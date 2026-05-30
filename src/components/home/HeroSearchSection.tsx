@@ -1,12 +1,6 @@
 import Link from "next/link";
 import { PageContainer } from "@/components/layout/PageContainer";
-
-const suggestedSearches = [
-  "Cardiologist",
-  "Pharmacy near me",
-  "Laboratory",
-  "Pediatric clinic",
-];
+import { HealthcareSearchBox } from "@/components/search/HealthcareSearchBox";
 
 export function HeroSearchSection() {
   return (
@@ -24,35 +18,7 @@ export function HeroSearchSection() {
             one calm, mobile-first starting point.
           </p>
 
-          <form className="mt-8 rounded-lg border border-border bg-card p-3 shadow-sm">
-            <label className="sr-only" htmlFor="home-healthcare-search">
-              Search healthcare providers
-            </label>
-            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
-              <input
-                id="home-healthcare-search"
-                className="min-h-14 rounded-md border border-border bg-input px-4 text-base text-foreground outline-none placeholder:text-muted-foreground"
-                placeholder="Search doctors, clinics, labs, pharmacies"
-                readOnly
-              />
-              <button
-                className="min-h-14 rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm"
-                type="button"
-              >
-                Search
-              </button>
-            </div>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {suggestedSearches.map((item) => (
-                <span
-                  key={item}
-                  className="rounded-full bg-muted px-3 py-2 text-sm font-medium text-foreground"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
-          </form>
+          <HealthcareSearchBox />
         </div>
 
         <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
