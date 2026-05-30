@@ -1,24 +1,8 @@
 import Link from "next/link";
+import { FacilityCardGrid } from "@/components/cards/FacilityCardGrid";
 import { PageContainer } from "@/components/layout/PageContainer";
+import { sampleFacilities } from "@/data/sampleFacilities";
 import { SectionHeading } from "./SectionHeading";
-
-const facilities = [
-  {
-    name: "Addis Health Center",
-    category: "Clinic and diagnostics",
-    location: "Addis Ababa",
-  },
-  {
-    name: "Unity Medical Clinic",
-    category: "Family medicine",
-    location: "Bole",
-  },
-  {
-    name: "Sunrise Diagnostic Lab",
-    category: "Laboratory services",
-    location: "Megenagna",
-  },
-];
 
 export function VerifiedFacilitiesPreview() {
   return (
@@ -37,42 +21,8 @@ export function VerifiedFacilitiesPreview() {
             Browse facilities
           </Link>
         </div>
-        <div className="mt-6 grid gap-4 lg:grid-cols-3">
-          {facilities.map((facility) => (
-            <article
-              key={facility.name}
-              className="rounded-lg border border-border bg-background p-5 shadow-sm"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <h3 className="text-lg font-semibold text-foreground">
-                  {facility.name}
-                </h3>
-                <span className="shrink-0 rounded-full bg-success px-3 py-1 text-xs font-semibold text-white">
-                  Verified
-                </span>
-              </div>
-              <p className="mt-3 text-sm font-medium text-muted-foreground">
-                {facility.category}
-              </p>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {facility.location}
-              </p>
-              <div className="mt-5 grid grid-cols-2 gap-2">
-                <Link
-                  className="min-h-11 rounded-md bg-primary px-3 py-3 text-center text-sm font-semibold text-primary-foreground"
-                  href="/facilities"
-                >
-                  View
-                </Link>
-                <Link
-                  className="min-h-11 rounded-md border border-border px-3 py-3 text-center text-sm font-semibold text-primary"
-                  href="/facilities"
-                >
-                  Contact
-                </Link>
-              </div>
-            </article>
-          ))}
+        <div className="mt-6">
+          <FacilityCardGrid facilities={sampleFacilities.slice(0, 3)} />
         </div>
       </PageContainer>
     </section>
