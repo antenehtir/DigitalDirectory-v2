@@ -1,65 +1,150 @@
-import Image from "next/image";
+const trustSignals = [
+  "Verified facilities",
+  "Doctor profiles",
+  "Nearby care",
+];
+
+const categories = ["Doctors", "Hospitals", "Pharmacies", "Labs"];
+
+const tokens = [
+  { name: "Primary", value: "#0F4C81", className: "bg-primary" },
+  { name: "Secondary", value: "#0E9F9A", className: "bg-secondary" },
+  { name: "Success", value: "#16A34A", className: "bg-success" },
+  { name: "Warning", value: "#F59E0B", className: "bg-warning" },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
+    <main className="min-h-screen bg-background">
+      <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 py-5 sm:px-6 lg:px-8">
+        <header className="flex items-center justify-between gap-4 py-2">
+          <a className="flex items-center gap-3" href="#" aria-label="DigitalDirectory-v2">
+            <span className="flex size-11 items-center justify-center rounded-lg bg-primary text-lg font-bold text-primary-foreground shadow-sm">
+              DD
+            </span>
+            <span className="flex flex-col leading-tight">
+              <span className="text-base font-semibold text-foreground">
+                DigitalDirectory-v2
+              </span>
+              <span className="text-sm text-muted-foreground">
+                Healthcare discovery
+              </span>
+            </span>
           </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          <span className="hidden rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-primary shadow-sm sm:inline-flex">
+            Ethiopia
+          </span>
+        </header>
+
+        <div className="grid flex-1 items-center gap-8 py-10 lg:grid-cols-[1.05fr_0.95fr] lg:py-14">
+          <div className="max-w-2xl">
+            <p className="mb-4 inline-flex rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-primary shadow-sm">
+              Design system foundation
+            </p>
+            <h1 className="text-4xl font-semibold leading-tight text-foreground sm:text-5xl">
+              Trusted healthcare discovery, prepared for a search-first product.
+            </h1>
+            <p className="mt-5 max-w-xl text-lg leading-8 text-muted-foreground">
+              A calm starter interface for patients and doctors to find verified
+              healthcare services quickly on mobile and desktop.
+            </p>
+
+            <div className="mt-8 rounded-lg border border-border bg-card p-3 shadow-sm">
+              <div className="flex min-h-14 items-center gap-3 rounded-md border border-border bg-input px-4">
+                <span
+                  aria-hidden="true"
+                  className="size-3 rounded-full bg-secondary"
+                />
+                <span className="text-sm text-muted-foreground sm:text-base">
+                  Search doctors, facilities, pharmacies, or services
+                </span>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {categories.map((category) => (
+                  <span
+                    key={category}
+                    className="rounded-full bg-muted px-3 py-2 text-sm font-medium text-foreground"
+                  >
+                    {category}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              {trustSignals.map((signal) => (
+                <div
+                  key={signal}
+                  className="rounded-lg border border-border bg-card p-4 shadow-sm"
+                >
+                  <div className="mb-3 size-2 rounded-full bg-success" />
+                  <p className="text-sm font-semibold text-card-foreground">
+                    {signal}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <aside className="rounded-lg border border-border bg-card p-5 shadow-sm">
+            <div className="flex items-start justify-between gap-4 border-b border-border pb-5">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Starter card pattern
+                </p>
+                <h2 className="mt-2 text-2xl font-semibold text-card-foreground">
+                  Verified Facility
+                </h2>
+              </div>
+              <span className="rounded-full bg-success px-3 py-1 text-xs font-semibold text-white">
+                Verified
+              </span>
+            </div>
+
+            <div className="space-y-4 py-5">
+              <div>
+                <p className="text-sm text-muted-foreground">Facility</p>
+                <p className="mt-1 font-semibold text-card-foreground">
+                  Addis Health Center
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Category</p>
+                <p className="mt-1 font-semibold text-card-foreground">
+                  Clinic and diagnostics
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Location</p>
+                <p className="mt-1 font-semibold text-card-foreground">
+                  Addis Ababa, Ethiopia
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-3 border-t border-border pt-5 sm:grid-cols-2">
+              <button className="min-h-12 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm">
+                Primary action
+              </button>
+              <button className="min-h-12 rounded-md border border-border bg-card px-4 text-sm font-semibold text-primary">
+                Secondary action
+              </button>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {tokens.map((token) => (
+                <div key={token.name}>
+                  <div className={`h-12 rounded-md ${token.className}`} />
+                  <p className="mt-2 text-xs font-semibold text-card-foreground">
+                    {token.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground">{token.value}</p>
+                </div>
+              ))}
+            </div>
+          </aside>
         </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }
