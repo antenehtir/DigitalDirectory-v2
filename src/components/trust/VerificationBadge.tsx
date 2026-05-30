@@ -1,11 +1,12 @@
-import type { FacilityVerificationStatus } from "@/types/facility";
+import type { VerificationStatus } from "@/types/verification";
 
 type VerificationBadgeProps = {
-  status: FacilityVerificationStatus;
+  status: VerificationStatus;
+  entityType?: "facility" | "doctor";
 };
 
 const badgeContent: Record<
-  FacilityVerificationStatus,
+  VerificationStatus,
   { label: string; className: string }
 > = {
   verified: {
@@ -22,14 +23,23 @@ const badgeContent: Record<
   },
 };
 
-export function VerificationBadge({ status }: VerificationBadgeProps) {
+export function VerificationBadge({
+  status,
+  entityType,
+}: VerificationBadgeProps) {
   const badge = badgeContent[status];
+  const label =
+    status === "verified" && entityType === "doctor"
+      ? "Verified Doctor"
+      : status === "verified" && entityType === "facility"
+        ? "Verified Facility"
+        : badge.label;
 
   return (
     <span
       className={`inline-flex shrink-0 items-center rounded-full px-3 py-1 text-xs font-semibold ${badge.className}`}
     >
-      {badge.label}
+      {label}
     </span>
   );
 }

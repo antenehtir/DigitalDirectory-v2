@@ -1,7 +1,6 @@
-export type FacilityVerificationStatus =
-  | "verified"
-  | "pending"
-  | "community-submitted";
+import type { VerificationStatus } from "./verification";
+
+export type FacilityVerificationStatus = VerificationStatus;
 
 export type Facility = {
   id: string;
