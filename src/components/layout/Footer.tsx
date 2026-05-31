@@ -35,6 +35,12 @@ export function Footer() {
           <p className="mt-2 leading-6">
             Trusted healthcare discovery for Ethiopia.
           </p>
+          <Link
+            className="mt-4 inline-flex min-h-9 items-center rounded-full border border-border bg-background px-3 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/35 hover:text-primary"
+            href="/account-preview"
+          >
+            Account preview
+          </Link>
         </div>
 
         <nav aria-label="Footer quick links">
