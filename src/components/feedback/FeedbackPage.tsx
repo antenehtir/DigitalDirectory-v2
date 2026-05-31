@@ -1,3 +1,4 @@
+import { CommunityFeedbackCta } from "@/components/community/CommunityFeedbackCta";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { FeatureRequestSection } from "./FeatureRequestSection";
 import { FeedbackCtaSection } from "./FeedbackCtaSection";
@@ -30,6 +31,7 @@ export function FeedbackPage() {
         </div>
 
         <FeedbackTrustPrivacyNote />
+        <CommunityFeedbackCta />
         <FeedbackCtaSection />
       </div>
     </PageContainer>

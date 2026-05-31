@@ -1,3 +1,6 @@
+import { CommunityChannelsSection } from "@/components/community/CommunityChannelsSection";
+import { CommunityTrustNote } from "@/components/community/CommunityTrustNote";
+import { NewsletterPreview } from "@/components/community/NewsletterPreview";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { ContactHero } from "./ContactHero";
 import { ContactPreviewForm } from "./ContactPreviewForm";
@@ -31,6 +34,11 @@ export function ContactPage() {
         </div>
 
         <ContactTrustSafetyNote />
+        <CommunityChannelsSection />
+        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+          <NewsletterPreview />
+          <CommunityTrustNote />
+        </div>
       </div>
     </PageContainer>
   );
