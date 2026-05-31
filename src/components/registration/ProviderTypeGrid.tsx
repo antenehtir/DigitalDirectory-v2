@@ -4,7 +4,7 @@ export function ProviderTypeGrid() {
   return (
     <div>
       <p className="mb-3 text-sm font-semibold text-muted-foreground">
-        Who can register
+        Who can request a listing
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
         {providerTypes.map((provider) => (

@@ -1,46 +1,4 @@
 import type { Doctor } from "@/types/doctor";
+import { seedDoctors } from "./seed-doctors";
 
-export const sampleDoctors: Doctor[] = [
-  {
-    id: "doctor-hana-bekele",
-    name: "Dr. Hana Bekele",
-    slug: "hana-bekele",
-    specialty: "Pediatrics",
-    facility: "Bole Family Clinic",
-    location: "Bole, Addis Ababa",
-    availability: "Available this week",
-    verificationStatus: "verified",
-    telemedicineStatus: "planned",
-    profileInitials: "HB",
-    profileActionLabel: "View profile",
-    bookingActionLabel: "Booking preview",
-  },
-  {
-    id: "doctor-samuel-tesfaye",
-    name: "Dr. Samuel Tesfaye",
-    slug: "samuel-tesfaye",
-    specialty: "Cardiology",
-    facility: "Addis Health Center",
-    location: "Addis Ababa",
-    availability: "Next sample slot today",
-    verificationStatus: "verified",
-    telemedicineStatus: "available",
-    profileInitials: "ST",
-    profileActionLabel: "View profile",
-    bookingActionLabel: "Booking preview",
-  },
-  {
-    id: "doctor-meron-dawit",
-    name: "Dr. Meron Dawit",
-    slug: "meron-dawit",
-    specialty: "Dermatology",
-    facility: "Unity Medical Clinic",
-    location: "Bole",
-    availability: "Limited sample availability",
-    verificationStatus: "pending",
-    telemedicineStatus: "not-available",
-    profileInitials: "MD",
-    profileActionLabel: "View profile",
-    bookingActionLabel: "Booking preview",
-  },
-];
+export const sampleDoctors: Doctor[] = seedDoctors;

@@ -10,7 +10,7 @@ const quickLinks = [
 ];
 
 const providerLinks = [
-  { label: "Register", href: "/register" },
+  { label: "Provider registration", href: "/register" },
   { label: "Suggest correction", href: "/corrections" },
   { label: "Contact", href: "/contact" },
   { label: "Feedback", href: "/feedback" },
@@ -75,15 +75,21 @@ export function Footer() {
 
         <nav aria-label="Footer community links">
           <p className="font-semibold text-foreground">Community</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {communityLinks.map((link) => (
-              <a
-                className="inline-flex min-h-9 items-center rounded-full border border-border bg-background px-3 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/35 hover:text-primary"
-                href={link.href}
-                key={link.label}
-              >
-                {link.label}
-              </a>
+          <div className="mt-3 flex flex-wrap items-center gap-x-1 gap-y-0.5 text-sm leading-6">
+            {communityLinks.map((link, index) => (
+              <span className="inline-flex items-center gap-x-1" key={link.label}>
+                {index > 0 ? (
+                  <span className="text-border" aria-hidden="true">
+                    &middot;
+                  </span>
+                ) : null}
+                <a
+                  className="inline-flex min-h-8 items-center text-muted-foreground transition-colors hover:text-primary"
+                  href={link.href}
+                >
+                  {link.label}
+                </a>
+              </span>
             ))}
           </div>
         </nav>

@@ -17,7 +17,7 @@ export function ProviderSupportSection() {
         className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-md bg-primary px-5 text-center text-sm font-semibold text-primary-foreground"
         href="/register"
       >
-        Go to register
+        Provider registration preview
       </Link>
     </section>
   );

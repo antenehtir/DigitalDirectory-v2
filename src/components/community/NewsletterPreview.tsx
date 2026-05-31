@@ -12,7 +12,7 @@ export function NewsletterPreview() {
         Email updates preview
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-        Newsletter signup can come later.
+        Email updates can come later.
       </h2>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
         This static preview reserves space for future platform updates without

@@ -13,7 +13,7 @@ export function CorrectionsNavigationCta() {
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-primary-foreground/85">
             Search first when you want to review an existing listing. Use
-            registration when the provider or facility is not listed yet.
+            provider registration when the provider or facility is not listed yet.
           </p>
         </div>
 
@@ -29,7 +29,7 @@ export function CorrectionsNavigationCta() {
             className="inline-flex min-h-12 w-full items-center justify-center rounded-md border border-primary-foreground/40 px-5 text-center text-sm font-semibold text-primary-foreground sm:w-auto"
             href="/register"
           >
-            Go to register
+            Provider registration
           </Link>
         </div>
       </div>

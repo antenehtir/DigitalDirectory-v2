@@ -1,0 +1,61 @@
+import type { SeedLocation } from "./seed-types";
+
+export const seedLocations: SeedLocation[] = [
+  {
+    id: "location-ethiopia",
+    slug: "ethiopia",
+    name: "Ethiopia",
+    displayName: "Ethiopia",
+    locationType: "country",
+    isPublic: true,
+  },
+  {
+    id: "location-addis-ababa",
+    slug: "addis-ababa",
+    name: "Addis Ababa",
+    displayName: "Addis Ababa, Ethiopia",
+    locationType: "city",
+    parentLocationId: "location-ethiopia",
+    isPublic: true,
+    coordinatesPreview: {
+      latitude: 9.03,
+      longitude: 38.74,
+    },
+  },
+  {
+    id: "location-bole",
+    slug: "bole",
+    name: "Bole",
+    displayName: "Bole, Addis Ababa",
+    locationType: "area",
+    parentLocationId: "location-addis-ababa",
+    isPublic: true,
+  },
+  {
+    id: "location-megenagna",
+    slug: "megenagna",
+    name: "Megenagna",
+    displayName: "Megenagna, Addis Ababa",
+    locationType: "area",
+    parentLocationId: "location-addis-ababa",
+    isPublic: true,
+  },
+  {
+    id: "location-kazanchis",
+    slug: "kazanchis",
+    name: "Kazanchis",
+    displayName: "Kazanchis, Addis Ababa",
+    locationType: "area",
+    parentLocationId: "location-addis-ababa",
+    isPublic: true,
+  },
+  {
+    id: "location-central-addis",
+    slug: "central-addis-ababa",
+    name: "Central Addis Ababa",
+    displayName: "Central Addis Ababa",
+    locationType: "area",
+    parentLocationId: "location-addis-ababa",
+    isPublic: true,
+  },
+];

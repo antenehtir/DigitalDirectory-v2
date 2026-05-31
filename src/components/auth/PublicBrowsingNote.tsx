@@ -25,7 +25,7 @@ export function PublicBrowsingNote() {
           className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-card px-4 text-sm font-semibold text-foreground shadow-sm"
           href="/register"
         >
-          View registration preview
+          View provider registration preview
         </Link>
       </div>
     </section>
