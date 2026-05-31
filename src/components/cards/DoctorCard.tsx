@@ -13,6 +13,11 @@ const telemedicineLabels: Record<DoctorTelemedicineStatus, string> = {
 };
 
 export function DoctorCard({ doctor }: DoctorCardProps) {
+  const detailHref =
+    doctor.id === "doctor-hana-bekele"
+      ? "/doctors/dr-hana-bekele"
+      : "/doctors";
+
   return (
     <article className="flex h-full min-w-0 flex-col rounded-lg border border-border bg-card p-4 shadow-sm sm:p-5">
       <div className="flex flex-col items-start gap-3 min-[420px]:flex-row min-[420px]:justify-between">
@@ -54,7 +59,7 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
         </button>
         <Link
           className="flex min-h-12 items-center justify-center rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground"
-          href="/doctors"
+          href={detailHref}
         >
           {doctor.profileActionLabel}
         </Link>

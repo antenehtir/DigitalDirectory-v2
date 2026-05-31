@@ -7,6 +7,11 @@ type FacilityCardProps = {
 };
 
 export function FacilityCard({ facility }: FacilityCardProps) {
+  const detailHref =
+    facility.slug === "addis-health-center"
+      ? "/facilities/addis-health-center"
+      : "/facilities";
+
   return (
     <article className="flex h-full min-w-0 flex-col rounded-lg border border-border bg-background p-4 shadow-sm sm:p-5">
       <div className="flex flex-col items-start gap-3 min-[420px]:flex-row min-[420px]:justify-between">
@@ -66,7 +71,7 @@ export function FacilityCard({ facility }: FacilityCardProps) {
         </button>
         <Link
           className="flex min-h-12 items-center justify-center rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground"
-          href="/facilities"
+          href={detailHref}
         >
           View details
         </Link>
