@@ -19,6 +19,7 @@ export function RequestFacilityAdditionCta() {
         <Link
           className="inline-flex min-h-12 items-center justify-center rounded-md bg-card px-5 text-center text-sm font-semibold text-[#0F172A]"
           href="/register"
+          style={{ color: "#0F172A" }}
         >
           Request facility addition
         </Link>

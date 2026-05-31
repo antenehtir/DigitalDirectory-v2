@@ -14,13 +14,6 @@ export function Header() {
 
         <DesktopNavigation />
 
-        <Link
-          className="hidden min-h-11 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-[#0B3D68] lg:inline-flex"
-          href="/register"
-        >
-          Register
-        </Link>
-
         <div className="ml-auto flex items-center gap-2 lg:hidden">
           <Link
             className="flex size-11 items-center justify-center rounded-md border border-border bg-card text-sm font-semibold text-primary shadow-sm md:hidden"

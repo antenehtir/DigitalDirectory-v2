@@ -4,12 +4,13 @@ export const mainNavigationItems = [
   { label: "Nearby", href: "/nearby" },
   { label: "Doctors", href: "/doctors" },
   { label: "Facilities", href: "/facilities" },
+  { label: "Register", href: "/register" },
 ];
 
 export const mobileNavigationItems = [
   { label: "Home", href: "/", shortLabel: "Home" },
   { label: "Search", href: "/search", shortLabel: "Search" },
   { label: "Nearby", href: "/nearby", shortLabel: "Nearby" },
-  { label: "Register", href: "/register", shortLabel: "Register" },
-  { label: "Menu", href: "/menu", shortLabel: "Menu" },
+  { label: "Doctors", href: "/doctors", shortLabel: "Doctors" },
+  { label: "Facilities", href: "/facilities", shortLabel: "Care" },
 ];

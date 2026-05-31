@@ -7,7 +7,7 @@ const categories = [
   { label: "Hospitals", detail: "Browse major care facilities", href: "/facilities" },
   { label: "Clinics", detail: "Discover local outpatient care", href: "/facilities" },
   { label: "Pharmacies", detail: "Locate medicine access points", href: "/pharmacies" },
-  { label: "Laboratories", detail: "Review diagnostic providers", href: "/labs" },
+  { label: "Laboratories", detail: "Review diagnostic providers", href: "/diagnostics" },
   { label: "Diagnostic centers", detail: "Compare imaging and tests", href: "/diagnostics" },
 ];
 
