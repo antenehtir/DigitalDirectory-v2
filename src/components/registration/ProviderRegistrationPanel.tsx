@@ -16,14 +16,14 @@ export function ProviderRegistrationPanel() {
       </p>
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <Link
-          className="inline-flex min-h-12 items-center justify-center rounded-md bg-card px-5 text-center text-sm font-semibold text-[#0F4C81]"
+          className="inline-flex min-h-12 w-full items-center justify-center rounded-md bg-card px-5 text-center text-sm font-semibold text-[#0F172A] sm:w-auto"
           href="/register"
           style={{ color: "#0F172A" }}
         >
           Request listing preview
         </Link>
         <Link
-          className="inline-flex min-h-12 items-center justify-center rounded-md border border-primary-foreground/40 px-5 text-center text-sm font-semibold text-primary-foreground"
+          className="inline-flex min-h-12 w-full items-center justify-center rounded-md border border-primary-foreground/40 px-5 text-center text-sm font-semibold text-primary-foreground sm:w-auto"
           href="/register"
         >
           Request verification preview

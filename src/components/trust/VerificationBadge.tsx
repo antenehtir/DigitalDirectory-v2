@@ -37,7 +37,7 @@ export function VerificationBadge({
 
   return (
     <span
-      className={`inline-flex shrink-0 items-center rounded-full px-3 py-1 text-xs font-semibold ${badge.className}`}
+      className={`inline-flex max-w-full shrink-0 items-center rounded-full px-3 py-1 text-center text-xs font-semibold leading-4 ${badge.className}`}
     >
       {label}
     </span>

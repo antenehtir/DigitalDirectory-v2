@@ -14,7 +14,7 @@ export function CorrectionRequestCta() {
         locations, services, or trust status.
       </p>
       <Link
-        className="mt-5 inline-flex min-h-12 items-center justify-center rounded-md bg-card px-5 text-center text-sm font-semibold text-[#0F172A]"
+        className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-md bg-card px-5 text-center text-sm font-semibold text-[#0F172A] sm:w-auto"
         href="/register"
         style={{ color: "#0F172A" }}
       >

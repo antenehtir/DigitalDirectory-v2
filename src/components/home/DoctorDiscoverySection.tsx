@@ -13,7 +13,10 @@ export function DoctorDiscoverySection() {
             title="Doctor discovery starts with clear profile previews."
             description="Sample doctor cards prepare the future profile experience while showing verification as a first-class signal."
           />
-          <DoctorCardGrid doctors={sampleDoctors.slice(0, 2)} />
+          <DoctorCardGrid
+            doctors={sampleDoctors.slice(0, 2)}
+            className="grid gap-4"
+          />
         </div>
       </PageContainer>
     </section>

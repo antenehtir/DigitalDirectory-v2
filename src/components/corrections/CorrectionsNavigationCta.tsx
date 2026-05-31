@@ -19,14 +19,14 @@ export function CorrectionsNavigationCta() {
 
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:justify-end">
           <Link
-            className="inline-flex min-h-12 items-center justify-center rounded-md bg-card px-5 text-center text-sm font-semibold text-[#0F172A]"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-md bg-card px-5 text-center text-sm font-semibold text-[#0F172A] sm:w-auto"
             href="/search"
             style={{ color: "#0F172A" }}
           >
             Back to search
           </Link>
           <Link
-            className="inline-flex min-h-12 items-center justify-center rounded-md border border-primary-foreground/40 px-5 text-center text-sm font-semibold text-primary-foreground"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-md border border-primary-foreground/40 px-5 text-center text-sm font-semibold text-primary-foreground sm:w-auto"
             href="/register"
           >
             Go to register

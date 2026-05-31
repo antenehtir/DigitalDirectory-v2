@@ -19,7 +19,7 @@ export function FacilityCard({ facility }: FacilityCardProps) {
           <p className="text-sm font-semibold text-primary">
             {facility.category}
           </p>
-          <h3 className="mt-2 text-lg font-semibold leading-tight text-foreground sm:text-xl">
+          <h3 className="mt-2 break-words text-lg font-semibold leading-tight text-foreground sm:text-xl">
             {facility.name}
           </h3>
         </div>
@@ -58,19 +58,19 @@ export function FacilityCard({ facility }: FacilityCardProps) {
 
       <div className="mt-auto grid gap-2 pt-5 min-[520px]:grid-cols-3">
         <button
-          className="min-h-12 rounded-md border border-border bg-card px-3 text-sm font-semibold text-primary"
+          className="min-h-12 rounded-md border border-border bg-card px-3 text-center text-sm font-semibold text-primary"
           type="button"
         >
           {facility.contactActionLabel}
         </button>
         <button
-          className="min-h-12 rounded-md border border-border bg-card px-3 text-sm font-semibold text-primary"
+          className="min-h-12 rounded-md border border-border bg-card px-3 text-center text-sm font-semibold text-primary"
           type="button"
         >
           {facility.directionsActionLabel}
         </button>
         <Link
-          className="flex min-h-12 items-center justify-center rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground"
+          className="flex min-h-12 items-center justify-center rounded-md bg-primary px-3 text-center text-sm font-semibold text-primary-foreground"
           href={detailHref}
         >
           View details

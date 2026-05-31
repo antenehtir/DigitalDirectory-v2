@@ -17,8 +17,8 @@ const providerLinks = [
 export function Footer() {
   return (
     <footer className="border-t border-border bg-card">
-      <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-8 pb-28 text-sm text-muted-foreground sm:px-6 md:grid-cols-[1.1fr_1fr_0.8fr] md:pb-8 lg:px-8">
-        <div>
+      <div className="mx-auto grid w-full max-w-6xl gap-7 px-4 py-8 pb-28 text-sm text-muted-foreground sm:px-6 md:grid-cols-[1.1fr_1fr_0.8fr] md:gap-8 md:pb-8 lg:px-8">
+        <div className="max-w-sm">
           <p className="font-medium text-foreground">DigitalDirectory-v2</p>
           <p className="mt-2 leading-6">
             Trusted healthcare discovery for Ethiopia.
@@ -27,10 +27,10 @@ export function Footer() {
 
         <nav aria-label="Footer quick links">
           <p className="font-semibold text-foreground">Explore</p>
-          <div className="mt-3 grid grid-cols-2 gap-2">
+          <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1">
             {quickLinks.map((link) => (
               <Link
-                className="w-fit text-muted-foreground transition-colors hover:text-primary"
+                className="flex min-h-9 w-fit items-center text-muted-foreground transition-colors hover:text-primary"
                 href={link.href}
                 key={link.href}
               >
@@ -42,10 +42,10 @@ export function Footer() {
 
         <nav aria-label="Footer provider links">
           <p className="font-semibold text-foreground">Providers</p>
-          <div className="mt-3 grid gap-2">
+          <div className="mt-3 grid gap-1">
             {providerLinks.map((link) => (
               <Link
-                className="w-fit text-muted-foreground transition-colors hover:text-primary"
+                className="flex min-h-9 w-fit items-center text-muted-foreground transition-colors hover:text-primary"
                 href={link.href}
                 key={link.href}
               >

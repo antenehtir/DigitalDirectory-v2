@@ -22,13 +22,13 @@ export function Header() {
           >
             S
           </Link>
-          <button
+          <Link
             className="flex size-11 items-center justify-center rounded-md border border-border bg-card text-sm font-semibold text-primary shadow-sm"
-            type="button"
-            aria-label="Open menu"
+            href="/register"
+            aria-label="Open register"
           >
-            M
-          </button>
+            R
+          </Link>
         </div>
       </div>
     </header>
