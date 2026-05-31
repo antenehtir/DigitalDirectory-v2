@@ -13,6 +13,7 @@ const providerLinks = [
   { label: "Register", href: "/register" },
   { label: "Suggest correction", href: "/corrections" },
   { label: "Contact", href: "/contact" },
+  { label: "Feedback", href: "/feedback" },
 ];
 
 export function Footer() {
