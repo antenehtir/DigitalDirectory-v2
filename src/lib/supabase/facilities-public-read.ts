@@ -4,6 +4,7 @@ import {
   normalizeCategoryLabel,
   normalizePublicSlug,
 } from "@/lib/public-listing-mappers";
+import type { Facility } from "@/types/facility";
 import type { PublicProviderCard } from "@/types/public-listings";
 import type { VerificationStatus } from "@/types/verification";
 
@@ -68,6 +69,12 @@ type FacilitiesPublicReadUnavailableReason =
   | "client-unavailable";
 
 type FacilitiesPublicReadErrorReason = "query-failed";
+
+export type FacilityPublicDetailResult =
+  | { status: "found"; source: "supabase"; facility: Facility }
+  | { status: "not-found"; source: "supabase" }
+  | { status: "unavailable"; source: "static-fallback" }
+  | { status: "error"; source: "static-fallback" };
 
 export type FacilitiesPublicReadResult =
   | {
@@ -220,4 +227,68 @@ function createFreshnessLabel(lastConfirmedAt: string | null): string {
   return lastConfirmedAt
     ? "Listing confirmation date available"
     : "Listing confirmation not listed";
+}
+
+function mapSupabaseFacilityRowToFacility(row: SupabaseFacilityPublicRow): Facility {
+  const locationLabel = createLocationLabel(row);
+  const categoryLabel = normalizeCategoryLabel(
+    row.category ?? row.facility_type,
+    "facility",
+  );
+
+  return {
+    id: row.id,
+    slug: normalizePublicSlug(row.slug, row.id),
+    name: coercePublicText(row.display_name, "Facility name not listed"),
+    category: categoryLabel,
+    subcategory: coercePublicText(row.description, "Details not listed"),
+    services: [],
+    location: locationLabel,
+    address: coercePublicText(row.address_public, locationLabel),
+    workingHours: "Hours not listed",
+    verificationStatus: mapSupabaseFacilityVerificationStatus(row.verification_status),
+    isOpen: false,
+    availabilityNote: createFreshnessLabel(row.last_confirmed_at),
+    contactActionLabel: "View details",
+    directionsActionLabel: "Get directions",
+  };
+}
+
+export async function getSupabasePublicFacilityBySlug(
+  slug: string,
+): Promise<FacilityPublicDetailResult> {
+  const clientStatus = getSupabasePublicClientStatus();
+
+  if (!clientStatus.isAvailable) {
+    return { status: "unavailable", source: "static-fallback" };
+  }
+
+  const client = getSupabasePublicClient();
+
+  if (!client) {
+    return { status: "unavailable", source: "static-fallback" };
+  }
+
+  const { data, error } = await client
+    .from("facilities")
+    .select(FACILITIES_PUBLIC_SELECT)
+    .eq("slug", slug)
+    .eq("listing_status", "active")
+    .eq("visibility_status", "public")
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      return { status: "not-found", source: "supabase" };
+    }
+    return { status: "error", source: "static-fallback" };
+  }
+
+  const row = data as unknown as SupabaseFacilityPublicRow;
+
+  return {
+    status: "found",
+    source: "supabase",
+    facility: mapSupabaseFacilityRowToFacility(row),
+  };
 }

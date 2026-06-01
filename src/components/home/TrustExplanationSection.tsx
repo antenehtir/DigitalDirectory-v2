@@ -3,16 +3,16 @@ import { SectionHeading } from "./SectionHeading";
 
 const trustItems = [
   {
-    title: "Verification is visible",
-    text: "Verified providers use distinct badges and consistent card patterns.",
+    title: "Verification you can see",
+    text: "Every verified provider carries a green badge. Community-submitted listings are labelled separately so you always know what has been reviewed.",
   },
   {
-    title: "Information is easy to scan",
-    text: "Names, categories, locations, and actions stay clear on mobile screens.",
+    title: "Fast on every screen",
+    text: "Names, locations, hours, and contact actions are readable on a small Android screen in under five seconds — no app download needed.",
   },
   {
-    title: "Future review flow is respected",
-    text: "The frontend structure leaves room for later admin and verification work.",
+    title: "You can report wrong information",
+    text: "Every listing has a correction link. If an address or phone number is out of date, one tap lets you flag it for review.",
   },
 ];
 
@@ -22,8 +22,8 @@ export function TrustExplanationSection() {
       <PageContainer className="py-8 sm:py-10 lg:py-14">
         <SectionHeading
           eyebrow="Why trust matters"
-          title="The homepage should make verified healthcare feel different."
-          description="Trust signals, calm spacing, and consistent cards help patients choose with less confusion."
+          title="Verified healthcare, clearly labelled."
+          description="Tiru puts verification, hours, and location front and centre so you can choose with confidence."
         />
         <div className="mt-6 grid gap-4 lg:grid-cols-3">
           {trustItems.map((item) => (

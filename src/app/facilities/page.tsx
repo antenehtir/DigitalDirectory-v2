@@ -1,15 +1,25 @@
 import { FacilitiesPage } from "@/components/facilities/FacilitiesPage";
 import { PageShell } from "@/components/layout/PageShell";
 import { sampleFacilities } from "@/data/sampleFacilities";
-import { getPublicFacilityCardsFromSource } from "@/lib/public-listing-source";
+import {
+  getActiveFacilitySourceMode,
+  getPublicFacilityCardsFromSource,
+} from "@/lib/public-listing-source";
 import type { PublicProviderCard } from "@/types/public-listings";
 import type { Facility } from "@/types/facility";
+import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: "Facilities",
+  description:
+    "Browse verified hospitals, clinics, and health centres in Addis Ababa.",
+};
 
 export default async function FacilitiesRoute() {
   const facilitiesSource = await getPublicFacilityCardsFromSource({
-    mode: "supabase-facilities-preview",
+    mode: getActiveFacilitySourceMode(),
   });
   const facilities = mapPublicFacilityCardsToFacilities(
     facilitiesSource.cards,

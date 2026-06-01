@@ -3,12 +3,12 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { SectionHeading } from "./SectionHeading";
 
 const categories = [
-  { label: "Doctors", detail: "Find sample specialist profiles", href: "/doctors" },
-  { label: "Hospitals", detail: "Browse major care facilities", href: "/facilities" },
-  { label: "Clinics", detail: "Discover local outpatient care", href: "/facilities" },
-  { label: "Pharmacies", detail: "Locate medicine access points", href: "/pharmacies" },
-  { label: "Laboratories", detail: "Review diagnostic providers", href: "/diagnostics" },
-  { label: "Diagnostic centers", detail: "Compare imaging and tests", href: "/diagnostics" },
+  { label: "Doctors", detail: "Find specialist and general practitioners", href: "/doctors" },
+  { label: "Hospitals", detail: "Browse major hospitals and care centres", href: "/facilities" },
+  { label: "Clinics", detail: "Discover local outpatient clinics", href: "/facilities" },
+  { label: "Pharmacies", detail: "Locate nearby pharmacies and dispensaries", href: "/pharmacies" },
+  { label: "Laboratories", detail: "Find diagnostic labs and sample collection", href: "/diagnostics" },
+  { label: "Imaging centres", detail: "X-ray, ultrasound, and scan services", href: "/diagnostics" },
 ];
 
 export function QuickCategoriesSection() {
@@ -18,7 +18,7 @@ export function QuickCategoriesSection() {
         <SectionHeading
           eyebrow="Discover"
           title="Start with the care category you need."
-          description="Quick paths keep the homepage focused on healthcare discovery without adding search logic yet."
+          description="Choose a category to browse providers in Addis Ababa."
         />
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category) => (

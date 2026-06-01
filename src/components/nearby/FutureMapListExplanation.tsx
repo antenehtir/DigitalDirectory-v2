@@ -5,12 +5,11 @@ export function FutureMapListExplanation() {
         Future map and list
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-        Nearby will support map and list views later.
+        List view now. Map view coming soon.
       </h2>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        This preview reserves the product shape for future map/list discovery
-        while keeping Task 14 frontend-only. No map library, location lookup, or
-        distance calculation is included.
+        Browse facilities as a list today. A map view showing distances and
+        directions is planned for a future update.
       </p>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         <div className="rounded-md border border-border bg-card p-4">

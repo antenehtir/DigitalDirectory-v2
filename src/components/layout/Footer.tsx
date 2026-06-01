@@ -32,9 +32,10 @@ export function Footer() {
     <footer className="border-t border-border bg-card">
       <div className="mx-auto grid w-full max-w-6xl gap-7 px-4 py-8 pb-28 text-sm text-muted-foreground sm:px-6 md:grid-cols-2 md:gap-8 md:pb-8 lg:grid-cols-[1.1fr_1fr_0.8fr_0.8fr] lg:px-8">
         <div className="max-w-sm">
-          <p className="font-medium text-foreground">DigitalDirectory-v2</p>
+          <p className="font-medium text-foreground">Tiru</p>
           <p className="mt-2 leading-6">
-            Trusted healthcare discovery for Ethiopia.
+            Find verified hospitals, clinics, doctors, and pharmacies in Addis
+            Ababa.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <Link

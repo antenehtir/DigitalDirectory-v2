@@ -1,7 +1,7 @@
 import { PageContainer } from "@/components/layout/PageContainer";
+import { AreaBrowseSelector } from "./AreaBrowseSelector";
 import { DiagnosticsNearMePreview } from "./DiagnosticsNearMePreview";
 import { FutureMapListExplanation } from "./FutureMapListExplanation";
-import { LocationContextPreview } from "./LocationContextPreview";
 import { NearbyFacilitiesPreview } from "./NearbyFacilitiesPreview";
 import { NearbyFilterChips } from "./NearbyFilterChips";
 import { NearbyHero } from "./NearbyHero";
@@ -16,7 +16,7 @@ export function NearbyPage() {
 
         <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div className="grid gap-6">
-            <LocationContextPreview />
+            <AreaBrowseSelector />
             <NearbyFilterChips />
           </div>
 

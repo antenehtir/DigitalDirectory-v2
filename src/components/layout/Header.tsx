@@ -16,18 +16,18 @@ export function Header() {
 
         <div className="ml-auto flex items-center gap-2 lg:hidden">
           <Link
-            className="flex size-11 items-center justify-center rounded-md border border-border bg-card text-sm font-semibold text-primary shadow-sm md:hidden"
+            className="flex size-11 items-center justify-center rounded-md border border-border bg-card text-primary shadow-sm md:hidden"
             href="/search"
-            aria-label="Open search"
+            aria-label="Search"
           >
-            S
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           </Link>
           <Link
-            className="flex size-11 items-center justify-center rounded-md border border-border bg-card text-sm font-semibold text-primary shadow-sm"
+            className="flex size-11 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm"
             href="/register"
-            aria-label="Open register"
+            aria-label="List your practice"
           >
-            R
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
           </Link>
         </div>
       </div>

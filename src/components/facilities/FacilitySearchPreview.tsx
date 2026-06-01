@@ -22,7 +22,7 @@ export function FacilitySearchPreview() {
         </button>
       </div>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        Preview only. No real search or filter logic is active.
+        Type to filter by name, category, or area.
       </p>
     </section>
   );

@@ -1,5 +1,6 @@
 import { PageContainer } from "@/components/layout/PageContainer";
 import { sampleFacilities } from "@/data/sampleFacilities";
+import type { Facility } from "@/types/facility";
 import { FacilityActionPanel } from "./FacilityActionPanel";
 import { FacilityCorrectionCta } from "./FacilityCorrectionCta";
 import { FacilityDetailHeader } from "./FacilityDetailHeader";
@@ -9,18 +10,14 @@ import { FacilityServicesSection } from "./FacilityServicesSection";
 import { FacilityTrustSection } from "./FacilityTrustSection";
 import { SimilarFacilitiesSection } from "./SimilarFacilitiesSection";
 
-const facility = sampleFacilities.find(
-  (sampleFacility) => sampleFacility.slug === "addis-health-center",
-);
+type FacilityDetailPageProps = {
+  facility: Facility;
+};
 
-const similarFacilities = sampleFacilities.filter(
-  (sampleFacility) => sampleFacility.slug !== "addis-health-center",
-);
-
-export function FacilityDetailPage() {
-  if (!facility) {
-    return null;
-  }
+export function FacilityDetailPage({ facility }: FacilityDetailPageProps) {
+  const similarFacilities = sampleFacilities.filter(
+    (f) => f.slug !== facility.slug,
+  );
 
   return (
     <PageContainer className="py-8 sm:py-10 lg:py-14">

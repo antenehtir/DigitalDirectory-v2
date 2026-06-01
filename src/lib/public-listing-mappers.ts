@@ -25,14 +25,6 @@ const DEFAULT_HOURS = "Hours not listed";
 const DEFAULT_PRIMARY_ACTION = "View details";
 const DEFAULT_SECONDARY_ACTION = "More information";
 
-const knownDetailSlugs: Partial<Record<PublicProviderType, Record<string, string>>> =
-  {
-    doctor: {
-      "doctor-hana-bekele": "dr-hana-bekele",
-      "hana-bekele": "dr-hana-bekele",
-    },
-  };
-
 const providerBasePaths: Record<PublicProviderType, string> = {
   facility: "/facilities",
   doctor: "/doctors",
@@ -48,7 +40,7 @@ const providerDefaultCategoryLabels: Record<PublicProviderType, string> = {
 };
 
 const verificationLabels: Record<VerificationStatus, string> = {
-  verified: "Verified preview",
+  verified: "Verified",
   pending: "Pending verification",
   "community-submitted": "Community submitted",
 };
@@ -127,12 +119,7 @@ export function getPublicProviderDetailPath(input: {
   slug?: string | null;
   providerType: PublicProviderType;
 }): string {
-  const sourceSlug = normalizePublicSlug(input.slug, input.id);
-  const knownSlug =
-    knownDetailSlugs[input.providerType]?.[input.id] ??
-    knownDetailSlugs[input.providerType]?.[sourceSlug];
-
-  const routeSlug = knownSlug ?? sourceSlug;
+  const routeSlug = normalizePublicSlug(input.slug, input.id);
 
   if (input.providerType === "facility" || input.providerType === "doctor") {
     return `${providerBasePaths[input.providerType]}/${routeSlug}`;
@@ -180,7 +167,7 @@ export function createPublicVerification(input: {
     label: verificationLabels[input.status],
     note:
       input.note ??
-      "Sample-only trust label. This is not a real verified claim.",
+      "Verification status shown as reported. Contact Tiru to report inaccuracies.",
   };
 }
 

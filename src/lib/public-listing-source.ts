@@ -5,6 +5,7 @@ import {
   seedLocations,
   seedPharmacies,
 } from "@/data";
+import type { Facility } from "@/types/facility";
 import {
   mapSeedDiagnosticsProviderToPublicCard,
   mapSeedDiagnosticsProviderToPublicDetail,
@@ -52,6 +53,14 @@ const STATIC_SOURCE_MODE: PublicListingSourceMode = "static";
 const SUPABASE_FACILITIES_SOURCE_MODE: PublicListingSourceMode =
   "supabase-facilities-preview";
 
+function resolveListingModeFromEnv(): PublicListingSourceMode {
+  const envMode = process.env.NEXT_PUBLIC_LISTING_MODE;
+  if (envMode === SUPABASE_FACILITIES_SOURCE_MODE) {
+    return SUPABASE_FACILITIES_SOURCE_MODE;
+  }
+  return STATIC_SOURCE_MODE;
+}
+
 const sourceStatus: PublicListingSourceStatus = {
   mode: STATIC_SOURCE_MODE,
   isStaticDefault: true,
@@ -64,7 +73,11 @@ const locationsById = Object.fromEntries(
 );
 
 export function getPublicListingSourceMode(): PublicListingSourceMode {
-  return STATIC_SOURCE_MODE;
+  return resolveListingModeFromEnv();
+}
+
+export function getActiveFacilitySourceMode(): PublicListingSourceMode {
+  return resolveListingModeFromEnv();
 }
 
 export function getPublicListingSourceStatus(): PublicListingSourceStatus {
@@ -199,4 +212,23 @@ export function isSupabasePublicListingSourceAvailable(
   mode: PublicListingSourceMode = STATIC_SOURCE_MODE,
 ): boolean {
   return mode === SUPABASE_FACILITIES_SOURCE_MODE;
+}
+
+export async function getPublicFacilityBySlugFromSource(
+  slug: string,
+): Promise<Facility | null> {
+  const mode = resolveListingModeFromEnv();
+
+  if (mode === SUPABASE_FACILITIES_SOURCE_MODE) {
+    const { getSupabasePublicFacilityBySlug } = await import(
+      "./supabase/facilities-public-read"
+    );
+    const result = await getSupabasePublicFacilityBySlug(slug);
+    if (result.status === "found") {
+      return result.facility;
+    }
+  }
+
+  const seedFacility = seedFacilities.find((f) => f.slug === slug);
+  return seedFacility ?? null;
 }
