@@ -21,16 +21,36 @@ import type {
   PublicProviderType,
 } from "@/types/public-listings";
 
-export type PublicListingSourceMode = "static";
+export type PublicListingSourceMode =
+  | "static"
+  | "supabase-facilities-preview";
 
 export type PublicListingSourceStatus = {
   mode: PublicListingSourceMode;
-  isStaticDefault: true;
-  isSupabaseEnabled: false;
+  isStaticDefault: boolean;
+  isSupabaseEnabled: boolean;
+  note: string;
+};
+
+export type PublicFacilityCardsSourceOptions = {
+  mode?: PublicListingSourceMode;
+};
+
+export type PublicFacilityCardsSourceResult = {
+  mode: PublicListingSourceMode;
+  source: "static" | "supabase";
+  cards: PublicProviderCard[];
+  fallbackUsed: boolean;
+  fallbackReason?:
+    | "supabase-unavailable"
+    | "supabase-error"
+    | "supabase-empty";
   note: string;
 };
 
 const STATIC_SOURCE_MODE: PublicListingSourceMode = "static";
+const SUPABASE_FACILITIES_SOURCE_MODE: PublicListingSourceMode =
+  "supabase-facilities-preview";
 
 const sourceStatus: PublicListingSourceStatus = {
   mode: STATIC_SOURCE_MODE,
@@ -53,6 +73,61 @@ export function getPublicListingSourceStatus(): PublicListingSourceStatus {
 
 export function getPublicFacilityCards(): PublicProviderCard[] {
   return seedFacilities.map(mapSeedFacilityToPublicCard);
+}
+
+export async function getPublicFacilityCardsFromSource(
+  options: PublicFacilityCardsSourceOptions = {},
+): Promise<PublicFacilityCardsSourceResult> {
+  const mode = options.mode ?? STATIC_SOURCE_MODE;
+  const staticCards = getPublicFacilityCards();
+
+  if (mode !== SUPABASE_FACILITIES_SOURCE_MODE) {
+    return {
+      mode: STATIC_SOURCE_MODE,
+      source: "static",
+      cards: staticCards,
+      fallbackUsed: false,
+      note: "Static facility seed data returned by default.",
+    };
+  }
+
+  const { getSupabasePublicFacilityCards } = await import(
+    "./supabase/facilities-public-read"
+  );
+  const supabaseResult = await getSupabasePublicFacilityCards();
+
+  if (supabaseResult.status !== "success") {
+    return {
+      mode,
+      source: "static",
+      cards: staticCards,
+      fallbackUsed: true,
+      fallbackReason:
+        supabaseResult.status === "unavailable"
+          ? "supabase-unavailable"
+          : "supabase-error",
+      note: "Static facility seed data returned because Supabase facilities are unavailable.",
+    };
+  }
+
+  if (supabaseResult.cards.length === 0) {
+    return {
+      mode,
+      source: "static",
+      cards: staticCards,
+      fallbackUsed: true,
+      fallbackReason: "supabase-empty",
+      note: "Static facility seed data returned because Supabase facilities returned no cards.",
+    };
+  }
+
+  return {
+    mode,
+    source: "supabase",
+    cards: supabaseResult.cards,
+    fallbackUsed: false,
+    note: "Supabase active/public facility cards returned for explicit preview mode.",
+  };
 }
 
 export function getPublicDoctorCards(): PublicProviderCard[] {
@@ -120,6 +195,8 @@ export function getPublicProviderCardsByType(
   return getPublicDiagnosticsCards();
 }
 
-export function isSupabasePublicListingSourceAvailable(): false {
-  return false;
+export function isSupabasePublicListingSourceAvailable(
+  mode: PublicListingSourceMode = STATIC_SOURCE_MODE,
+): boolean {
+  return mode === SUPABASE_FACILITIES_SOURCE_MODE;
 }
