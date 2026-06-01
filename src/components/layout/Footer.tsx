@@ -55,6 +55,12 @@ export function Footer() {
             >
               Booking preview
             </Link>
+            <Link
+              className="inline-flex min-h-9 items-center rounded-full border border-border bg-background px-3 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/35 hover:text-primary"
+              href="/admin-review-preview"
+            >
+              Admin preview
+            </Link>
           </div>
         </div>
 
