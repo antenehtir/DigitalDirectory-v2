@@ -1,13 +1,20 @@
 import { FacilityCardGrid } from "@/components/cards/FacilityCardGrid";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { sampleFacilities } from "@/data/sampleFacilities";
+import type { Facility } from "@/types/facility";
 import { FacilitiesHero } from "./FacilitiesHero";
 import { FacilityCategoryFilters } from "./FacilityCategoryFilters";
 import { FacilitySearchPreview } from "./FacilitySearchPreview";
 import { FacilityTrustBlock } from "./FacilityTrustBlock";
 import { RequestFacilityAdditionCta } from "./RequestFacilityAdditionCta";
 
-export function FacilitiesPage() {
+type FacilitiesPageProps = {
+  facilities?: Facility[];
+};
+
+export function FacilitiesPage({
+  facilities = sampleFacilities,
+}: FacilitiesPageProps) {
   return (
     <PageContainer className="py-8 sm:py-10 lg:py-14">
       <div className="grid gap-6">
@@ -24,7 +31,7 @@ export function FacilitiesPage() {
               Sample facility cards using the reusable card system.
             </p>
           </div>
-          <FacilityCardGrid facilities={sampleFacilities} />
+          <FacilityCardGrid facilities={facilities} />
         </section>
 
         <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
