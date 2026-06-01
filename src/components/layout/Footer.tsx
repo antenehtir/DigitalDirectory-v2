@@ -11,6 +11,7 @@ const quickLinks = [
 
 const providerLinks = [
   { label: "Provider registration", href: "/register" },
+  { label: "Provider dashboard preview", href: "/provider-dashboard-preview" },
   { label: "Suggest correction", href: "/corrections" },
   { label: "Contact", href: "/contact" },
   { label: "Feedback", href: "/feedback" },
