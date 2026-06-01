@@ -6,6 +6,7 @@ import {
   seedPharmacies,
 } from "@/data";
 import type { Facility } from "@/types/facility";
+import type { SeedFacility } from "@/data/seed-types";
 import {
   mapSeedDiagnosticsProviderToPublicCard,
   mapSeedDiagnosticsProviderToPublicDetail,
@@ -85,7 +86,7 @@ export function getPublicListingSourceStatus(): PublicListingSourceStatus {
 }
 
 export function getPublicFacilityCards(): PublicProviderCard[] {
-  return seedFacilities.map(mapSeedFacilityToPublicCard);
+  return (seedFacilities as SeedFacility[]).map(mapSeedFacilityToPublicCard);
 }
 
 export async function getPublicFacilityCardsFromSource(
@@ -165,7 +166,7 @@ export function getAllPublicProviderCards(): PublicProviderCard[] {
 }
 
 export function getPublicFacilityDetails(): PublicProviderDetail[] {
-  return seedFacilities.map((facility) =>
+  return (seedFacilities as SeedFacility[]).map((facility) =>
     mapSeedFacilityToPublicDetail(facility, { locationsById }),
   );
 }

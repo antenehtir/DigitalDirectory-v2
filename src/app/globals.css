@@ -1,8 +1,16 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
 
 :root {
   --background: #F8FAFC;
   --foreground: #0F172A;
+
+  /* Category accent colors */
+  --cat-hospital: #1d4ed8;
+  --cat-clinic: #0e9f9a;
+  --cat-diagnostic: #7c3aed;
+  --cat-pharmacy: #059669;
+  --cat-other: #d97706;
 
   --primary: #0F4C81;
   --primary-foreground: #FFFFFF;
@@ -42,6 +50,13 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-cat-hospital: var(--cat-hospital);
+  --color-cat-clinic: var(--cat-clinic);
+  --color-cat-diagnostic: var(--cat-diagnostic);
+  --color-cat-pharmacy: var(--cat-pharmacy);
+  --color-cat-other: var(--cat-other);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
   --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
   --font-mono: "Courier New", Courier, monospace;
 }
@@ -60,6 +75,15 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   overflow-x: hidden;
+}
+
+/* Hide scrollbar while keeping scroll functionality */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
 button,
