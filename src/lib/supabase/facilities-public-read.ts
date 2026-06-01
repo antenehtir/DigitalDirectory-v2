@@ -1,10 +1,14 @@
 import {
   coercePublicText,
+  createPublicVerification,
   getPublicProviderDetailPath,
   normalizeCategoryLabel,
   normalizePublicSlug,
 } from "@/lib/public-listing-mappers";
-import type { PublicProviderCard } from "@/types/public-listings";
+import type {
+  PublicProviderCard,
+  PublicProviderDetail,
+} from "@/types/public-listings";
 import type { VerificationStatus } from "@/types/verification";
 
 import {
@@ -65,7 +69,8 @@ type SupabaseFacilityPublicRow = {
 
 type FacilitiesPublicReadUnavailableReason =
   | "missing-env"
-  | "client-unavailable";
+  | "client-unavailable"
+  | "invalid-slug";
 
 type FacilitiesPublicReadErrorReason = "query-failed";
 
@@ -92,6 +97,40 @@ export type FacilitiesPublicReadResult =
       fallbackRecommended: true;
       reason: FacilitiesPublicReadErrorReason;
       errorCode: "FACILITIES_PUBLIC_READ_FAILED";
+      message: string;
+    };
+
+export type FacilityPublicDetailReadResult =
+  | {
+      status: "success";
+      source: "supabase";
+      detail: PublicProviderDetail;
+      fallbackRecommended: false;
+    }
+  | {
+      status: "not-found";
+      source: "static-fallback";
+      detail: null;
+      fallbackRecommended: true;
+      reason: "not-found";
+      message: string;
+    }
+  | {
+      status: "unavailable";
+      source: "static-fallback";
+      detail: null;
+      fallbackRecommended: true;
+      reason: FacilitiesPublicReadUnavailableReason;
+      missingKeys: string[];
+      message: string;
+    }
+  | {
+      status: "error";
+      source: "static-fallback";
+      detail: null;
+      fallbackRecommended: true;
+      reason: FacilitiesPublicReadErrorReason;
+      errorCode: "FACILITY_DETAIL_PUBLIC_READ_FAILED";
       message: string;
     };
 
@@ -156,6 +195,98 @@ export async function getSupabasePublicFacilityCards(): Promise<FacilitiesPublic
   };
 }
 
+export async function getSupabasePublicFacilityDetailBySlug(
+  slug: string,
+): Promise<FacilityPublicDetailReadResult> {
+  const requestedSlug = slug.trim();
+
+  if (!requestedSlug) {
+    return {
+      status: "unavailable",
+      source: "static-fallback",
+      detail: null,
+      fallbackRecommended: true,
+      reason: "invalid-slug",
+      missingKeys: [],
+      message:
+        "Facility detail slug is unavailable. Use static facility detail data.",
+    };
+  }
+
+  const clientStatus = getSupabasePublicClientStatus();
+
+  if (!clientStatus.isAvailable) {
+    return {
+      status: "unavailable",
+      source: "static-fallback",
+      detail: null,
+      fallbackRecommended: true,
+      reason: "missing-env",
+      missingKeys: clientStatus.missingKeys,
+      message:
+        "Supabase public listing environment is unavailable. Use static facility detail data.",
+    };
+  }
+
+  const client = getSupabasePublicClient();
+
+  if (!client) {
+    return {
+      status: "unavailable",
+      source: "static-fallback",
+      detail: null,
+      fallbackRecommended: true,
+      reason: "client-unavailable",
+      missingKeys: [],
+      message:
+        "Supabase browser client is unavailable. Use static facility detail data.",
+    };
+  }
+
+  const { data, error } = await client
+    .from("facilities")
+    .select(FACILITIES_PUBLIC_SELECT)
+    .eq("slug", requestedSlug)
+    .eq("listing_status", "active")
+    .eq("visibility_status", "public")
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    return {
+      status: "error",
+      source: "static-fallback",
+      detail: null,
+      fallbackRecommended: true,
+      reason: "query-failed",
+      errorCode: "FACILITY_DETAIL_PUBLIC_READ_FAILED",
+      message:
+        "Supabase facility detail public read failed. Use static facility detail data.",
+    };
+  }
+
+  if (!data) {
+    return {
+      status: "not-found",
+      source: "static-fallback",
+      detail: null,
+      fallbackRecommended: true,
+      reason: "not-found",
+      message:
+        "Supabase facility detail was not found as an active public listing. Use static fallback or not-found handling.",
+    };
+  }
+
+  return {
+    status: "success",
+    source: "supabase",
+    detail: mapSupabaseFacilityRowToPublicDetail(
+      data as unknown as SupabaseFacilityPublicRow,
+    ),
+    fallbackRecommended: false,
+  };
+}
+
 function mapSupabaseFacilityRowToPublicCard(
   row: SupabaseFacilityPublicRow,
 ): PublicProviderCard {
@@ -192,6 +323,31 @@ function mapSupabaseFacilityRowToPublicCard(
   };
 }
 
+function mapSupabaseFacilityRowToPublicDetail(
+  row: SupabaseFacilityPublicRow,
+): PublicProviderDetail {
+  const card = mapSupabaseFacilityRowToPublicCard(row);
+  const address = createAddressLabel(row);
+
+  return {
+    ...card,
+    description: card.summary,
+    location: {
+      name: card.locationLabel,
+      displayName: card.locationLabel,
+    },
+    address,
+    contactChannels: [],
+    workingHours: "Hours not listed",
+    verification: createPublicVerification({
+      status: card.verificationStatus,
+      note: "Supabase public listing preview. Verification details are not exposed in public reads.",
+    }),
+    relatedProviderIds: [],
+    correctionHref: `/corrections?listing=${card.slug}`,
+  };
+}
+
 function mapSupabaseFacilityVerificationStatus(
   status: SupabaseFacilityVerificationStatus,
 ): VerificationStatus {
@@ -214,6 +370,14 @@ function createLocationLabel(row: SupabaseFacilityPublicRow): string {
   return locationParts.length > 0
     ? locationParts.join(", ")
     : "Location not listed";
+}
+
+function createAddressLabel(row: SupabaseFacilityPublicRow): string | undefined {
+  const addressParts = [row.address_public, row.landmark_public]
+    .map((part) => part?.trim())
+    .filter((part): part is string => Boolean(part));
+
+  return addressParts.length > 0 ? addressParts.join(", ") : undefined;
 }
 
 function createFreshnessLabel(lastConfirmedAt: string | null): string {
