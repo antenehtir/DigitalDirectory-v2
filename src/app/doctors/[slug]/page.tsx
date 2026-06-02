@@ -9,6 +9,10 @@ import {
   getSupabasePublicDoctorDetailBySlug,
   type DoctorPublicDetailReadResult,
 } from "@/lib/supabase/doctors-public-read";
+import {
+  getSupabasePublicProviderContactChannels,
+  type PublicProviderContactChannel,
+} from "@/lib/supabase/provider-contact-channels-public-read";
 import type { PublicProviderDetail } from "@/types/public-listings";
 
 export const dynamic = "force-dynamic";
@@ -19,11 +23,30 @@ type DoctorDetailRouteProps = {
   }>;
 };
 
+type DoctorContactChannelType =
+  | "phone"
+  | "whatsapp"
+  | "website"
+  | "maps"
+  | "social"
+  | "appointment";
+
+type DoctorContactChannel = {
+  id: string;
+  channelType: DoctorContactChannelType;
+  label: string;
+  value: string;
+  href?: string;
+};
+
 export default async function DoctorDetailRoute({
   params,
 }: DoctorDetailRouteProps) {
   const { slug } = await params;
-  const result = await getSafeDoctorDetail(slug);
+  const [result, contactChannels] = await Promise.all([
+    getSafeDoctorDetail(slug),
+    getSafeDoctorContactChannels(slug),
+  ]);
 
   if (result.status !== "success") {
     notFound();
@@ -31,7 +54,10 @@ export default async function DoctorDetailRoute({
 
   return (
     <PageShell>
-      <DoctorPublicDetailPage doctor={result.detail} />
+      <DoctorPublicDetailPage
+        contactChannels={contactChannels}
+        doctor={result.detail}
+      />
     </PageShell>
   );
 }
@@ -54,9 +80,34 @@ async function getSafeDoctorDetail(
   }
 }
 
+async function getSafeDoctorContactChannels(
+  slug: string,
+): Promise<DoctorContactChannel[]> {
+  try {
+    const result = await getSupabasePublicProviderContactChannels(
+      "doctor",
+      slug,
+    );
+
+    if (result.status !== "success") {
+      return [];
+    }
+
+    return result.channels
+      .map(mapPublicProviderContactChannelToDoctorContactChannel)
+      .filter((channel): channel is DoctorContactChannel =>
+        Boolean(channel),
+      );
+  } catch {
+    return [];
+  }
+}
+
 function DoctorPublicDetailPage({
+  contactChannels,
   doctor,
 }: {
+  contactChannels: DoctorContactChannel[];
   doctor: PublicProviderDetail;
 }) {
   const primaryAffiliation = doctor.affiliations[0] ?? "Facility not listed";
@@ -181,12 +232,84 @@ function DoctorPublicDetailPage({
                 Public profile only. Booking, messaging, and account features
                 are not active from this page.
               </p>
+              {contactChannels.length > 0 ? (
+                <div className="mt-5 border-t border-border pt-5">
+                  <p className="text-sm font-semibold text-foreground">
+                    Public contact channels
+                  </p>
+                  <div className="mt-3 grid gap-2">
+                    {contactChannels.map((channel) => (
+                      <div
+                        className="rounded-md border border-border bg-background p-3 text-sm leading-6"
+                        key={channel.id}
+                      >
+                        <div className="flex flex-wrap items-baseline justify-between gap-2">
+                          <p className="font-semibold text-foreground">
+                            {channel.label}
+                          </p>
+                          <p className="text-xs font-medium uppercase tracking-normal text-muted-foreground">
+                            {getChannelTypeLabel(channel)}
+                          </p>
+                        </div>
+                        <p className="mt-1 break-words text-muted-foreground">
+                          {channel.href ?? channel.value}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
             </InfoPanel>
           </aside>
         </section>
       </div>
     </PageContainer>
   );
+}
+
+function mapPublicProviderContactChannelToDoctorContactChannel(
+  channel: PublicProviderContactChannel,
+): DoctorContactChannel | null {
+  if (!isAllowedDoctorContactChannelType(channel.channelType)) {
+    return null;
+  }
+
+  return {
+    id: channel.id,
+    channelType: channel.channelType,
+    label: channel.label,
+    value: channel.valuePublic,
+    href: channel.urlPublic,
+  };
+}
+
+function isAllowedDoctorContactChannelType(
+  channelType: PublicProviderContactChannel["channelType"],
+): channelType is DoctorContactChannel["channelType"] {
+  return (
+    channelType === "phone" ||
+    channelType === "whatsapp" ||
+    channelType === "website" ||
+    channelType === "maps" ||
+    channelType === "social" ||
+    channelType === "appointment"
+  );
+}
+
+function getChannelTypeLabel(channel: DoctorContactChannel): string {
+  if (channel.channelType === "social" && channel.label === "LinkedIn") {
+    return "LinkedIn";
+  }
+
+  if (channel.channelType === "maps") {
+    return "Maps";
+  }
+
+  if (channel.channelType === "whatsapp") {
+    return "WhatsApp";
+  }
+
+  return channel.channelType;
 }
 
 function SummaryCard({ label, value }: { label: string; value: string }) {
