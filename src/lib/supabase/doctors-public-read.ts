@@ -1,9 +1,13 @@
 import {
   coercePublicText,
+  createPublicVerification,
   getPublicProviderDetailPath,
   normalizePublicSlug,
 } from "@/lib/public-listing-mappers";
-import type { PublicProviderCard } from "@/types/public-listings";
+import type {
+  PublicProviderCard,
+  PublicProviderDetail,
+} from "@/types/public-listings";
 import type { VerificationStatus } from "@/types/verification";
 
 import {
@@ -68,7 +72,8 @@ type SupabaseDoctorPublicRow = {
 
 type DoctorsPublicReadUnavailableReason =
   | "missing-env"
-  | "client-unavailable";
+  | "client-unavailable"
+  | "invalid-slug";
 
 type DoctorsPublicReadErrorReason = "query-failed";
 
@@ -99,6 +104,40 @@ export type DoctorsPublicReadResult =
       status: "error";
       source: "static-fallback";
       cards: [];
+      fallbackRecommended: true;
+      reason: DoctorsPublicReadErrorReason;
+      errorCode: DoctorsPublicReadSafeErrorCode;
+      message: string;
+    };
+
+export type DoctorPublicDetailReadResult =
+  | {
+      status: "success";
+      source: "supabase";
+      detail: PublicProviderDetail;
+      fallbackRecommended: false;
+    }
+  | {
+      status: "not-found";
+      source: "static-fallback";
+      detail: null;
+      fallbackRecommended: true;
+      reason: "not-found";
+      message: string;
+    }
+  | {
+      status: "unavailable";
+      source: "static-fallback";
+      detail: null;
+      fallbackRecommended: true;
+      reason: DoctorsPublicReadUnavailableReason;
+      missingKeys: string[];
+      message: string;
+    }
+  | {
+      status: "error";
+      source: "static-fallback";
+      detail: null;
       fallbackRecommended: true;
       reason: DoctorsPublicReadErrorReason;
       errorCode: DoctorsPublicReadSafeErrorCode;
@@ -165,6 +204,98 @@ export async function getSupabasePublicDoctorCards(): Promise<DoctorsPublicReadR
   };
 }
 
+export async function getSupabasePublicDoctorDetailBySlug(
+  slug: string,
+): Promise<DoctorPublicDetailReadResult> {
+  const requestedSlug = slug.trim();
+
+  if (!requestedSlug) {
+    return {
+      status: "unavailable",
+      source: "static-fallback",
+      detail: null,
+      fallbackRecommended: true,
+      reason: "invalid-slug",
+      missingKeys: [],
+      message:
+        "Doctor detail slug is unavailable. Use static doctor detail data.",
+    };
+  }
+
+  const clientStatus = getSupabasePublicClientStatus();
+
+  if (!clientStatus.isAvailable) {
+    return {
+      status: "unavailable",
+      source: "static-fallback",
+      detail: null,
+      fallbackRecommended: true,
+      reason: "missing-env",
+      missingKeys: clientStatus.missingKeys,
+      message:
+        "Supabase public listing environment is unavailable. Use static doctor detail data.",
+    };
+  }
+
+  const client = getSupabasePublicClient();
+
+  if (!client) {
+    return {
+      status: "unavailable",
+      source: "static-fallback",
+      detail: null,
+      fallbackRecommended: true,
+      reason: "client-unavailable",
+      missingKeys: [],
+      message:
+        "Supabase public client is unavailable. Use static doctor detail data.",
+    };
+  }
+
+  const { data, error } = await client
+    .from("doctors")
+    .select(DOCTORS_PUBLIC_SELECT)
+    .eq("slug", requestedSlug)
+    .eq("listing_status", "active")
+    .eq("visibility_status", "public")
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    return {
+      status: "error",
+      source: "static-fallback",
+      detail: null,
+      fallbackRecommended: true,
+      reason: "query-failed",
+      errorCode: getSafeDoctorsPublicReadErrorCode(error),
+      message:
+        "Supabase doctor detail public read failed. Use static doctor detail data.",
+    };
+  }
+
+  if (!data) {
+    return {
+      status: "not-found",
+      source: "static-fallback",
+      detail: null,
+      fallbackRecommended: true,
+      reason: "not-found",
+      message:
+        "Supabase doctor detail was not found as an active public listing. Use static fallback or not-found handling.",
+    };
+  }
+
+  return {
+    status: "success",
+    source: "supabase",
+    detail: mapSupabaseDoctorRowToPublicDetail(
+      data as unknown as SupabaseDoctorPublicRow,
+    ),
+    fallbackRecommended: false,
+  };
+}
+
 function mapSupabaseDoctorRowToPublicCard(
   row: SupabaseDoctorPublicRow,
 ): PublicProviderCard {
@@ -198,6 +329,29 @@ function mapSupabaseDoctorRowToPublicCard(
     affiliations: facility ? [facility] : [],
     availabilityPreview: createConsultationPreview(row.consultation_modes),
     telemedicinePreview: createTelemedicinePreview(row.consultation_modes),
+  };
+}
+
+function mapSupabaseDoctorRowToPublicDetail(
+  row: SupabaseDoctorPublicRow,
+): PublicProviderDetail {
+  const card = mapSupabaseDoctorRowToPublicCard(row);
+
+  return {
+    ...card,
+    description: card.summary,
+    location: {
+      name: card.locationLabel,
+      displayName: card.locationLabel,
+    },
+    contactChannels: [],
+    workingHours: card.availabilityPreview ?? "Availability not listed",
+    verification: createPublicVerification({
+      status: card.verificationStatus,
+      note: "Supabase public doctor listing preview. Verification evidence is not exposed in public reads.",
+    }),
+    relatedProviderIds: [],
+    correctionHref: `/corrections?listing=${card.slug}`,
   };
 }
 
