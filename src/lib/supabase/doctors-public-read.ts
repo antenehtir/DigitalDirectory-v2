@@ -72,6 +72,13 @@ type DoctorsPublicReadUnavailableReason =
 
 type DoctorsPublicReadErrorReason = "query-failed";
 
+type DoctorsPublicReadSafeErrorCode =
+  | "DOCTORS_PUBLIC_READ_FAILED"
+  | "DOCTORS_PUBLIC_NETWORK_OR_FETCH_FAILED"
+  | "DOCTORS_PUBLIC_PERMISSION_DENIED"
+  | "DOCTORS_PUBLIC_SCHEMA_UNAVAILABLE"
+  | "DOCTORS_PUBLIC_COLUMN_MISMATCH";
+
 export type DoctorsPublicReadResult =
   | {
       status: "success";
@@ -94,7 +101,7 @@ export type DoctorsPublicReadResult =
       cards: [];
       fallbackRecommended: true;
       reason: DoctorsPublicReadErrorReason;
-      errorCode: "DOCTORS_PUBLIC_READ_FAILED";
+      errorCode: DoctorsPublicReadSafeErrorCode;
       message: string;
     };
 
@@ -143,7 +150,7 @@ export async function getSupabasePublicDoctorCards(): Promise<DoctorsPublicReadR
       cards: [],
       fallbackRecommended: true,
       reason: "query-failed",
-      errorCode: "DOCTORS_PUBLIC_READ_FAILED",
+      errorCode: getSafeDoctorsPublicReadErrorCode(error),
       message: "Supabase doctors public read failed. Use static doctor data.",
     };
   }
@@ -291,4 +298,47 @@ function mapSupabaseDoctorVerificationStatus(
   }
 
   return "community-submitted";
+}
+
+function getSafeDoctorsPublicReadErrorCode(
+  error: unknown,
+): DoctorsPublicReadSafeErrorCode {
+  const text = getSafeErrorSearchText(error);
+
+  if (
+    text.includes("fetch failed") ||
+    text.includes("failed to fetch") ||
+    text.includes("network")
+  ) {
+    return "DOCTORS_PUBLIC_NETWORK_OR_FETCH_FAILED";
+  }
+
+  if (text.includes("permission denied")) {
+    return "DOCTORS_PUBLIC_PERMISSION_DENIED";
+  }
+
+  if (text.includes("could not find") || text.includes("schema cache")) {
+    return "DOCTORS_PUBLIC_SCHEMA_UNAVAILABLE";
+  }
+
+  if (text.includes("column")) {
+    return "DOCTORS_PUBLIC_COLUMN_MISMATCH";
+  }
+
+  return "DOCTORS_PUBLIC_READ_FAILED";
+}
+
+function getSafeErrorSearchText(error: unknown): string {
+  if (!error || typeof error !== "object") {
+    return "";
+  }
+
+  const safeFields = ["message", "details", "hint", "code"] as const;
+  const record = error as Partial<Record<(typeof safeFields)[number], unknown>>;
+
+  return safeFields
+    .map((field) => record[field])
+    .filter((value): value is string => typeof value === "string")
+    .join(" ")
+    .toLowerCase();
 }

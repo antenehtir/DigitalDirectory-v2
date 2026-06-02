@@ -4,7 +4,15 @@ export const dynamic = "force-dynamic";
 
 type ProbeResult = {
   status: "success" | "unavailable" | "error";
-  safeCategory: "success" | "unavailable" | "helper-error" | "probe-timeout";
+  safeCategory:
+    | "success"
+    | "unavailable"
+    | "network-or-fetch-failure"
+    | "permission-denied"
+    | "schema-unavailable"
+    | "column-mismatch"
+    | "helper-error"
+    | "probe-timeout";
   count: number;
   displayNames: string[];
 };
@@ -75,8 +83,7 @@ async function readDoctorsProbe(): Promise<ProbeResult> {
   return withProbeTimeout(
     getSupabasePublicDoctorCards().then((result) => ({
       status: result.status,
-      safeCategory:
-        result.status === "error" ? "helper-error" : result.status,
+      safeCategory: getProbeSafeCategory(result),
       count: result.cards.length,
       displayNames: result.cards.map((card) => card.name),
     })),
@@ -113,4 +120,30 @@ async function withProbeTimeout<T>(
       clearTimeout(timeoutId);
     }
   }
+}
+
+function getProbeSafeCategory(
+  result: Awaited<ReturnType<typeof getSupabasePublicDoctorCards>>,
+): ProbeResult["safeCategory"] {
+  if (result.status !== "error") {
+    return result.status;
+  }
+
+  if (result.errorCode === "DOCTORS_PUBLIC_NETWORK_OR_FETCH_FAILED") {
+    return "network-or-fetch-failure";
+  }
+
+  if (result.errorCode === "DOCTORS_PUBLIC_PERMISSION_DENIED") {
+    return "permission-denied";
+  }
+
+  if (result.errorCode === "DOCTORS_PUBLIC_SCHEMA_UNAVAILABLE") {
+    return "schema-unavailable";
+  }
+
+  if (result.errorCode === "DOCTORS_PUBLIC_COLUMN_MISMATCH") {
+    return "column-mismatch";
+  }
+
+  return "helper-error";
 }
