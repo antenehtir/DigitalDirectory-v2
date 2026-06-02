@@ -1,6 +1,7 @@
 import { DoctorCardGrid } from "@/components/cards/DoctorCardGrid";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { sampleDoctors } from "@/data/sampleDoctors";
+import type { Doctor } from "@/types/doctor";
 import { DoctorAvailabilityPreview } from "./DoctorAvailabilityPreview";
 import { DoctorSearchPreview } from "./DoctorSearchPreview";
 import { DoctorTrustBlock } from "./DoctorTrustBlock";
@@ -8,7 +9,11 @@ import { DoctorsHero } from "./DoctorsHero";
 import { RequestDoctorProfileCta } from "./RequestDoctorProfileCta";
 import { SpecialtyFilterChips } from "./SpecialtyFilterChips";
 
-export function DoctorsPage() {
+type DoctorsPageProps = {
+  doctors?: Doctor[];
+};
+
+export function DoctorsPage({ doctors = sampleDoctors }: DoctorsPageProps) {
   return (
     <PageContainer className="py-8 sm:py-10 lg:py-14">
       <div className="grid gap-6">
@@ -25,7 +30,7 @@ export function DoctorsPage() {
               Sample doctor cards using the reusable doctor card system.
             </p>
           </div>
-          <DoctorCardGrid doctors={sampleDoctors} />
+          <DoctorCardGrid doctors={doctors} />
         </section>
 
         <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
