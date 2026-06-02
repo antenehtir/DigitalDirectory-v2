@@ -258,8 +258,7 @@ export async function getSupabasePublicDoctorDetailBySlug(
     .eq("slug", requestedSlug)
     .eq("listing_status", "active")
     .eq("visibility_status", "public")
-    .limit(1)
-    .maybeSingle();
+    .limit(1);
 
   if (error) {
     return {
@@ -274,7 +273,10 @@ export async function getSupabasePublicDoctorDetailBySlug(
     };
   }
 
-  if (!data) {
+  const rows = (data ?? []) as unknown as SupabaseDoctorPublicRow[];
+  const row = rows[0];
+
+  if (!row) {
     return {
       status: "not-found",
       source: "static-fallback",
@@ -289,9 +291,7 @@ export async function getSupabasePublicDoctorDetailBySlug(
   return {
     status: "success",
     source: "supabase",
-    detail: mapSupabaseDoctorRowToPublicDetail(
-      data as unknown as SupabaseDoctorPublicRow,
-    ),
+    detail: mapSupabaseDoctorRowToPublicDetail(row),
     fallbackRecommended: false,
   };
 }
