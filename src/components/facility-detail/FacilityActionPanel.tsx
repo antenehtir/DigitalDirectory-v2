@@ -1,10 +1,12 @@
-import type { Facility } from "@/types/facility";
+import type { Facility, FacilityContactChannel } from "@/types/facility";
 
 type FacilityActionPanelProps = {
   facility: Facility;
 };
 
 export function FacilityActionPanel({ facility }: FacilityActionPanelProps) {
+  const contactChannels = facility.contactChannels ?? [];
+
   return (
     <aside className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
       <p className="text-sm font-semibold uppercase tracking-normal text-primary">
@@ -38,6 +40,50 @@ export function FacilityActionPanel({ facility }: FacilityActionPanelProps) {
           Save preview
         </button>
       </div>
+
+      {contactChannels.length > 0 ? (
+        <div className="mt-5 border-t border-border pt-5">
+          <p className="text-sm font-semibold text-foreground">
+            Public contact channels
+          </p>
+          <div className="mt-3 grid gap-2">
+            {contactChannels.map((channel) => (
+              <div
+                className="rounded-md border border-border bg-background p-3 text-sm leading-6"
+                key={channel.id}
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <p className="font-semibold text-foreground">
+                    {channel.label}
+                  </p>
+                  <p className="text-xs font-medium uppercase tracking-normal text-muted-foreground">
+                    {getChannelTypeLabel(channel)}
+                  </p>
+                </div>
+                <p className="mt-1 break-words text-muted-foreground">
+                  {channel.href ?? channel.value}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </aside>
   );
+}
+
+function getChannelTypeLabel(channel: FacilityContactChannel): string {
+  if (channel.channelType === "social" && channel.label === "LinkedIn") {
+    return "LinkedIn";
+  }
+
+  if (channel.channelType === "maps") {
+    return "Maps";
+  }
+
+  if (channel.channelType === "whatsapp") {
+    return "WhatsApp";
+  }
+
+  return channel.channelType;
 }

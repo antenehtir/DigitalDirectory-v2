@@ -2,6 +2,22 @@ import type { VerificationStatus } from "./verification";
 
 export type FacilityVerificationStatus = VerificationStatus;
 
+export type FacilityContactChannelType =
+  | "phone"
+  | "whatsapp"
+  | "website"
+  | "maps"
+  | "social"
+  | "appointment";
+
+export type FacilityContactChannel = {
+  id: string;
+  channelType: FacilityContactChannelType;
+  label: string;
+  value: string;
+  href?: string;
+};
+
 export type Facility = {
   id: string;
   name: string;
@@ -17,4 +33,5 @@ export type Facility = {
   availabilityNote: string;
   contactActionLabel: string;
   directionsActionLabel: string;
+  contactChannels?: FacilityContactChannel[];
 };

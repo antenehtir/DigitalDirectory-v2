@@ -3,7 +3,11 @@ import { notFound } from "next/navigation";
 import { FacilityDetailPage } from "@/components/facility-detail/FacilityDetailPage";
 import { PageShell } from "@/components/layout/PageShell";
 import { getSupabasePublicFacilityDetailBySlug } from "@/lib/supabase/facilities-public-read";
-import type { Facility } from "@/types/facility";
+import {
+  getSupabasePublicProviderContactChannels,
+  type PublicProviderContactChannel,
+} from "@/lib/supabase/provider-contact-channels-public-read";
+import type { Facility, FacilityContactChannel } from "@/types/facility";
 import type { PublicProviderDetail } from "@/types/public-listings";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +22,10 @@ export default async function FacilityDetailRoute({
   params,
 }: FacilityDetailRouteProps) {
   const { slug } = await params;
-  const result = await getSafeFacilityDetail(slug);
+  const [result, contactChannels] = await Promise.all([
+    getSafeFacilityDetail(slug),
+    getSafeFacilityContactChannels(slug),
+  ]);
 
   if (result.status !== "success") {
     notFound();
@@ -27,7 +34,10 @@ export default async function FacilityDetailRoute({
   return (
     <PageShell>
       <FacilityDetailPage
-        facility={mapPublicProviderDetailToFacility(result.detail)}
+        facility={mapPublicProviderDetailToFacility(
+          result.detail,
+          contactChannels,
+        )}
       />
     </PageShell>
   );
@@ -50,8 +60,32 @@ async function getSafeFacilityDetail(slug: string) {
   }
 }
 
+async function getSafeFacilityContactChannels(
+  slug: string,
+): Promise<FacilityContactChannel[]> {
+  try {
+    const result = await getSupabasePublicProviderContactChannels(
+      "facility",
+      slug,
+    );
+
+    if (result.status !== "success") {
+      return [];
+    }
+
+    return result.channels
+      .map(mapPublicProviderContactChannelToFacilityContactChannel)
+      .filter(
+        (channel): channel is FacilityContactChannel => Boolean(channel),
+      );
+  } catch {
+    return [];
+  }
+}
+
 function mapPublicProviderDetailToFacility(
   detail: PublicProviderDetail,
+  contactChannels: FacilityContactChannel[],
 ): Facility {
   const category = detail.categoryLabel;
 
@@ -70,5 +104,35 @@ function mapPublicProviderDetailToFacility(
     availabilityNote: detail.availabilityPreview ?? "Availability not listed",
     contactActionLabel: detail.primaryActionLabel,
     directionsActionLabel: detail.secondaryActionLabel,
+    contactChannels,
   };
+}
+
+function mapPublicProviderContactChannelToFacilityContactChannel(
+  channel: PublicProviderContactChannel,
+): FacilityContactChannel | null {
+  if (!isAllowedFacilityContactChannelType(channel.channelType)) {
+    return null;
+  }
+
+  return {
+    id: channel.id,
+    channelType: channel.channelType,
+    label: channel.label,
+    value: channel.valuePublic,
+    href: channel.urlPublic,
+  };
+}
+
+function isAllowedFacilityContactChannelType(
+  channelType: PublicProviderContactChannel["channelType"],
+): channelType is FacilityContactChannel["channelType"] {
+  return (
+    channelType === "phone" ||
+    channelType === "whatsapp" ||
+    channelType === "website" ||
+    channelType === "maps" ||
+    channelType === "social" ||
+    channelType === "appointment"
+  );
 }
