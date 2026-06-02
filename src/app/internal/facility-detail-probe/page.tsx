@@ -1,4 +1,7 @@
-import { getSupabasePublicFacilityDetailBySlug } from "@/lib/supabase/facilities-public-read";
+import {
+  getSupabasePublicFacilityCards,
+  getSupabasePublicFacilityDetailBySlug,
+} from "@/lib/supabase/facilities-public-read";
 
 export const dynamic = "force-dynamic";
 
@@ -9,10 +12,23 @@ type ProbeCase = {
 
 type ProbeResult = ProbeCase & {
   status: "success" | "not-found" | "unavailable" | "error";
+  safeCategory:
+    | "success"
+    | "not-found"
+    | "unavailable"
+    | "helper-error"
+    | "probe-timeout";
   displayName: string | null;
 };
 
-const PROBE_TIMEOUT_MS = 4_000;
+type ListProbeResult = {
+  status: "success" | "unavailable" | "error";
+  safeCategory: "success" | "unavailable" | "helper-error" | "probe-timeout";
+  count: number;
+  displayNames: string[];
+};
+
+const PROBE_TIMEOUT_MS = 12_000;
 
 const probeCases: ProbeCase[] = [
   { group: "positive", slug: "test-facility-alpha" },
@@ -26,11 +42,10 @@ const probeCases: ProbeCase[] = [
 ];
 
 export default async function FacilityDetailProbeRoute() {
-  const results: ProbeResult[] = [];
-
-  for (const probeCase of probeCases) {
-    results.push(await readProbeCase(probeCase));
-  }
+  const [listProbe, results] = await Promise.all([
+    readListProbe(),
+    Promise.all(probeCases.map(readProbeCase)),
+  ]);
 
   return (
     <main className="min-h-screen bg-background px-4 py-8 text-foreground sm:px-6 lg:px-8">
@@ -49,18 +64,46 @@ export default async function FacilityDetailProbeRoute() {
           </p>
         </header>
 
+        <section className="rounded-lg border border-border bg-card p-5 shadow-sm">
+          <h2 className="text-lg font-semibold">List helper baseline</h2>
+          <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+            <div>
+              <dt className="font-medium text-muted-foreground">Status</dt>
+              <dd className="mt-1 font-semibold">{listProbe.status}</dd>
+            </div>
+            <div>
+              <dt className="font-medium text-muted-foreground">
+                Safe category
+              </dt>
+              <dd className="mt-1 font-semibold">{listProbe.safeCategory}</dd>
+            </div>
+            <div>
+              <dt className="font-medium text-muted-foreground">
+                Public row count
+              </dt>
+              <dd className="mt-1 font-semibold">{listProbe.count}</dd>
+            </div>
+          </dl>
+          <p className="mt-4 text-sm text-muted-foreground">
+            {listProbe.displayNames.length > 0
+              ? listProbe.displayNames.join(", ")
+              : "No public list rows shown by the baseline probe."}
+          </p>
+        </section>
+
         <section className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
-          <div className="grid grid-cols-[1fr_0.8fr_0.8fr_1fr] gap-3 border-b border-border bg-muted px-4 py-3 text-sm font-semibold text-muted-foreground">
+          <div className="grid grid-cols-[1fr_0.7fr_0.7fr_0.9fr_1fr] gap-3 border-b border-border bg-muted px-4 py-3 text-sm font-semibold text-muted-foreground">
             <span>Slug</span>
             <span>Group</span>
             <span>Status</span>
+            <span>Safe category</span>
             <span>Safe display name</span>
           </div>
 
           <div className="divide-y divide-border">
             {results.map((result) => (
               <div
-                className="grid grid-cols-[1fr_0.8fr_0.8fr_1fr] gap-3 px-4 py-3 text-sm"
+                className="grid grid-cols-[1fr_0.7fr_0.7fr_0.9fr_1fr] gap-3 px-4 py-3 text-sm"
                 key={result.slug}
               >
                 <span className="break-words font-medium">{result.slug}</span>
@@ -68,6 +111,7 @@ export default async function FacilityDetailProbeRoute() {
                   {result.group}
                 </span>
                 <span className="font-semibold">{result.status}</span>
+                <span className="font-semibold">{result.safeCategory}</span>
                 <span className="text-muted-foreground">
                   {result.displayName ?? "Not shown"}
                 </span>
@@ -81,22 +125,56 @@ export default async function FacilityDetailProbeRoute() {
 }
 
 async function readProbeCase(probeCase: ProbeCase): Promise<ProbeResult> {
+  return withProbeTimeout(
+    getSupabasePublicFacilityDetailBySlug(probeCase.slug).then((result) => ({
+      ...probeCase,
+      status: result.status,
+      safeCategory: getDetailSafeCategory(result.status),
+      displayName: result.detail?.name ?? null,
+    })),
+    {
+      ...probeCase,
+      status: "error",
+      safeCategory: "probe-timeout",
+      displayName: null,
+    },
+  );
+}
+
+async function readListProbe(): Promise<ListProbeResult> {
+  return withProbeTimeout(
+    getSupabasePublicFacilityCards().then((result) => ({
+      status: result.status,
+      safeCategory:
+        result.status === "error" ? "helper-error" : result.status,
+      count: result.cards.length,
+      displayNames: result.cards.map((card) => card.name),
+    })),
+    {
+      status: "error",
+      safeCategory: "probe-timeout",
+      count: 0,
+      displayNames: [],
+    },
+  );
+}
+
+async function withProbeTimeout<T>(
+  read: Promise<T>,
+  fallback: T,
+): Promise<T> {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
   try {
     return await Promise.race([
-      getSupabasePublicFacilityDetailBySlug(probeCase.slug).then((result) => ({
-        ...probeCase,
-        status: result.status,
-        displayName: result.detail?.name ?? null,
-      })),
-      new Promise<ProbeResult>((resolve) => {
+      read.finally(() => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+      }),
+      new Promise<T>((resolve) => {
         timeoutId = setTimeout(() => {
-          resolve({
-            ...probeCase,
-            status: "error",
-            displayName: null,
-          });
+          resolve(fallback);
         }, PROBE_TIMEOUT_MS);
       }),
     ]);
@@ -105,4 +183,14 @@ async function readProbeCase(probeCase: ProbeCase): Promise<ProbeResult> {
       clearTimeout(timeoutId);
     }
   }
+}
+
+function getDetailSafeCategory(
+  status: ProbeResult["status"],
+): ProbeResult["safeCategory"] {
+  if (status === "error") {
+    return "helper-error";
+  }
+
+  return status;
 }
