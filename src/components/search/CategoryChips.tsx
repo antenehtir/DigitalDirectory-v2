@@ -1,4 +1,14 @@
+import Link from "next/link";
 import { healthcareCategories } from "./search-options";
+
+const categoryRoutes: Record<string, string> = {
+  All: "/search",
+  Doctors: "/doctors",
+  Hospitals: "/facilities?category=hospital",
+  Clinics: "/facilities?category=clinic",
+  Pharmacies: "/pharmacies",
+  Laboratories: "/facilities?category=laboratory",
+};
 
 export function CategoryChips() {
   return (
@@ -8,18 +18,18 @@ export function CategoryChips() {
       </p>
       <div className="flex flex-wrap gap-2">
         {healthcareCategories.map((category, index) => (
-          <button
+          <Link
             key={category}
-            className={`min-h-10 rounded-full border px-3 text-sm font-semibold sm:px-4 ${
+            className={`flex min-h-10 items-center rounded-full border px-3 text-sm font-semibold sm:px-4 ${
               index === 0
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-border bg-card text-foreground"
             }`}
-            type="button"
-            aria-pressed={index === 0}
+            href={categoryRoutes[category]}
+            aria-current={index === 0 ? "page" : undefined}
           >
             {category}
-          </button>
+          </Link>
         ))}
       </div>
     </div>
