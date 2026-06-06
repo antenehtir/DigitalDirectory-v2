@@ -39,7 +39,7 @@ async function getPharmaciesForRoute(): Promise<Facility[]> {
   const supabaseResult = await getSupabasePublicPharmacyCards();
 
   if (supabaseResult.cards.length === 0) {
-    return samplePharmacies;
+    return samplePharmacies.map(addPharmacyDetailHref);
   }
 
   return mapPublicPharmacyCardsToFacilities(supabaseResult.cards);
@@ -52,7 +52,10 @@ function mapPublicPharmacyCardsToFacilities(
     const samplePharmacy = samplePharmaciesById.get(card.id);
 
     if (samplePharmacy) {
-      return samplePharmacy;
+      return {
+        ...samplePharmacy,
+        detailHref: card.listingHref,
+      };
     }
 
     return {
@@ -73,4 +76,11 @@ function mapPublicPharmacyCardsToFacilities(
       detailHref: card.listingHref,
     };
   });
+}
+
+function addPharmacyDetailHref(pharmacy: Facility): Facility {
+  return {
+    ...pharmacy,
+    detailHref: `/pharmacies/${pharmacy.slug}`,
+  };
 }

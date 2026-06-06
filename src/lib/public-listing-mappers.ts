@@ -134,7 +134,11 @@ export function getPublicProviderDetailPath(input: {
 
   const routeSlug = knownSlug ?? sourceSlug;
 
-  if (input.providerType === "facility" || input.providerType === "doctor") {
+  if (
+    input.providerType === "facility" ||
+    input.providerType === "doctor" ||
+    input.providerType === "pharmacy"
+  ) {
     return `${providerBasePaths[input.providerType]}/${routeSlug}`;
   }
 
