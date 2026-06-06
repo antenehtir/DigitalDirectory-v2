@@ -6,7 +6,11 @@ import {
   getSupabasePublicPharmacyDetailBySlug,
   type PharmacyPublicDetailReadResult,
 } from "@/lib/supabase/pharmacies-public-read";
-import type { Facility } from "@/types/facility";
+import {
+  getSupabasePublicProviderContactChannels,
+  type PublicProviderContactChannel,
+} from "@/lib/supabase/provider-contact-channels-public-read";
+import type { Facility, FacilityContactChannel } from "@/types/facility";
 import type { PublicProviderDetail } from "@/types/public-listings";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +25,10 @@ export default async function PharmacyDetailRoute({
   params,
 }: PharmacyDetailRouteProps) {
   const { slug } = await params;
-  const result = await getSafePharmacyDetail(slug);
+  const [result, contactChannels] = await Promise.all([
+    getSafePharmacyDetail(slug),
+    getSafePharmacyContactChannels(slug),
+  ]);
 
   if (result.status !== "success") {
     notFound();
@@ -30,7 +37,10 @@ export default async function PharmacyDetailRoute({
   return (
     <PageShell>
       <FacilityDetailPage
-        facility={mapPublicProviderDetailToPharmacyFacility(result.detail)}
+        facility={mapPublicProviderDetailToPharmacyFacility(
+          result.detail,
+          contactChannels,
+        )}
       />
     </PageShell>
   );
@@ -55,8 +65,32 @@ async function getSafePharmacyDetail(
   }
 }
 
+async function getSafePharmacyContactChannels(
+  slug: string,
+): Promise<FacilityContactChannel[]> {
+  try {
+    const result = await getSupabasePublicProviderContactChannels(
+      "pharmacy",
+      slug,
+    );
+
+    if (result.status !== "success") {
+      return [];
+    }
+
+    return result.channels
+      .map(mapPublicProviderContactChannelToFacilityContactChannel)
+      .filter(
+        (channel): channel is FacilityContactChannel => Boolean(channel),
+      );
+  } catch {
+    return [];
+  }
+}
+
 function mapPublicProviderDetailToPharmacyFacility(
   detail: PublicProviderDetail,
+  contactChannels: FacilityContactChannel[],
 ): Facility {
   const category = detail.categoryLabel;
 
@@ -75,6 +109,35 @@ function mapPublicProviderDetailToPharmacyFacility(
     availabilityNote: detail.availabilityPreview ?? "Availability not listed",
     contactActionLabel: detail.pickupPreview ?? detail.primaryActionLabel,
     directionsActionLabel: detail.deliveryPreview ?? detail.secondaryActionLabel,
-    contactChannels: [],
+    contactChannels,
   };
+}
+
+function mapPublicProviderContactChannelToFacilityContactChannel(
+  channel: PublicProviderContactChannel,
+): FacilityContactChannel | null {
+  if (!isAllowedPharmacyContactChannelType(channel.channelType)) {
+    return null;
+  }
+
+  return {
+    id: channel.id,
+    channelType: channel.channelType,
+    label: channel.label,
+    value: channel.valuePublic,
+    href: channel.urlPublic,
+  };
+}
+
+function isAllowedPharmacyContactChannelType(
+  channelType: PublicProviderContactChannel["channelType"],
+): channelType is FacilityContactChannel["channelType"] {
+  return (
+    channelType === "phone" ||
+    channelType === "whatsapp" ||
+    channelType === "website" ||
+    channelType === "maps" ||
+    channelType === "social" ||
+    channelType === "appointment"
+  );
 }
