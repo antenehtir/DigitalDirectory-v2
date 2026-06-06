@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "probe:pharmacies": "node --no-warnings --loader ./scripts/ts-paths-loader.mjs scripts/probe-pharmacies-public-read.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.2",
