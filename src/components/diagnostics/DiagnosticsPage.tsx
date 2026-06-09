@@ -7,8 +7,13 @@ import { DiagnosticsTrustNote } from "./DiagnosticsTrustNote";
 import { ImagingServicesPreview } from "./ImagingServicesPreview";
 import { LaboratoryServicesPreview } from "./LaboratoryServicesPreview";
 import { RequestDiagnosticsAdditionCta } from "./RequestDiagnosticsAdditionCta";
+import type { Facility } from "@/types/facility";
 
-export function DiagnosticsPage() {
+type DiagnosticsPageProps = {
+  diagnostics?: Facility[];
+};
+
+export function DiagnosticsPage({ diagnostics }: DiagnosticsPageProps) {
   return (
     <PageContainer className="py-8 sm:py-10 lg:py-14">
       <div className="grid gap-6">
@@ -22,7 +27,7 @@ export function DiagnosticsPage() {
           <DiagnosticsTrustNote />
         </div>
 
-        <DiagnosticsResultsSection />
+        <DiagnosticsResultsSection diagnostics={diagnostics} />
 
         <div className="grid gap-6 lg:grid-cols-2">
           <LaboratoryServicesPreview />
