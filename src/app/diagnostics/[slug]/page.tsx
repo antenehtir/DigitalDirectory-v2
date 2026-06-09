@@ -6,7 +6,11 @@ import {
   getSupabasePublicDiagnosticDetailBySlug,
   type DiagnosticPublicDetailReadResult,
 } from "@/lib/supabase/diagnostics-public-read";
-import type { Facility } from "@/types/facility";
+import {
+  getSupabasePublicProviderContactChannels,
+  type PublicProviderContactChannel,
+} from "@/lib/supabase/provider-contact-channels-public-read";
+import type { Facility, FacilityContactChannel } from "@/types/facility";
 import type { PublicProviderDetail } from "@/types/public-listings";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +25,10 @@ export default async function DiagnosticsDetailRoute({
   params,
 }: DiagnosticsDetailRouteProps) {
   const { slug } = await params;
-  const result = await getSafeDiagnosticsDetail(slug);
+  const [result, contactChannels] = await Promise.all([
+    getSafeDiagnosticsDetail(slug),
+    getSafeDiagnosticsContactChannels(slug),
+  ]);
 
   if (result.status !== "success") {
     notFound();
@@ -30,7 +37,10 @@ export default async function DiagnosticsDetailRoute({
   return (
     <PageShell>
       <FacilityDetailPage
-        facility={mapPublicProviderDetailToDiagnosticsFacility(result.detail)}
+        facility={mapPublicProviderDetailToDiagnosticsFacility(
+          result.detail,
+          contactChannels,
+        )}
       />
     </PageShell>
   );
@@ -55,8 +65,32 @@ async function getSafeDiagnosticsDetail(
   }
 }
 
+async function getSafeDiagnosticsContactChannels(
+  slug: string,
+): Promise<FacilityContactChannel[]> {
+  try {
+    const result = await getSupabasePublicProviderContactChannels(
+      "diagnostic",
+      slug,
+    );
+
+    if (result.status !== "success") {
+      return [];
+    }
+
+    return result.channels
+      .map(mapPublicProviderContactChannelToFacilityContactChannel)
+      .filter(
+        (channel): channel is FacilityContactChannel => Boolean(channel),
+      );
+  } catch {
+    return [];
+  }
+}
+
 function mapPublicProviderDetailToDiagnosticsFacility(
   detail: PublicProviderDetail,
+  contactChannels: FacilityContactChannel[],
 ): Facility {
   const category = detail.categoryLabel;
 
@@ -76,6 +110,35 @@ function mapPublicProviderDetailToDiagnosticsFacility(
       detail.availabilityPreview ?? "Sample collection details not listed",
     contactActionLabel: detail.primaryActionLabel,
     directionsActionLabel: detail.secondaryActionLabel,
-    contactChannels: [],
+    contactChannels,
   };
+}
+
+function mapPublicProviderContactChannelToFacilityContactChannel(
+  channel: PublicProviderContactChannel,
+): FacilityContactChannel | null {
+  if (!isAllowedDiagnosticsContactChannelType(channel.channelType)) {
+    return null;
+  }
+
+  return {
+    id: channel.id,
+    channelType: channel.channelType,
+    label: channel.label,
+    value: channel.valuePublic,
+    href: channel.urlPublic,
+  };
+}
+
+function isAllowedDiagnosticsContactChannelType(
+  channelType: PublicProviderContactChannel["channelType"],
+): channelType is FacilityContactChannel["channelType"] {
+  return (
+    channelType === "phone" ||
+    channelType === "whatsapp" ||
+    channelType === "website" ||
+    channelType === "maps" ||
+    channelType === "social" ||
+    channelType === "appointment"
+  );
 }
