@@ -6,87 +6,85 @@ DigitalDirectory-v2
 
 ## Goal
 
-Plan how diagnostics contact channels should be added to diagnostics detail pages.
+Plan how diagnostics contact channels should be wired into diagnostics detail pages in a future task.
 
-This task defines the safe approach for displaying public contact channels for diagnostics providers without implementing the wiring yet.
-
-This task follows:
-
-* CodexTask-161-DiagnosticsDetailReadPlanning.md
-* CodexTask-162-DiagnosticsDetailReadHelperImplementation.md
-* CodexTask-163-DiagnosticsDetailRuntimeProbe.md
-* CodexTask-164-DiagnosticsDetailRouteControl.md
-* CodexTask-165-DiagnosticsDetailRouteQA.md
+This is a planning-only task. No source code, diagnostics detail route, diagnostics helper, contact channel helper, SQL, RLS, schema, migrations, contact channel rows, diagnostics contact channels, pharmacy, doctors, facilities, UI, brand, logo, colors, or real data files were modified.
 
 ---
 
-## Important Context
+## Context Reviewed
 
-The diagnostics detail route now exists:
+Planning and QA references:
+
+- `docs/CodexTask-148-PharmacyContactChannelsPlanning.md`
+- `docs/CodexTask-149-WirePharmacyContactChannelsIntoDetailPage.md`
+- `docs/CodexTask-150-PharmacyContactChannelsQA.md`
+- `docs/CodexTask-164-DiagnosticsDetailRouteControl.md`
+- `docs/CodexTask-165-DiagnosticsDetailRouteQA.md`
+
+Implementation references:
+
+- `src/app/diagnostics/[slug]/page.tsx`
+- `src/lib/supabase/provider-contact-channels-public-read.ts`
+
+The diagnostics detail route currently maps:
 
 ```text
-src/app/diagnostics/[slug]/page.tsx
-```
-
-The diagnostics detail route uses:
-
-```ts
-getSupabasePublicDiagnosticDetailBySlug(slug: string)
-```
-
-from:
-
-```text
-src/lib/supabase/diagnostics-public-read.ts
+contactChannels: []
 ```
 
 Diagnostics contact channels are intentionally not implemented yet.
 
-Pharmacy contact channels were already planned, wired, and QA-tested in earlier tasks. Use the pharmacy contact channel pattern as the primary guide.
-
 ---
 
-## Main Objective
+## Existing Shared Helper Pattern
 
-Create a planning document for diagnostics contact channel wiring.
-
-Recommended target file:
-
-```text
-docs/CodexTask-166-DiagnosticsContactChannelsPlanning.md
-```
-
-This task should not modify source code.
-
----
-
-## Contact Channel Goal
-
-Future diagnostics detail pages should display safe public contact channels for diagnostics providers.
-
-Expected future contact helper pattern should follow pharmacy:
+The project already has a shared provider contact channel helper:
 
 ```ts
-getSupabasePublicProviderContactChannels(providerType, slug)
+getSupabasePublicProviderContactChannels(providerType, providerSlug)
 ```
 
-The diagnostics detail route should eventually pass the correct diagnostics provider type value and slug.
+File:
+
+```text
+src/lib/supabase/provider-contact-channels-public-read.ts
+```
+
+The helper reads:
+
+```text
+public.provider_contact_channels
+```
+
+The helper filters public contact rows by:
+
+```text
+provider_type = requested provider type
+provider_slug = requested provider slug
+listing_status = active
+visibility_status = public
+```
+
+It returns safe `success`, `unavailable`, or `error` results and does not expose raw Supabase errors, Supabase URLs, anon keys, environment values, service-role values, or secrets.
+
+The helper already supports this provider type union:
+
+```text
+facility
+doctor
+pharmacy
+diagnostic
+telemedicine
+ambulance
+home_care
+```
 
 ---
 
-## Provider Type Naming Risk
+## Recommended Provider Type
 
-Carry forward the known naming issue:
-
-```text
-App public listing providerType may be "diagnostics"
-Contact channel provider_type may later be "diagnostic"
-SQL field diagnostic_provider_type is a subtype, not the contact provider_type
-```
-
-The planning document must clearly decide or recommend the provider_type value to use for diagnostics contact channel rows.
-
-Recommended contact-channel provider type:
+Recommended diagnostics contact channel `provider_type` value:
 
 ```text
 diagnostic
@@ -94,132 +92,281 @@ diagnostic
 
 Reason:
 
-* It is singular.
-* It matches the earlier known naming note.
-* It avoids confusing the contact-channel provider type with the SQL subtype field `diagnostic_provider_type`.
+- The shared contact channel helper already supports `diagnostic`.
+- It matches the earlier naming note that contact channels should use singular `diagnostic`.
+- It avoids confusing contact channel `provider_type` with app/card `providerType = diagnostics`.
+- It avoids confusing contact channel `provider_type` with the diagnostics table subtype field `diagnostic_provider_type`.
 
-Do not implement this yet.
+Future diagnostics contact channel rows should therefore use:
 
----
-
-## Future Contact Channel Behavior
-
-The future wiring should:
-
-1. Read public contact channels for the diagnostics provider slug.
-2. Use the shared provider contact channel helper if available.
-3. Pass the correct provider type.
-4. Display only public-safe contact channels.
-5. Preserve safe empty-state behavior if no contact rows exist.
-6. Never expose raw Supabase errors, env values, URLs, anon keys, or secrets.
-7. Not block the detail page if contact channels fail.
-8. Keep diagnostics detail page usable even when no contact channels are available.
+```text
+provider_type = diagnostic
+provider_slug = diagnostic_providers.slug
+```
 
 ---
 
-## Expected Future Route Integration
+## Provider Type Naming Risk
 
-Future wiring target:
+There are three similar but distinct names:
+
+```text
+PublicProviderCard.providerType = diagnostics
+provider_contact_channels.provider_type = diagnostic
+diagnostic_providers.diagnostic_provider_type = laboratory | imaging_center | radiology_center | pathology_service | mixed_diagnostic_center | facility_diagnostic_department | home_sample_collection_provider
+```
+
+Risk:
+
+- Using `diagnostics` instead of `diagnostic` when reading contact channels would fail helper validation or return no rows.
+- Using `diagnostic_provider_type` values as contact `provider_type` values would mix subtype taxonomy with top-level provider identity.
+- Using `diagnostic` in `PublicProviderCard.providerType` would conflict with the current app type, which expects `diagnostics`.
+
+Decision:
+
+- Keep public listing cards/details as `providerType = diagnostics`.
+- Use `provider_type = diagnostic` only for rows in `public.provider_contact_channels`.
+- Keep `diagnostic_provider_type` only as the diagnostics provider subtype.
+
+---
+
+## Future Route Integration Target
+
+Future diagnostics contact channel wiring target:
 
 ```text
 src/app/diagnostics/[slug]/page.tsx
 ```
 
-Future route should likely call:
+Future route should call:
 
 ```ts
 getSupabasePublicProviderContactChannels("diagnostic", slug)
 ```
 
-or the project-consistent equivalent.
+The route should pass the same dynamic route slug to both:
 
-The contact channel result should be passed into the diagnostics detail UI using existing pharmacy detail conventions.
+```ts
+getSupabasePublicDiagnosticDetailBySlug(slug)
+getSupabasePublicProviderContactChannels("diagnostic", slug)
+```
+
+This keeps the diagnostics detail record and its contact channels aligned by public slug.
+
+---
+
+## Future Wiring Behavior
+
+Future diagnostics contact channel wiring should:
+
+1. Read the diagnostics detail record first or in parallel with contact channels.
+2. Preserve `notFound()` if the diagnostics detail helper does not return `success`.
+3. Call the shared contact helper with `providerType = "diagnostic"` and the route slug.
+4. Treat contact helper `unavailable`, `error`, and empty `success` results as an empty contact channel list.
+5. Map only supported public channel types into the existing facility-style detail action panel shape.
+6. Keep the detail page usable even when no contact channel rows exist.
+7. Never expose raw Supabase errors, env values, URLs, anon keys, service-role values, secrets, or private/internal fields.
+8. Avoid adding ordering, booking, payment, sample pickup scheduling, patient address collection, report/result delivery, or lab workflow behavior.
 
 ---
 
 ## Public-Safe Contact Fields
 
-Future contact display may include public-safe fields such as:
+Future diagnostics contact channel display may use public-safe fields from the shared helper:
 
-* channel type
-* label
-* value
-* href
-* priority/order
-* availability note
-* public visibility flag
+- `id`
+- `providerType`
+- `providerSlug`
+- `channelType`
+- `label`
+- `valuePublic`
+- `urlPublic`
+- `isPrimary`
+- `displayOrder`
+- `verificationStatus`
+- `lastConfirmedAt`
 
-Do not expose private/internal contact fields.
+Public-safe diagnostics contact channel examples:
 
----
+- public phone
+- public WhatsApp
+- public website
+- public maps/directions URL
+- public social profile
+- public appointment or inquiry link
+- public email only if explicitly approved for public display
 
-## Empty-State Behavior
+Fields and concepts that must remain private or out of scope:
 
-If no contact rows exist for a diagnostics provider:
-
-* The diagnostics detail page should still render.
-* The contact section should either be hidden or display a safe “contact information not listed yet” message, following pharmacy convention.
-* The page should not crash.
-
-This is expected at the current stage because diagnostics contact rows may not exist yet.
-
----
-
-## Scope
-
-Allowed:
-
-* Create/update `docs/CodexTask-166-DiagnosticsContactChannelsPlanning.md`.
-* Inspect pharmacy contact channel planning/wiring/QA docs if needed.
-* Document future implementation approach.
-
-Not allowed:
-
-* Do not modify source code.
-* Do not modify diagnostics detail route.
-* Do not modify diagnostics helper.
-* Do not modify contact channel helper.
-* Do not modify SQL, RLS, schema, or migrations.
-* Do not insert contact channel rows.
-* Do not implement diagnostics contact channels yet.
-* Do not change pharmacy, doctors, or facilities behavior.
-* Do not change UI, brand, logo, colors, or real data.
-* Do not create Task 167.
+- staff personal phone numbers
+- owner private phone numbers
+- private email not approved for listing display
+- patient names
+- patient phone numbers
+- patient addresses
+- diagnostic reports
+- lab results
+- uploaded files
+- sample tracking
+- test orders
+- payments
+- admin notes
+- reviewer notes
+- verification evidence
+- service-role or internal Supabase metadata
 
 ---
 
-## Validation
+## Supported Channel Types For First Wiring
 
-No code validation is required for this planning-only task.
+For the first diagnostics contact-channel implementation, prefer the channel types already supported by the existing detail action panel mapping pattern:
 
-Recommended check:
+- `phone`
+- `whatsapp`
+- `website`
+- `maps`
+- `social`
+- `appointment`
 
-```bash
-git status
+Defer these until a separate UI/type expansion task if needed:
+
+- `telegram`
+- `email`
+- `emergency`
+- `habaridoc`
+
+Reason:
+
+- The shared helper supports more types than the current detail action panel is known to display.
+- Unsupported channel types should be filtered out rather than rendered awkwardly.
+- Diagnostics should follow the safer pharmacy contact-channel route pattern first.
+
+---
+
+## Expected Empty-State Behavior
+
+If no diagnostics contact rows exist:
+
+- `/diagnostics/[slug]` should still render when the diagnostics detail itself is public.
+- The contact channel section should be hidden or left empty through the existing action panel behavior.
+- The route should not crash.
+- The route should not show raw errors.
+- The page should continue showing public diagnostics detail information.
+
+This empty state is expected because diagnostics contact channel rows may not exist yet.
+
+---
+
+## Safe Fallback And Error Behavior
+
+If the shared contact channel helper returns `unavailable`:
+
+- use an empty contact channel list
+- keep the diagnostics detail page rendering if the detail record is valid
+
+If the shared contact channel helper returns `error`:
+
+- use an empty contact channel list
+- do not expose raw error details
+- do not convert a valid diagnostics detail page into an error page
+
+If the shared contact channel helper returns `success` with unsupported channel types:
+
+- filter unsupported types out
+- render supported channels only
+
+If diagnostics detail helper returns anything other than `success`:
+
+- preserve existing route `notFound()` behavior
+- do not let contact channels reveal that a blocked diagnostics detail exists
+
+---
+
+## Validation Plan For Task 167
+
+Task 167 should wire diagnostics contact channels into:
+
+```text
+src/app/diagnostics/[slug]/page.tsx
 ```
 
-No lint/build is required unless Codex modifies source code, which it must not do.
+Recommended validation commands:
+
+```bash
+npm.cmd run lint
+npm.cmd run build
+npm.cmd run probe:diagnostics-detail
+npm.cmd run probe:diagnostics
+npm.cmd run probe:pharmacies
+npm.cmd run probe:pharmacy-detail
+```
+
+Recommended implementation checks:
+
+- route imports `getSupabasePublicProviderContactChannels`
+- route calls `getSupabasePublicProviderContactChannels("diagnostic", slug)`
+- route still calls `getSupabasePublicDiagnosticDetailBySlug(slug)`
+- route still calls `notFound()` when diagnostics detail is not `success`
+- unavailable/error contact helper results produce an empty contact list
+- unsupported contact channel types are filtered out
+- supported public channel types map safely to `FacilityContactChannel`
+- no raw errors or secrets are exposed
+- no SQL, RLS, schema, migration, real data, or contact row insertion occurs
+- pharmacy, doctors, and facilities behavior remains unchanged
+
+Known limitation to carry forward:
+
+```text
+Diagnostics Supabase runtime probes still report safe fallback/error in the local/Codex runtime.
+```
+
+Task 167 should report whether the same runtime limitation affects contact-channel validation.
 
 ---
 
-## Acceptance Criteria
+## Scope Boundaries
 
-* Diagnostics contact channel planning document exists.
-* Future route integration target is identified.
-* Future contact helper pattern is identified.
-* Recommended diagnostics contact `provider_type` value is documented.
-* Provider type naming risk is clearly documented.
-* Empty-state behavior is documented.
-* Safe error/fallback behavior is documented.
-* Scope boundaries are clear.
-* No source code is modified.
-* No SQL/RLS/migration/schema files are modified.
-* Task 167 is not created.
+Task 166 does not implement:
+
+- diagnostics contact channels
+- route imports for contact channels
+- provider contact helper changes
+- SQL changes
+- RLS changes
+- schema changes
+- migration changes
+- contact channel row inserts
+- diagnostics detail route changes
+- diagnostics helper changes
+- pharmacy behavior changes
+- doctors behavior changes
+- facilities behavior changes
+- UI redesign
+- brand/logo/color changes
+- real data imports
+
+Task 166 does not create Task 167 as a file.
 
 ---
 
-## Deliverable
+## Readiness
 
-A focused planning document for diagnostics contact channel wiring.
+```text
+Ready for Task 167 - Wire Diagnostics Contact Channels Into Detail Page.
+```
 
-Do not proceed beyond Task 166.
+Recommended Task 167 objective:
+
+```text
+Wire active/public diagnostics contact channels into src/app/diagnostics/[slug]/page.tsx using getSupabasePublicProviderContactChannels("diagnostic", slug), map supported public channel types into the existing detail action panel shape, preserve notFound() for non-public diagnostics details, and treat unavailable/error/empty contact results as safe empty contact channels.
+```
+
+---
+
+## Planning Status
+
+```text
+Planning complete
+```
+
+The future route integration target, shared helper pattern, recommended diagnostics contact `provider_type`, provider type naming risk, empty-state behavior, safe fallback/error behavior, public-safe contact fields, validation plan, and Task 167 readiness are defined.
