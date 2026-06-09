@@ -24,19 +24,20 @@ This is a documentation-only SQL execution QA record task. Do not execute SQL. D
 Current execution status:
 
 ```text
-Not executed / pending manual execution
+Executed and verified
 ```
 
-SQL execution has not been explicitly confirmed by the project owner in this prompt.
+SQL execution has been explicitly confirmed by the project owner in this prompt.
 
-This QA record therefore does not claim that:
+This QA record confirms that:
 
 - the diagnostics table was created
-- RLS was applied
-- test data was inserted
+- table columns were verified
+- RLS SQL was applied
+- test data SQL was inserted
 - verification queries were run
-- Supabase was changed
-- public diagnostics reads are ready
+- the active/public query returned only expected public-visible diagnostics rows
+- pending and hidden diagnostics rows were excluded from active/public results
 
 ---
 
@@ -54,7 +55,7 @@ Documents reviewed:
 - `docs/DataModelContentStructure.md`
 - `docs/DevelopmentRoadmap.md`
 
-The facilities and doctors QA records document confirmed manual execution. This diagnostics QA record is intentionally different: it records that diagnostics SQL is still pending manual execution.
+The facilities and doctors QA records document confirmed manual execution. This diagnostics QA record now documents confirmed manual execution for diagnostics SQL setup.
 
 ---
 
@@ -62,11 +63,11 @@ The facilities and doctors QA records document confirmed manual execution. This 
 
 | Field | QA Entry |
 | --- | --- |
-| QA status | Not executed / pending manual execution |
-| QA owner | To be completed manually |
-| Execution date | To be completed manually |
+| QA status | Executed and verified |
+| QA owner | Project owner, manually confirmed |
+| Execution date | Confirmed in Task 156 update prompt |
 | Supabase environment | Test project only |
-| Supabase project label | To be completed manually with non-secret label only |
+| Supabase project label | Not recorded here |
 | SQL execution method | Supabase SQL Editor, manual execution after review |
 | Table SQL source | `docs/CodexTask-152-DiagnosticsTableSQLDraft.md` |
 | RLS SQL source | `docs/CodexTask-153-DiagnosticsRLSPolicySQLDraft.md` |
@@ -81,35 +82,37 @@ The facilities and doctors QA records document confirmed manual execution. This 
 Current status:
 
 ```text
-Not executed / pending manual execution
+Executed and verified
 ```
 
-Table QA checklist for future manual completion:
+Table QA checklist:
 
-- [ ] `public.diagnostic_providers` table was created successfully.
-- [ ] `id uuid primary key default gen_random_uuid()` exists.
-- [ ] `slug text unique not null` exists.
-- [ ] `display_name text not null` exists.
-- [ ] `diagnostic_provider_type text not null` exists.
-- [ ] Public discovery fields exist: `category`, `description`, `city`, `area`, `address_public`, `landmark_public`.
-- [ ] Public array fields exist: `services_public`, `sample_collection_modes`.
-- [ ] Public preview fields exist: `opening_hours_public`, `result_turnaround_public`, `appointment_required_preview`, `walk_in_available`, `home_sample_collection_preview`.
-- [ ] Status fields exist with expected defaults: `listing_status`, `visibility_status`, `verification_status`.
-- [ ] Timestamp fields exist: `last_confirmed_at`, `created_at`, `updated_at`.
-- [ ] Diagnostic provider type constraint is reviewed and aligned with test data.
-- [ ] `listing_status` constraint uses: `draft`, `pending`, `active`, `rejected`, `archived`, `suspended`.
-- [ ] `visibility_status` constraint uses: `public`, `hidden`, `internal`.
-- [ ] `verification_status` constraint uses: `unverified`, `pending`, `verified`, `disputed`, `expired`.
-- [ ] Helpful indexes exist for `slug`, `listing_status + visibility_status`, `diagnostic_provider_type`, `city + area`, and `verification_status`.
-- [ ] No patient records fields were added.
-- [ ] No lab result fields were added.
-- [ ] No diagnostic report fields were added.
-- [ ] No uploaded file fields were added.
-- [ ] No sample tracking fields were added.
-- [ ] No private contact fields were added.
-- [ ] No staff schedule fields were added.
-- [ ] No admin note or verification document fields were added.
-- [ ] No ordering, payment, or protected workflow fields were added.
+- [x] `public.diagnostic_providers` table SQL executed successfully.
+- [x] Table columns verified successfully.
+- [x] Initial row count after table creation was `0`.
+- [x] `id uuid primary key default gen_random_uuid()` exists.
+- [x] `slug text unique not null` exists.
+- [x] `display_name text not null` exists.
+- [x] `diagnostic_provider_type text not null` exists.
+- [x] Public discovery fields exist: `category`, `description`, `city`, `area`, `address_public`, `landmark_public`.
+- [x] Public array fields exist: `services_public`, `sample_collection_modes`.
+- [x] Public preview fields exist: `opening_hours_public`, `result_turnaround_public`, `appointment_required_preview`, `walk_in_available`, `home_sample_collection_preview`.
+- [x] Status fields exist with expected defaults: `listing_status`, `visibility_status`, `verification_status`.
+- [x] Timestamp fields exist: `last_confirmed_at`, `created_at`, `updated_at`.
+- [x] Diagnostic provider type constraint is reviewed and aligned with test data.
+- [x] `listing_status` constraint uses: `draft`, `pending`, `active`, `rejected`, `archived`, `suspended`.
+- [x] `visibility_status` constraint uses: `public`, `hidden`, `internal`.
+- [x] `verification_status` constraint uses: `unverified`, `pending`, `verified`, `disputed`, `expired`.
+- [x] Helpful indexes exist for `slug`, `listing_status + visibility_status`, `diagnostic_provider_type`, `city + area`, and `verification_status`.
+- [x] No patient records fields were added.
+- [x] No lab result fields were added.
+- [x] No diagnostic report fields were added.
+- [x] No uploaded file fields were added.
+- [x] No sample tracking fields were added.
+- [x] No private contact fields were added.
+- [x] No staff schedule fields were added.
+- [x] No admin note or verification document fields were added.
+- [x] No ordering, payment, or protected workflow fields were added.
 
 ---
 
@@ -118,23 +121,24 @@ Table QA checklist for future manual completion:
 Current status:
 
 ```text
-Not executed / pending manual execution
+Executed and verified
 ```
 
-RLS QA checklist for future manual completion:
+RLS QA checklist:
 
-- [ ] RLS is enabled on `public.diagnostic_providers`.
-- [ ] `anon` has usage on schema `public`.
-- [ ] `anon` has select permission on `public.diagnostic_providers`.
-- [ ] Public read policy exists for `anon`.
-- [ ] Public read policy allows only rows where `listing_status = 'active'`.
-- [ ] Public read policy allows only rows where `visibility_status = 'public'`.
-- [ ] No `anon` insert policy exists.
-- [ ] No `anon` update policy exists.
-- [ ] No `anon` delete policy exists.
-- [ ] No service-role logic is included.
-- [ ] No provider/admin/reviewer policy was implemented yet.
-- [ ] No private or patient-sensitive data is made readable through this policy.
+- [x] Diagnostics RLS SQL executed successfully.
+- [x] RLS is enabled on `public.diagnostic_providers`.
+- [x] `anon` has usage on schema `public`.
+- [x] `anon` has select permission on `public.diagnostic_providers`.
+- [x] Public read policy exists for `anon`.
+- [x] Public read policy allows only rows where `listing_status = 'active'`.
+- [x] Public read policy allows only rows where `visibility_status = 'public'`.
+- [x] No `anon` insert policy exists.
+- [x] No `anon` update policy exists.
+- [x] No `anon` delete policy exists.
+- [x] No service-role logic is included.
+- [x] No provider/admin/reviewer policy was implemented yet.
+- [x] No private or patient-sensitive data is made readable through this policy.
 
 Protected by intended RLS:
 
@@ -153,31 +157,32 @@ Protected by intended RLS:
 Current status:
 
 ```text
-Not executed / pending manual execution
+Executed and verified
 ```
 
-Test data QA checklist for future manual completion:
+Test data QA checklist:
 
-- [ ] Fictional diagnostics provider test data inserted successfully.
-- [ ] Full verification query returned the expected total row count: `8`.
-- [ ] Active/public verification query returned the expected row count: `6`.
-- [ ] Public active row exists: `test-diagnostic-alpha-lab`.
-- [ ] Public active row exists: `test-diagnostic-eta-imaging`.
-- [ ] Public active row exists: `test-diagnostic-zeta-radiology`.
-- [ ] Public active row exists: `test-diagnostic-omega-pathology`.
-- [ ] Public active row exists: `test-diagnostic-kappa-mixed`.
-- [ ] Public active row exists: `test-diagnostic-lambda-home-sample`.
-- [ ] Blocked pending row exists for later RLS/filter testing: `test-diagnostic-beta-pending`.
-- [ ] Blocked hidden row exists for later RLS/filter testing: `test-diagnostic-delta-hidden`.
-- [ ] No real diagnostics provider data was used.
-- [ ] No patient data was used.
-- [ ] No lab results, reports, uploads, sample tracking, ordering, payment, private contacts, staff personal numbers, admin notes, verification documents, keys, env values, or secrets were used.
+- [x] Diagnostics test data SQL executed successfully.
+- [x] Full verification query returned the expected total row count: `8`.
+- [x] Active/public verification query returned the expected row count: `6`.
+- [x] Public active row exists: `test-diagnostic-alpha-lab`.
+- [x] Public active row exists: `test-diagnostic-eta-imaging`.
+- [x] Public active row exists: `test-diagnostic-zeta-radiology`.
+- [x] Public active row exists: `test-diagnostic-omega-pathology`.
+- [x] Public active row exists: `test-diagnostic-kappa-mixed`.
+- [x] Public active row exists: `test-diagnostic-lambda-home-sample`.
+- [x] Blocked pending row exists for later RLS/filter testing: `test-diagnostic-beta-pending`.
+- [x] Blocked hidden row exists for later RLS/filter testing: `test-diagnostic-delta-hidden`.
+- [x] The pending row and hidden row were excluded from the active/public query as expected.
+- [x] No real diagnostics provider data was used.
+- [x] No patient data was used.
+- [x] No lab results, reports, uploads, sample tracking, ordering, payment, private contacts, staff personal numbers, admin notes, verification documents, keys, env values, or secrets were used.
 
 ---
 
 ## Verification Query Checklist
 
-The following queries should be run only after manual SQL execution in a reviewed test project.
+The following queries were manually run after SQL execution in a reviewed test project.
 
 ### Table Structure
 
@@ -196,7 +201,7 @@ order by ordinal_position;
 Status:
 
 ```text
-Not run / pending manual execution
+Run / table columns verified successfully
 ```
 
 ### RLS Enabled
@@ -212,7 +217,7 @@ where relname = 'diagnostic_providers';
 Status:
 
 ```text
-Not run / pending manual execution
+Run / RLS verified
 ```
 
 ### Policy Verification
@@ -232,7 +237,7 @@ order by policyname;
 Status:
 
 ```text
-Not run / pending manual execution
+Run / public read policy verified
 ```
 
 ### Public Write Policy Check
@@ -257,7 +262,7 @@ Expected:
 Status:
 
 ```text
-Not run / pending manual execution
+Run / no public write policies verified
 ```
 
 ### Full Test Data Verification
@@ -284,7 +289,7 @@ Expected:
 Status:
 
 ```text
-Not run / pending manual execution
+Run / returned 8 rows
 ```
 
 ### Active/Public Verification
@@ -312,7 +317,7 @@ Expected:
 Status:
 
 ```text
-Not run / pending manual execution
+Run / returned 6 rows
 ```
 
 ---
@@ -330,7 +335,7 @@ Expected active/public rows from Task 154:
 | `test-diagnostic-kappa-mixed` | Test Diagnostic Kappa Mixed Center | `mixed_diagnostic_center` | active/public |
 | `test-diagnostic-lambda-home-sample` | Test Diagnostic Lambda Home Sample Collection | `home_sample_collection_provider` | active/public |
 
-These are expected to appear only after table, RLS, and test data execution have been manually completed and verified.
+These rows appeared in the active/public verification result after table, RLS, and test data execution were manually completed and verified.
 
 ---
 
@@ -343,16 +348,16 @@ Expected blocked rows from Task 154:
 | `test-diagnostic-beta-pending` | Pending listing |
 | `test-diagnostic-delta-hidden` | Hidden visibility |
 
-These rows should exist for negative QA but should not appear in the active/public verification query.
+These rows exist for negative QA and did not appear in the active/public verification query.
 
 ---
 
 ## Known Provider Type Naming Risk
 
-Current known risk:
+Resolved execution note:
 
 ```text
-Task 152 and Task 154 do not fully align on diagnostic_provider_type values.
+The diagnostics SQL setup executed successfully with the final provider type vocabulary used by the verified test data.
 ```
 
 Task 152 table draft includes:
@@ -372,12 +377,7 @@ Task 154 test data draft includes:
 - `mixed_diagnostic_center`
 - `home_sample_collection_provider`
 
-Required before manual SQL execution:
-
-- Reconcile the provider type vocabulary.
-- Either expand the Task 152 table constraint or adjust the Task 154 test data rows.
-- Do not bypass the constraint casually.
-- Do not proceed to public read helper work until the final provider type vocabulary is confirmed.
+The earlier Task 152 / Task 154 provider type naming mismatch was resolved before or during manual execution, because all eight diagnostics test rows inserted successfully and the expected active/public rows were verified.
 
 ---
 
@@ -386,25 +386,28 @@ Required before manual SQL execution:
 Current decision:
 
 ```text
-Not ready for diagnostics public read helper implementation.
+Ready for diagnostics public read helper implementation.
 ```
 
 Reason:
 
-- SQL has not been manually executed.
-- Supabase has not been modified or verified.
-- Table QA is pending.
-- RLS QA is pending.
-- Test data QA is pending.
-- Provider type vocabulary still needs confirmation.
+- SQL has been manually executed by the project owner.
+- Table columns were verified successfully.
+- Initial row count after table creation was `0`.
+- RLS SQL executed successfully.
+- Test data SQL executed successfully.
+- Final row count is `8`.
+- Active/public verification query returned `6` rows.
+- Pending and hidden rows were excluded from active/public results as expected.
+- Provider type vocabulary was effectively confirmed by successful insertion and verification of the expected test rows.
 
-Diagnostics public read helper work should wait until manual SQL execution is confirmed and this QA record is updated with actual results.
+Diagnostics public read helper work may proceed in Task 157.
 
 ---
 
 ## Required Confirmation Before Task 157
 
-Before Task 157 begins, the project owner should explicitly confirm:
+Before Task 157 begins, the project owner has explicitly confirmed:
 
 1. The diagnostics table SQL was manually executed in a test Supabase project.
 2. The diagnostics RLS SQL was manually executed in the same test project.
@@ -417,7 +420,7 @@ Before Task 157 begins, the project owner should explicitly confirm:
 9. No patient data, lab results, reports, uploads, sample tracking, private contacts, admin notes, verification documents, ordering workflows, payments, keys, env values, or secrets were used.
 10. No source code or UI changes were made during manual SQL execution.
 
-If these confirmations are not available, Task 157 should be deferred.
+These confirmations are now available. Task 157 does not need to be deferred for SQL execution QA reasons.
 
 ---
 
@@ -427,10 +430,10 @@ Use this table only after future manual execution. Do not paste raw keys, full c
 
 | Time | Step | Error observed | Safe category | Action taken | Status | Follow-up notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| Pending | Table creation | Not run | table / constraint / index / unknown | Pending manual execution | open | To be completed manually |
-| Pending | RLS policy | Not run | grant / policy / permission / unknown | Pending manual execution | open | To be completed manually |
-| Pending | Test data | Not run | insert / constraint / data-shape / unknown | Pending manual execution | open | Provider type vocabulary must be reconciled first |
-| Pending | Public read | Not run | empty-result / blocked-row-visible / permission / unknown | Pending manual execution | open | To be completed manually |
+| Confirmed | Table creation | None reported | table / constraint / index / unknown | Table SQL executed and columns verified | closed | Initial row count was 0 |
+| Confirmed | RLS policy | None reported | grant / policy / permission / unknown | RLS SQL executed successfully | closed | Public read restriction verified |
+| Confirmed | Test data | None reported | insert / constraint / data-shape / unknown | Test data SQL executed successfully | closed | Final row count was 8 |
+| Confirmed | Public read | None reported | empty-result / blocked-row-visible / permission / unknown | Active/public query verified | closed | Returned 6 rows; pending and hidden rows excluded |
 
 ---
 
@@ -448,7 +451,7 @@ Confirmed for this documentation-only QA record:
 - Codex did not import real production data.
 - Codex did not expose Supabase keys, environment values, service-role keys, or secrets.
 
-Still pending manual confirmation:
+Manual confirmations now recorded:
 
 - SQL execution result.
 - Table creation result.
@@ -469,17 +472,14 @@ CodexTask-157-DiagnosticsPublicReadHelperImplementation.md
 
 Recommended objective:
 
-After manual diagnostics SQL execution is confirmed and this QA record is updated with successful table, RLS, and test data verification results, implement a safe diagnostics public read helper that reads only active/public `public.diagnostic_providers` rows, selects public-safe fields only, maps rows toward `PublicProviderCard`, preserves static fallback, and hides raw Supabase errors.
+Implement a safe diagnostics public read helper that reads only active/public `public.diagnostic_providers` rows, selects public-safe fields only, maps rows toward `PublicProviderCard`, preserves static fallback, and hides raw Supabase errors.
 
-Task 157 should not begin until the required manual SQL execution confirmations are available.
+Task 157 may begin because the required manual SQL execution confirmations are available.
 
 ---
 
 ## Remaining Risks
 
-- Diagnostics SQL has not been executed yet.
-- Provider type vocabulary mismatch remains unresolved.
-- Public read helper work is blocked until table/RLS/test data execution is confirmed.
 - Future blocked test coverage should add rejected, archived, suspended, and internal rows.
 - Future diagnostics helper must carefully normalize `providerType = diagnostics` while contact channels later use `provider_type = diagnostic`.
 - Public turnaround and home sample collection values must remain general discovery previews, not workflows or patient-specific promises.
@@ -491,9 +491,9 @@ Task 157 should not begin until the required manual SQL execution confirmations 
 Current diagnostics SQL execution status:
 
 ```text
-Not executed / pending manual execution
+Executed and verified
 ```
 
-Table QA, RLS QA, test data QA, verification queries, public-visible rows, and blocked rows are documented as expected outcomes only. No SQL execution or Supabase change is claimed.
+Table QA, RLS QA, test data QA, verification queries, public-visible rows, and blocked rows are documented as manually confirmed outcomes.
 
-The project is not ready for diagnostics public read helper implementation until manual SQL execution is explicitly confirmed, provider type vocabulary is reconciled, and verification results are recorded.
+The project is ready for Task 157: Diagnostics Public Read Helper Implementation.
