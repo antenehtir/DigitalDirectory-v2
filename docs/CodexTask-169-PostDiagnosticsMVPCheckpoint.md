@@ -1,4 +1,4 @@
-# Codex Task 169: Post-Diagnostics MVP Checkpoint and Next-Step Planning
+# Codex Task 169: Post-Diagnostics MVP Checkpoint
 
 ## Project
 
@@ -6,33 +6,48 @@ DigitalDirectory-v2
 
 ## Goal
 
-Create a checkpoint record after completing the Pharmacy and Diagnostics MVP module flows.
+Record the post-diagnostics MVP checkpoint after completing the Pharmacy and Diagnostics module flows through listing, detail, contact-channel wiring, and QA documentation.
 
-This task documents the current project state, completed modules, known limitations, and recommended next MVP steps before starting another feature block.
-
-This is a documentation-only planning/checkpoint task.
+This is a documentation-only checkpoint. No source code, SQL, RLS, schema, migrations, probe scripts, package scripts, UI, brand, logo, colors, or real data were modified for this task.
 
 ---
 
-## Completed Pharmacy Module Status
+## Context Reviewed
 
-The Pharmacy module has reached the current MVP-stable stage.
+Checkpoint references:
 
-Completed pharmacy work includes:
+- `docs/CodexTask-150-PharmacyContactChannelsQA.md`
+- `docs/CodexTask-156-DiagnosticsSQLExecutionQARecord.md`
+- `docs/CodexTask-160-DiagnosticsPageSupabaseWiringQA.md`
+- `docs/CodexTask-165-DiagnosticsDetailRouteQA.md`
+- `docs/CodexTask-168-DiagnosticsContactChannelsQA.md`
+- `docs/CodexTask-169-PostDiagnosticsMVPCheckpoint.md`
 
-* Pharmacies public read helper
-* Pharmacies runtime probe
-* Pharmacies page Supabase wiring QA
-* Pharmacy detail read planning
-* Pharmacy detail read helper implementation
-* Pharmacy detail runtime probe
-* Pharmacy detail route control
-* Pharmacy detail route QA
-* Pharmacy contact channels planning
-* Pharmacy contact channels wiring
-* Pharmacy contact channels QA
+---
 
-Current status:
+## Pharmacy Module Status
+
+Current pharmacy module status:
+
+```text
+MVP-stable
+```
+
+Completed pharmacy scope includes:
+
+- pharmacy public listing read flow
+- pharmacy listing runtime probe
+- pharmacy detail read flow
+- pharmacy detail runtime probe
+- pharmacy detail route control
+- pharmacy contact channel planning
+- pharmacy contact channel wiring
+- pharmacy contact channel QA
+- safe static fallback behavior
+- safe empty contact-channel behavior
+- no raw Supabase error or secret exposure in the reviewed flows
+
+Current pharmacy checkpoint:
 
 ```text
 Pharmacy listing: complete
@@ -41,34 +56,48 @@ Pharmacy contact channels: wired
 Pharmacy QA: documented
 ```
 
+Task 150 recorded that pharmacy contact channels use the shared provider contact channel helper with:
+
+```ts
+getSupabasePublicProviderContactChannels("pharmacy", slug)
+```
+
+It also recorded safe handling for unavailable, error, empty, and unsupported contact-channel states.
+
 ---
 
-## Completed Diagnostics Module Status
+## Diagnostics Module Status
 
-The Diagnostics module has reached the same current MVP-stable stage as Pharmacy.
+Current diagnostics module status:
 
-Completed diagnostics work includes:
+```text
+MVP-stable
+```
 
-* Diagnostics discovery schema planning
-* Diagnostics table SQL draft
-* Diagnostics RLS policy SQL draft
-* Diagnostics test data SQL draft
-* Diagnostics manual SQL execution guide
-* Diagnostics SQL execution QA record
-* Diagnostics public read helper implementation
-* Diagnostics runtime probe
-* Diagnostics page Supabase wiring
-* Diagnostics page Supabase wiring QA
-* Diagnostics detail read planning
-* Diagnostics detail read helper implementation
-* Diagnostics detail runtime probe
-* Diagnostics detail route control
-* Diagnostics detail route QA
-* Diagnostics contact channels planning
-* Diagnostics contact channels wiring
-* Diagnostics contact channels QA
+Completed diagnostics scope includes:
 
-Current status:
+- diagnostics discovery schema planning
+- diagnostics table SQL draft
+- diagnostics RLS policy SQL draft
+- diagnostics test data SQL draft
+- diagnostics manual SQL execution QA record
+- diagnostics public listing read helper
+- diagnostics listing runtime probe
+- diagnostics listing page Supabase wiring
+- diagnostics listing page QA
+- diagnostics detail read planning
+- diagnostics detail read helper
+- diagnostics detail runtime probe
+- diagnostics detail route control
+- diagnostics detail route QA
+- diagnostics contact channel planning
+- diagnostics contact channel wiring
+- diagnostics contact channel QA
+- safe static fallback behavior
+- safe empty contact-channel behavior
+- no raw Supabase error or secret exposure in the reviewed flows
+
+Current diagnostics checkpoint:
 
 ```text
 Diagnostics listing: complete
@@ -77,24 +106,34 @@ Diagnostics contact channels: wired
 Diagnostics QA: documented
 ```
 
----
+Task 168 recorded that diagnostics contact channels use the shared provider contact channel helper with:
 
-## Confirmed Diagnostics Database State
-
-The diagnostics Supabase setup was manually executed and verified.
-
-Confirmed state:
-
-```text
-public.diagnostic_providers table exists
-RLS is enabled
-Public select policy allows active/public rows only
-Total test rows: 8
-Expected active/public rows: 6
-Expected blocked rows: 2
+```ts
+getSupabasePublicProviderContactChannels("diagnostic", slug)
 ```
 
-Expected active/public rows:
+It also recorded that contact reads run alongside diagnostics detail reads, contact read failure resolves safely to an empty list, and unsupported channel types are ignored safely.
+
+---
+
+## Diagnostics Database Verification State
+
+Diagnostics database setup was manually executed and verified by the project owner during Task 156.
+
+Confirmed diagnostics database state:
+
+```text
+public.diagnostic_providers table SQL executed successfully
+Table columns verified successfully
+Initial row count after table creation was 0
+Diagnostics RLS SQL executed successfully
+Diagnostics test data SQL executed successfully
+Final row count is 8
+Active/public verification query returned 6 rows
+Pending and hidden rows were excluded from the active/public query
+```
+
+Expected public-visible diagnostics rows:
 
 ```text
 test-diagnostic-alpha-lab
@@ -105,168 +144,152 @@ test-diagnostic-kappa-mixed
 test-diagnostic-lambda-home-sample
 ```
 
-Expected blocked rows:
+Expected blocked diagnostics rows:
 
 ```text
 test-diagnostic-beta-pending
 test-diagnostic-delta-hidden
 ```
 
+The diagnostics database verification state is:
+
+```text
+Executed and verified in Supabase SQL
+```
+
+No real production data, patient data, lab results, reports, uploads, sample tracking, private contacts, admin notes, ordering workflows, payments, keys, environment values, or secrets were used in the verified diagnostics test data.
+
 ---
 
-## Known Runtime Limitation
+## Known Diagnostics Runtime Probe Limitation
 
-The diagnostics rows were manually verified in Supabase SQL during Task 156.
+The six live Supabase diagnostics rows were manually verified in SQL during Task 156, but they are still not verified through the local/Codex diagnostics runtime probe.
 
-However, the local/Codex runtime probe still does not verify the 6 live Supabase diagnostics rows.
-
-Known probe result:
+Known local runtime result:
 
 ```text
 npm.cmd run probe:diagnostics: safe fallback/error, DIAGNOSTICS_PUBLIC_READ_FAILED
 ```
 
-This is documented as a runtime verification limitation, not a page build failure.
+This limitation is documented in:
 
-Safety behavior remains acceptable because:
+- `docs/CodexTask-160-DiagnosticsPageSupabaseWiringQA.md`
+- `docs/CodexTask-165-DiagnosticsDetailRouteQA.md`
+- `docs/CodexTask-168-DiagnosticsContactChannelsQA.md`
 
-* Lint passes.
-* Build passes.
-* Diagnostics detail safety probe passes.
-* Pharmacy probes pass.
-* Blocked diagnostics rows are not exposed.
-* Safe fallback behavior is preserved.
-* No raw Supabase errors or secrets are exposed.
+Current interpretation:
+
+```text
+Runtime Supabase verification limitation, not a build failure or known public exposure issue.
+```
+
+Safety remains acceptable for the current checkpoint because:
+
+- diagnostics SQL was manually verified in Supabase
+- diagnostics RLS was manually verified in Supabase
+- diagnostics active/public filtering was manually verified in Supabase
+- diagnostics listing, detail, and contact-channel code paths build successfully
+- diagnostics probes fail safely where live runtime verification is unavailable
+- blocked diagnostics rows remain protected by helper filters and not-found behavior
+- raw Supabase errors, environment values, URLs, anon keys, and secrets are not exposed
 
 ---
 
 ## Current MVP Position
 
-The project now has two provider modules completed through listing, detail, and contact-channel stages:
+The project now has two provider modules carried through the current MVP module pattern:
 
 ```text
 Pharmacy: MVP-stable
 Diagnostics: MVP-stable
 ```
 
-This creates a repeatable module pattern for future provider categories.
+The repeated provider-module pattern now covers:
+
+- public listing helper
+- listing page wiring
+- runtime probe
+- detail read helper
+- detail route
+- detail safety probe
+- shared provider contact-channel helper usage
+- contact-channel empty-state behavior
+- documentation and QA record
+
+This creates a repeatable implementation and QA model for future provider categories.
+
+Current MVP position:
+
+```text
+Provider module foundation is stable enough to pause feature expansion and clean up test, fallback, and placeholder content before the next MVP review step.
+```
 
 ---
 
 ## Recommended Next MVP Steps
 
-Before starting another large provider module, the recommended next steps are:
+Recommended next MVP steps:
 
-### Step 1: Placeholder and fake data cleanup planning
+1. Placeholder and test data cleanup planning
 
-Identify where test/fallback/sample data is still visible or used.
+   Identify where test, fallback, sample, fictional, or demo-only data may still be visible or relied on.
 
-Focus areas:
+2. Real data readiness planning
 
-* diagnostics test rows
-* pharmacy test rows if any
-* static fallback cards
-* placeholder labels
-* fictional contact states
-* empty-state messages
-* demo-only wording
+   Define how public-safe real provider data should replace test/fallback data without introducing patient data, private contacts, or unverified claims.
 
-### Step 2: Real data readiness plan
+3. Public content and trust review
 
-Prepare the structure for replacing test data with real Addis Ababa private healthcare provider data.
+   Review copy, verification labels, empty states, correction prompts, and action-panel wording for MVP users.
 
-Focus areas:
+4. Brand and UI alignment checkpoint
 
-* required fields
-* public-safe fields
-* verification workflow
-* correction request workflow
-* add facility request workflow
-* source tracking
-* last confirmed dates
+   Prepare a focused brand pass for logo, colors, typography, spacing, and provider card/detail consistency.
 
-### Step 3: Brand and UI alignment checkpoint
+5. Full MVP user journey QA
 
-Prepare for applying the Tiru Medical Directory logo and brand guideline.
-
-Focus areas:
-
-* colors
-* typography
-* spacing
-* card consistency
-* mobile detail page readability
-* desktop layout polish
-* trust badges and verification labels
-
-### Step 4: Full user journey QA
-
-Test the main user journey:
-
-```text
-Landing page
-Search/listing pages
-Provider detail pages
-Contact/action panels
-Correction request
-Add facility request
-Mobile and desktop responsiveness
-```
+   Review the user journey across landing, listings, detail pages, contact/action panels, correction requests, add-provider flows, and mobile/desktop responsiveness.
 
 ---
 
-## Recommended Immediate Next Task
+## Immediate Recommended Next Task
 
-The recommended next task after this checkpoint is:
+Immediate recommended next task:
 
 ```text
-Task 170 — Placeholder and Test Data Cleanup Planning
+Task 170 - Placeholder and Test Data Cleanup Planning
 ```
 
 Reason:
 
-The app now has enough working module structure that the next risk is not missing code; it is users seeing test/demo/fallback content during MVP review.
+The Pharmacy and Diagnostics module foundations are now stable enough that the next MVP risk is user-facing test, fallback, placeholder, or fictional content rather than missing provider-module architecture.
+
+Task 170 should be planning-only unless separately instructed. It should not delete or replace data before the project owner approves the cleanup plan.
 
 ---
 
-## Scope
+## Scope Confirmation
 
-Allowed:
+For Task 169:
 
-* Create/update `docs/CodexTask-169-PostDiagnosticsMVPCheckpoint.md`.
-* Document current project state.
-* Document completed Pharmacy and Diagnostics module status.
-* Document known diagnostics runtime limitation.
-* Recommend next MVP steps.
-
-Not allowed:
-
-* Do not modify source code.
-* Do not modify SQL, RLS, schema, or migrations.
-* Do not modify probe scripts.
-* Do not modify package scripts.
-* Do not change UI, brand, logo, colors, or real data.
-* Do not create Task 170.
+- No source code was modified.
+- No SQL was modified.
+- No RLS was modified.
+- No schema was modified.
+- No Supabase migrations were modified.
+- No probe scripts were modified.
+- No package scripts were modified.
+- No UI was changed.
+- No brand, logo, or color files were changed.
+- No real data was changed.
+- Task 170 was not created.
 
 ---
 
-## Acceptance Criteria
+## Checkpoint Status
 
-* Checkpoint markdown exists.
-* Pharmacy module status is documented.
-* Diagnostics module status is documented.
-* Known runtime limitation is documented.
-* Current MVP position is clear.
-* Recommended next MVP steps are listed.
-* Immediate recommended next task is identified.
-* No source code is modified.
-* No SQL/RLS/migration/schema files are modified.
-* Task 170 is not created.
+```text
+Post-diagnostics MVP checkpoint complete.
+```
 
----
-
-## Deliverable
-
-A focused post-diagnostics MVP checkpoint and next-step planning record.
-
-Do not proceed beyond Task 169.
+The Pharmacy module and Diagnostics module are documented as MVP-stable. The diagnostics database verification state, known runtime probe limitation, current MVP position, recommended next MVP steps, and immediate recommended next task are recorded.
