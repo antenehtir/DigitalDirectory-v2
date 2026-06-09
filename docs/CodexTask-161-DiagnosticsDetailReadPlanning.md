@@ -6,161 +6,354 @@ DigitalDirectory-v2
 
 ## Goal
 
-Plan the diagnostics detail read flow before implementing a diagnostics detail helper or route.
+Plan the diagnostics detail read flow before implementing a diagnostics detail helper, diagnostics detail route, or diagnostics detail runtime probe.
 
-This task defines how an individual diagnostics provider detail page should safely read and display one public diagnostics provider by slug.
+This is a planning-only task. No source code, SQL, RLS, schema, migrations, diagnostics listing page files, diagnostics helper files, probe scripts, package scripts, pharmacy, doctors, facilities, UI, brand, logo, color, or real data files are modified in this task.
+
+---
+
+## Context
 
 This task follows:
 
-* CodexTask-151-DiagnosticsDiscoverySchemaPlanning.md
-* CodexTask-152-DiagnosticsTableSQLDraft.md
-* CodexTask-153-DiagnosticsRLSPolicySQLDraft.md
-* CodexTask-154-DiagnosticsTestDataSQLDraft.md
-* CodexTask-155-DiagnosticsManualSQLExecutionGuide.md
-* CodexTask-156-DiagnosticsSQLExecutionQARecord.md
-* CodexTask-157-DiagnosticsPublicReadHelperImplementation.md
-* CodexTask-158-DiagnosticsRuntimeProbe.md
-* CodexTask-159-DiagnosticsPageSupabaseWiring.md
-* CodexTask-160-DiagnosticsPageSupabaseWiringQA.md
+- `docs/CodexTask-157-DiagnosticsPublicReadHelperImplementation.md`
+- `docs/CodexTask-158-DiagnosticsRuntimeProbe.md`
+- `docs/CodexTask-159-DiagnosticsPageSupabaseWiring.md`
+- `docs/CodexTask-160-DiagnosticsPageSupabaseWiringQA.md`
 
----
-
-## Important Context
-
-The diagnostics listing page has now been wired to the diagnostics public read helper.
-
-The diagnostics database setup has been manually verified:
-
-* `public.diagnostic_providers` table exists.
-* RLS is enabled.
-* Public read policy allows only:
-
-  * `listing_status = 'active'`
-  * `visibility_status = 'public'`
-* Total test rows: 8.
-* Active/public rows: 6.
-* Blocked rows: 2.
-
-The next goal is to plan how `/diagnostics/[slug]` should safely read one diagnostics provider detail record.
-
----
-
-## Main Objective
-
-Create a planning document for the diagnostics detail read implementation.
-
-Recommended target file:
+The diagnostics listing page now uses:
 
 ```text
-docs/CodexTask-161-DiagnosticsDetailReadPlanning.md
+getSupabasePublicDiagnosticsCards
 ```
 
-This task should not implement code.
+from:
+
+```text
+src/lib/supabase/diagnostics-public-read.ts
+```
+
+The diagnostics listing helper queries `public.diagnostic_providers` and filters by:
+
+```text
+listing_status = active
+visibility_status = public
+```
+
+Task 160 recorded that the diagnostics page wiring passed lint/build QA with a remaining local/Codex runtime Supabase verification limitation: `probe:diagnostics` returned safe fallback/error with `DIAGNOSTICS_PUBLIC_READ_FAILED`.
+
+The six active/public diagnostics rows were manually verified in SQL during Task 156, and the pending/hidden rows were manually verified as excluded from the active/public SQL result.
 
 ---
 
-## Detail Route Goal
+## Existing Pattern To Follow
 
-The future route will likely be:
+Use the pharmacy detail sequence as the closest pattern:
+
+- planning: `docs/CodexTask-143-PharmacyDetailReadPlanning.md`
+- helper implementation: `docs/CodexTask-144-PharmacyDetailReadHelperImplementation.md`
+- runtime probe: `docs/CodexTask-145-PharmacyDetailRuntimeProbe.md`
+- route control: `docs/CodexTask-146-PharmacyDetailRouteControl.md`
+- route QA: `docs/CodexTask-147-PharmacyDetailRouteQA.md`
+
+Relevant implemented pharmacy route/helper pattern:
+
+- list page calls a public read helper first
+- detail helper reads one row by slug
+- detail helper uses public-safe fields only
+- detail helper filters by slug, `listing_status = active`, and `visibility_status = public`
+- blocked or missing rows return safe not-found/unavailable behavior
+- routes avoid exposing raw Supabase errors or secrets
+- contact channels are handled separately and should not be bundled into the first detail-read helper task
+
+---
+
+## Future Route Path
+
+Future diagnostics detail route path:
+
+```text
+/diagnostics/[slug]
+```
+
+Future route file:
 
 ```text
 src/app/diagnostics/[slug]/page.tsx
 ```
 
-The future helper will likely be:
+The route should be dynamic when implemented, matching the live public-read pattern used by diagnostics listing, doctors, facilities, and pharmacies.
+
+---
+
+## Future Helper File
+
+Recommended future helper file:
+
+```text
+src/lib/supabase/diagnostics-public-read.ts
+```
+
+Reason:
+
+- The diagnostics list helper already lives there.
+- Pharmacy, doctor, and facility helpers keep list/detail reads close together.
+- Reusing the same diagnostics row types, select list, safe error classification, fallback card/detail mapping helpers, and public client access keeps the implementation small and consistent.
+
+Alternative only if the file becomes too large later:
 
 ```text
 src/lib/supabase/diagnostics-detail-read.ts
 ```
 
+For Task 162, prefer adding the detail helper to `src/lib/supabase/diagnostics-public-read.ts` unless the implementation clearly needs separation.
+
+---
+
+## Future Helper Name
+
 Recommended helper name:
 
 ```ts
-getSupabasePublicDiagnosticDetailBySlug(slug)
+getSupabasePublicDiagnosticDetailBySlug(slug: string)
 ```
 
-Use existing pharmacy detail patterns as the primary guide.
+Recommended result type:
+
+```ts
+DiagnosticPublicDetailReadResult
+```
+
+Expected result states:
+
+- `success`
+- `not-found`
+- `unavailable`
+- `error`
+
+The shape should mirror `PharmacyPublicDetailReadResult`, `DoctorPublicDetailReadResult`, and `FacilityPublicDetailReadResult` where practical.
 
 ---
 
-## Required Planning Areas
+## Public-Safe Fields
 
-The planning document should define:
+The future detail helper should select only public-safe diagnostics discovery fields from `public.diagnostic_providers`.
 
-1. Target route path.
-2. Target helper file.
-3. Expected helper name.
-4. Public-safe fields for detail display.
-5. Slug-based read behavior.
-6. Active/public filtering behavior.
-7. Safe fallback behavior.
-8. Not-found behavior.
-9. Error handling behavior.
-10. Static fallback behavior if available.
-11. Relationship to diagnostics listing helper.
-12. What must not be implemented yet.
-13. Validation plan for the next implementation task.
+Recommended detail select fields:
 
----
+- `id`
+- `slug`
+- `display_name`
+- `diagnostic_provider_type`
+- `category`
+- `description`
+- `city`
+- `area`
+- `address_public`
+- `landmark_public`
+- `services_public`
+- `sample_collection_modes`
+- `opening_hours_public`
+- `result_turnaround_public`
+- `appointment_required_preview`
+- `walk_in_available`
+- `home_sample_collection_preview`
+- `listing_status`
+- `visibility_status`
+- `verification_status`
+- `last_confirmed_at`
 
-## Public-Safe Detail Fields
+Do not select or expose:
 
-The future detail helper may select public-safe fields such as:
+- patient names or patient identifiers
+- lab results
+- diagnostic reports
+- uploaded files
+- sample tracking records
+- test orders
+- payment records
+- patient addresses
+- private contact details
+- staff personal numbers
+- admin notes
+- reviewer notes
+- verification documents or evidence
+- service-role data
+- Supabase URLs, anon keys, environment values, or secrets
 
-* id
-* slug
-* display_name
-* diagnostic_provider_type
-* category
-* description
-* city
-* area
-* address_public
-* landmark_public
-* services_public
-* sample_collection_modes
-* opening_hours_public
-* result_turnaround_public
-* appointment_required_preview
-* walk_in_available
-* home_sample_collection_preview
-* listing_status
-* visibility_status
-* verification_status
-* last_confirmed_at
-* created_at
-* updated_at
-
-Only include `created_at` and `updated_at` if existing detail patterns use them safely.
-
-Do not expose private/internal fields.
+`created_at` and `updated_at` should stay excluded for the first diagnostics detail helper unless a later QA task explicitly decides the UI needs public operational freshness beyond `last_confirmed_at`.
 
 ---
 
-## Required Future Helper Behavior
+## Slug-Based Read Behavior
 
-The future helper should:
+The future helper should accept a single slug string:
 
-1. Accept a slug.
-2. Sanitize or validate that slug safely.
-3. Query `public.diagnostic_providers`.
-4. Select public-safe fields only.
-5. Filter by:
+```ts
+getSupabasePublicDiagnosticDetailBySlug(slug: string)
+```
 
-   * `slug = provided slug`
-   * `listing_status = active`
-   * `visibility_status = public`
-6. Return a safe detail result.
-7. Return not-found for pending, hidden, missing, or invalid slugs.
-8. Never expose raw Supabase errors, URLs, anon keys, env values, or secrets.
-9. Use static fallback only if a matching static diagnostics provider exists.
-10. Avoid showing blocked rows.
+Required slug behavior:
+
+- trim the input slug
+- treat an empty slug as invalid
+- query by `slug = requestedSlug`
+- use `.limit(1)` plus `maybeSingle()` or the existing project-equivalent pattern
+- return `not-found` for no matching active/public row
+- never throw raw Supabase errors to the route or UI
+
+Do not query diagnostics detail by id for the first implementation.
+
+Reasons:
+
+- Detail pages should use stable public slugs.
+- `slug` is the user-facing route identifier.
+- The diagnostics listing cards already carry `slug`.
+- Existing detail routes use slug-based reads.
+
+---
+
+## Active/Public Filtering
+
+The future helper must filter by all of:
+
+```text
+slug = requested slug
+listing_status = active
+visibility_status = public
+```
+
+This app-side filter is required even though RLS also enforces the same public boundary.
+
+Expected blocked behavior:
+
+- pending rows must not render detail pages
+- hidden rows must not render detail pages
+- draft, rejected, archived, suspended, and internal rows must not render detail pages if added later
+
+Verification status must not make a row public by itself.
+
+---
+
+## Detail Mapping Plan
+
+The future helper should map the Supabase row into `PublicProviderDetail`.
+
+Recommended mapping:
+
+- `id` -> `id`
+- `slug` -> normalized public slug
+- `display_name` -> `name`
+- `providerType` -> `diagnostics`
+- `diagnostic_provider_type` or `category` -> `categoryLabel`
+- `description` -> `summary` and `description`
+- `city` and `area` -> `locationLabel` and `location`
+- `address_public` and `landmark_public` -> `address`
+- `services_public` -> `services`
+- `sample_collection_modes` -> availability/sample collection preview
+- `opening_hours_public` -> `hoursPreview` and `workingHours`
+- `result_turnaround_public` -> general public turnaround preview only
+- `appointment_required_preview` -> public appointment preview label only
+- `walk_in_available` -> public walk-in preview label only
+- `home_sample_collection_preview` -> public home sample collection preview label only
+- `verification_status` -> `verificationStatus`
+- `last_confirmed_at` -> public freshness preview only
+- `contactChannels` -> `[]` for Task 162
+- `relatedProviderIds` -> `[]`
+- `correctionHref` -> `/corrections?listing=${slug}`
+
+The mapper should reuse existing public-listing mapper helpers where practical.
+
+The existing `PublicDiagnosticsType` remains narrower than SQL provider types, so richer SQL values should be normalized safely:
+
+- `laboratory` and `pathology_service` -> `laboratory`
+- `imaging_center` and `radiology_center` -> `imaging`
+- mixed, facility department, home sample collection, or unknown future values -> `mixed`
+
+---
+
+## Fallback Behavior
+
+If Supabase env is missing, the public client is unavailable, or the query fails:
+
+- the helper should return a safe `unavailable` or `error` result
+- no raw Supabase errors should be exposed
+- no URLs, anon keys, env values, or secrets should be exposed
+- the route should not crash
+
+Static fallback behavior:
+
+- If a matching static diagnostics provider exists in current seed data, the route may render a safe fallback detail in a later route task.
+- If no matching static diagnostics provider exists, the route should use safe not-found behavior.
+- The helper itself may return `detail: null` for unavailable/error states and leave fallback rendering decisions to the route, matching existing pharmacy detail posture.
+
+For Task 162, the recommended helper behavior is:
+
+- `success`: return Supabase `PublicProviderDetail`
+- `not-found`: return `detail: null`
+- `unavailable`: return `detail: null`
+- `error`: return `detail: null`
+
+The route implementation can decide fallback rendering in a later task.
+
+---
+
+## Not-Found Behavior
+
+The future helper or route should return safe not-found behavior for:
+
+- missing slug
+- empty slug
+- invalid slug
+- unknown slug
+- pending diagnostics row
+- hidden diagnostics row
+- draft diagnostics row
+- rejected diagnostics row
+- archived diagnostics row
+- suspended diagnostics row
+- internal diagnostics row
+- Supabase unavailable and no matching static fallback
+- safe query error and no matching static fallback
+
+Blocked rows should not reveal that a non-public diagnostics provider exists.
+
+---
+
+## Error Handling Behavior
+
+The future helper should classify errors with safe codes similar to the diagnostics list helper:
+
+- `DIAGNOSTICS_DETAIL_PUBLIC_READ_FAILED`
+- `DIAGNOSTICS_DETAIL_NETWORK_OR_FETCH_FAILED`
+- `DIAGNOSTICS_DETAIL_PERMISSION_DENIED`
+- `DIAGNOSTICS_DETAIL_SCHEMA_UNAVAILABLE`
+- `DIAGNOSTICS_DETAIL_COLUMN_MISMATCH`
+
+Safe output may include:
+
+- helper status
+- source
+- fallback recommendation
+- safe reason
+- safe error code
+
+Safe output must not include:
+
+- raw Supabase error object
+- stack trace
+- Supabase URL
+- anon key
+- environment variable values
+- service-role key
+- connection string
+- private/internal fields
 
 ---
 
 ## Expected Public Test Slugs
 
-Future detail read should be able to return these public slugs:
+Future detail read should be able to return these active/public diagnostics slugs when Supabase runtime access succeeds:
 
 ```text
 test-diagnostic-alpha-lab
@@ -171,106 +364,108 @@ test-diagnostic-kappa-mixed
 test-diagnostic-lambda-home-sample
 ```
 
+Each should return a safe diagnostics `PublicProviderDetail`.
+
 ---
 
-## Expected Blocked Slugs
+## Expected Blocked Test Slugs
 
-Future detail read should not return these slugs:
+Future detail read should not return public details for:
 
 ```text
 test-diagnostic-beta-pending
 test-diagnostic-delta-hidden
 ```
 
-These should resolve to not-found or safe unavailable behavior, not public detail display.
+Expected behavior:
+
+- no detail display
+- no indication that a blocked row exists
+- safe `not-found`, `unavailable`, or route-level 404 behavior
 
 ---
 
-## Fallback Planning
+## Validation Plan For Task 162
 
-If Supabase is unavailable, env is missing, or the query fails:
+Task 162 should implement the diagnostics detail read helper only.
 
-* Future detail route should not crash.
-* If a matching static diagnostics provider exists, it may render fallback detail.
-* If no matching static diagnostics provider exists, it should return safe not-found behavior.
-* No raw technical details should be shown to users.
-
-Follow the pharmacy detail fallback pattern.
-
----
-
-## Not-Found Planning
-
-The future route should handle these safely:
-
-* Missing slug.
-* Invalid slug format.
-* Slug not found.
-* Pending diagnostics provider.
-* Hidden diagnostics provider.
-* Supabase unavailable and no fallback match.
-
-Recommended user-facing behavior should match existing pharmacy detail not-found behavior.
-
----
-
-## Scope
-
-Allowed:
-
-* Create/update `docs/CodexTask-161-DiagnosticsDetailReadPlanning.md`.
-* Inspect existing pharmacy detail planning/helper/route docs if needed.
-* Document future implementation plan.
-
-Not allowed:
-
-* Do not modify source code.
-* Do not create diagnostics detail helper.
-* Do not create diagnostics detail route.
-* Do not create diagnostics runtime probe for detail yet.
-* Do not implement diagnostics contact channels.
-* Do not modify SQL, RLS, schema, or migrations.
-* Do not modify diagnostics listing page.
-* Do not modify pharmacy, doctors, or facilities behavior.
-* Do not change UI, brand, logo, colors, or real data.
-* Do not create Task 162.
-
----
-
-## Validation
-
-No code validation is required for this planning-only task.
-
-Recommended checks:
+Recommended validation commands for Task 162:
 
 ```bash
-git status
+npm.cmd run lint
+npm.cmd run build
 ```
 
-No lint/build is required unless Codex modifies source code, which it must not do.
+If Task 162 also adds a helper-only probe script, run:
+
+```bash
+npm.cmd run probe:diagnostics-detail
+```
+
+Recommended helper validation cases:
+
+- valid active/public slug returns `success`
+- all six expected public slugs can return `success` when Supabase runtime access succeeds
+- pending slug returns `not-found` or safe unavailable behavior
+- hidden slug returns `not-found` or safe unavailable behavior
+- unknown slug returns `not-found`
+- empty slug returns `unavailable` or `not-found`
+- missing env returns `unavailable`
+- query failure returns safe `error`
+- no raw errors, env values, URLs, anon keys, or secrets are printed or exposed
+
+Known limitation to carry forward:
+
+```text
+Task 160 recorded that local/Codex diagnostics runtime probing still returned DIAGNOSTICS_PUBLIC_READ_FAILED for the list helper.
+```
+
+Task 162 should report whether the same runtime limitation affects detail-helper validation.
 
 ---
 
-## Acceptance Criteria
+## Scope Boundaries
 
-* Diagnostics detail read planning document exists.
-* Future route path is identified.
-* Future helper file and helper name are identified.
-* Public-safe detail fields are listed.
-* Active/public slug filtering is specified.
-* Blocked slug behavior is specified.
-* Safe fallback behavior is specified.
-* Not-found behavior is specified.
-* Error handling behavior is specified.
-* Scope boundaries are clear.
-* No source code is modified.
-* No SQL/RLS/migration/schema files are modified.
-* Task 162 is not created.
+Task 161 does not implement:
+
+- diagnostics detail helper
+- diagnostics detail route
+- diagnostics detail runtime probe
+- diagnostics contact channels
+- diagnostics page changes
+- SQL changes
+- RLS changes
+- schema changes
+- migration changes
+- pharmacy behavior changes
+- doctors behavior changes
+- facilities behavior changes
+- UI redesign
+- brand/logo/color changes
+- real data imports
+
+Task 161 does not create Task 162 as a file.
 
 ---
 
-## Deliverable
+## Readiness
 
-A focused planning document for diagnostics detail read implementation.
+```text
+Ready for Task 162 - Diagnostics Detail Read Helper Implementation.
+```
 
-Do not proceed beyond Task 161.
+Recommended Task 162 objective:
+
+```text
+Implement getSupabasePublicDiagnosticDetailBySlug in the diagnostics public read helper file, reading one active/public diagnostics provider by slug from public.diagnostic_providers, selecting public-safe fields only, returning PublicProviderDetail on success, returning safe not-found/unavailable/error results otherwise, and preserving all public-safety boundaries.
+```
+
+---
+
+## Planning Status
+
+```text
+Planning complete
+```
+
+The future diagnostics detail route path, helper file, helper name, public-safe field boundary, slug-based read behavior, active/public filtering, fallback behavior, not-found behavior, error handling behavior, expected public and blocked test slugs, validation plan, and Task 162 readiness are defined.
