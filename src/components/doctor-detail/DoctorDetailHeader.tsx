@@ -15,7 +15,7 @@ export function DoctorDetailHeader({ doctor }: DoctorDetailHeaderProps) {
           </div>
           <div className="min-w-0">
             <p className="mb-3 inline-flex rounded-full border border-border bg-muted px-3 py-2 text-sm font-medium text-primary">
-              Doctor detail preview
+              Doctor details
             </p>
             <h1 className="text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
               {doctor.name}

@@ -17,13 +17,13 @@ export function ResultsSummary({
   return (
     <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
       <p className="text-sm font-semibold text-foreground">
-        {totalCount} {hasQuery ? "matching" : "sample"} results
+        {totalCount} {hasQuery ? "matching" : "available"} results
       </p>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">
         {hasQuery
-          ? `Showing frontend-only matches for "${query}" across ${facilityCount} facility, ${doctorCount} doctor, and ${pharmacyCount} pharmacy previews.`
-          : `Showing ${facilityCount} facility, ${doctorCount} doctor, and ${pharmacyCount} pharmacy previews from mock data.`}{" "}
-        Real ranking and advanced search matching will come in a later phase.
+          ? `Showing matches for "${query}" across ${facilityCount} facility, ${doctorCount} doctor, and ${pharmacyCount} pharmacy listings.`
+          : `Showing ${facilityCount} facility, ${doctorCount} doctor, and ${pharmacyCount} pharmacy listings.`}{" "}
+        Information is reviewed before publication.
       </p>
     </div>
   );

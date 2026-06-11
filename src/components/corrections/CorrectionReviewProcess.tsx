@@ -1,7 +1,7 @@
 const reviewSteps = [
   {
     title: "Receive correction",
-    description: "The future workflow collects the suggested update.",
+    description: "Suggested updates are collected for review.",
   },
   {
     title: "Compare listing details",
@@ -24,8 +24,8 @@ export function CorrectionReviewProcess() {
           Corrections are reviewed before they affect trust.
         </h2>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          This page only previews the process. It does not add admin review,
-          authentication, documents, or database updates.
+          Provider information is reviewed before publication and may be updated
+          as details are confirmed.
         </p>
       </div>
 

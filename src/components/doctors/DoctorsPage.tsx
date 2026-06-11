@@ -37,7 +37,7 @@ export function DoctorsPage({
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
               {isFiltered
                 ? `Showing doctor matches${activeSpecialty ? ` for ${activeSpecialty}` : ""}${activeQuery ? ` matching "${activeQuery}"` : ""}.`
-                : "Sample doctor cards using the reusable doctor card system."}
+                : "Reviewed doctor information."}
             </p>
           </div>
           {doctors.length > 0 ? (
@@ -51,8 +51,7 @@ export function DoctorsPage({
                 No doctor matches yet
               </h3>
               <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-                Try a broader specialty, doctor name, facility, or location
-                while doctor filtering remains frontend-only.
+                Try a broader specialty, doctor name, facility, or location.
               </p>
             </section>
           )}

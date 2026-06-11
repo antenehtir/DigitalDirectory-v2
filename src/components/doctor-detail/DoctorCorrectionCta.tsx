@@ -15,15 +15,15 @@ export function DoctorCorrectionCta({ doctor }: DoctorCorrectionCtaProps) {
         See something outdated for {doctor.name}?
       </h2>
       <p className="mt-3 text-sm leading-6 text-primary-foreground/85">
-        Preview the correction flow for outdated specialty, facility,
-        availability, or verification details.
+        Share updated specialty, facility, availability, or verification details
+        for review.
       </p>
       <Link
         className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-md bg-card px-5 text-center text-sm font-semibold text-[#0F172A] sm:w-auto"
         href="/corrections"
         style={{ color: "#0F172A" }}
       >
-        Request correction preview
+        Request correction
       </Link>
     </section>
   );

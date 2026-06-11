@@ -67,10 +67,11 @@ function mapPublicPharmacyCardsToFacilities(
       services: card.services,
       location: card.locationLabel,
       address: card.locationLabel,
-      workingHours: card.hoursPreview ?? "Hours not listed",
+      workingHours: card.hoursPreview ?? "Hours will be added after verification.",
       verificationStatus: card.verificationStatus,
       isOpen: false,
-      availabilityNote: card.availabilityPreview ?? "Availability not listed",
+      availabilityNote:
+        card.availabilityPreview ?? "Availability details are being verified.",
       contactActionLabel: card.primaryActionLabel,
       directionsActionLabel: card.secondaryActionLabel,
       detailHref: card.listingHref,

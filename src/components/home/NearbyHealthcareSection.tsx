@@ -14,8 +14,8 @@ export function NearbyHealthcareSection() {
         <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <SectionHeading
             eyebrow="Nearby"
-            title="Preview nearby healthcare without maps."
-            description="This section prepares the future nearby discovery experience with simple sample cards only."
+            title="Explore healthcare options by area."
+            description="Area-based cards help people compare nearby care options without requesting location access."
           />
           <div className="grid gap-3">
             {nearbyItems.map((item) => (

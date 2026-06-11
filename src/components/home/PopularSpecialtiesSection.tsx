@@ -19,8 +19,8 @@ export function PopularSpecialtiesSection() {
       <PageContainer className="py-8 sm:py-10 lg:py-14">
         <SectionHeading
           eyebrow="Specialties"
-          title="Popular specialties prepared for future search filters."
-          description="These sample specialty links help users scan care options quickly while keeping the page simple."
+          title="Popular specialties to start your search."
+          description="These specialty links help users scan care options quickly while keeping the page simple."
         />
         <div className="mt-6 flex flex-wrap gap-3">
           {specialties.map((specialty) => (

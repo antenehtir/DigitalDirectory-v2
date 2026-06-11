@@ -22,7 +22,7 @@ export function FacilitySearchPreview() {
         </button>
       </div>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        Preview only. No real search or filter logic is active.
+        Search and filter details are reviewed as provider information is updated.
       </p>
     </section>
   );

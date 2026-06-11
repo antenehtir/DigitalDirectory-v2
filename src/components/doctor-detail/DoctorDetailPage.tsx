@@ -52,7 +52,7 @@ export function DoctorDetailPage() {
               Other doctors to compare
             </h2>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Sample doctors use the existing reusable doctor card system.
+              Compare doctor specialties, locations, and verification signals.
             </p>
           </div>
           <DoctorCardGrid doctors={similarDoctors} />

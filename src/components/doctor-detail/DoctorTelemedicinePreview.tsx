@@ -9,19 +9,19 @@ const telemedicineCopy: Record<
   { title: string; description: string }
 > = {
   available: {
-    title: "Telemedicine preview available",
+    title: "Telemedicine information available",
     description:
-      "Future versions can show online consultation access after product logic is added.",
+      "Online consultation details are shown only when confirmed by the provider.",
   },
   planned: {
     title: "Telemedicine planned",
     description:
-      "This profile reserves space for future online care without enabling video, chat, or booking.",
+      "Telemedicine details are being verified before they are shown as available.",
   },
   "not-available": {
-    title: "In-person care preview",
+    title: "In-person care",
     description:
-      "This profile currently presents in-person discovery only in the static UI.",
+      "This profile currently presents in-person care information.",
   },
 };
 
@@ -33,7 +33,7 @@ export function DoctorTelemedicinePreview({
   return (
     <section className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
       <p className="text-sm font-semibold uppercase tracking-normal text-secondary">
-        Telemedicine preview
+        Telemedicine
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
         {copy.title}
@@ -42,7 +42,7 @@ export function DoctorTelemedicinePreview({
         {copy.description}
       </p>
       <div className="mt-5 rounded-md border border-border bg-muted px-4 py-3 text-sm font-semibold text-primary">
-        No real telemedicine functionality is active.
+        Telemedicine details are being verified.
       </div>
     </section>
   );

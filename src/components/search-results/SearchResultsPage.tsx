@@ -55,8 +55,8 @@ export function SearchResultsPage({ query = "" }: SearchResultsPageProps) {
                         </h2>
                         <p className="mt-1 text-sm text-muted-foreground">
                           {hasQuery
-                            ? "Facility previews matching the current search."
-                            : "Sample facility cards using the reusable card system."}
+                            ? "Facilities matching the current search."
+                            : "Reviewed facility information."}
                         </p>
                       </div>
                     </div>
@@ -76,8 +76,8 @@ export function SearchResultsPage({ query = "" }: SearchResultsPageProps) {
                       </h2>
                       <p className="mt-1 text-sm text-muted-foreground">
                         {hasQuery
-                          ? "Doctor previews matching the current search."
-                          : "Sample doctor cards using the reusable doctor card system."}
+                          ? "Doctors matching the current search."
+                          : "Reviewed doctor information."}
                       </p>
                     </div>
                     <div className="grid gap-4 xl:grid-cols-2">
@@ -96,8 +96,8 @@ export function SearchResultsPage({ query = "" }: SearchResultsPageProps) {
                       </h2>
                       <p className="mt-1 text-sm text-muted-foreground">
                         {hasQuery
-                          ? "Pharmacy previews matching the current search."
-                          : "Sample pharmacy cards using frontend-only data."}
+                          ? "Pharmacies matching the current search."
+                          : "Reviewed pharmacy information."}
                       </p>
                     </div>
                     <div className="grid gap-4 xl:grid-cols-2">
@@ -118,7 +118,7 @@ export function SearchResultsPage({ query = "" }: SearchResultsPageProps) {
                   0
                 </div>
                 <h2 className="text-lg font-semibold text-foreground">
-                  No-result state preview
+                  No matching results yet
                 </h2>
                 <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
                   When a search has no matches, this area becomes a friendly

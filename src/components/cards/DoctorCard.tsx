@@ -7,9 +7,9 @@ type DoctorCardProps = {
 };
 
 const telemedicineLabels: Record<DoctorTelemedicineStatus, string> = {
-  available: "Telemedicine preview",
+  available: "Telemedicine information",
   planned: "Telemedicine planned",
-  "not-available": "In-person preview",
+  "not-available": "In-person care",
 };
 
 export function DoctorCard({ doctor }: DoctorCardProps) {

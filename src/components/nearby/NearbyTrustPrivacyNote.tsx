@@ -13,8 +13,7 @@ export function NearbyTrustPrivacyNote() {
         <div className="grid gap-3 text-sm leading-6 text-muted-foreground">
           <p>
             This page does not request browser location, calculate distance, or
-            store user location. It only previews how nearby care could be
-            organized in a future version.
+            store user location. Nearby care is organized by area.
           </p>
           <p>
             Verified, pending, and community-submitted healthcare information

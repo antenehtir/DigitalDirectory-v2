@@ -4,12 +4,12 @@ const pickupSteps = [
     description: "Patients can discover trusted pharmacy listings first.",
   },
   {
-    title: "Preview pickup",
-    description: "Future versions can show pickup interest without upload here.",
+    title: "Review pickup details",
+    description: "Pickup information is shown only after provider confirmation.",
   },
   {
     title: "Confirm later",
-    description: "Real prescription handling and pharmacy workflows come later.",
+    description: "Prescription handling details are updated after verification.",
   },
 ];
 
@@ -17,10 +17,10 @@ export function PrescriptionPickupPreview() {
   return (
     <section className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
       <p className="text-sm font-semibold uppercase tracking-normal text-primary">
-        Prescription pickup preview
+        Prescription pickup
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-        A future pickup flow, shown safely.
+        Pickup information is reviewed before publication.
       </h2>
       <div className="mt-5 grid gap-3">
         {pickupSteps.map((step, index) => (

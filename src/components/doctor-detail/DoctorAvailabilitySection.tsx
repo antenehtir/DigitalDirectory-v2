@@ -13,15 +13,15 @@ export function DoctorAvailabilitySection({
         Availability
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-        Schedule preview
+        Schedule information
       </h2>
       <div className="mt-5 rounded-md border border-border bg-background p-4">
         <p className="text-sm font-semibold text-success">
           {doctor.availability}
         </p>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          Real appointment slots, calendars, and schedule updates are not
-          connected yet.
+          Availability details are being verified and may be updated as the
+          provider confirms schedules.
         </p>
       </div>
     </section>

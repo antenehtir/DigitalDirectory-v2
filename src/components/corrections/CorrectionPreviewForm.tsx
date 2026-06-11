@@ -1,5 +1,5 @@
 const correctionFields = [
-  { label: "Listing name", value: "Example Care Clinic" },
+  { label: "Listing name", value: "Provider or facility name" },
   { label: "Listing type", value: "Facility, doctor, pharmacy, or lab" },
   { label: "Current information", value: "Old phone number or address" },
   { label: "Suggested correction", value: "Updated phone number or address" },
@@ -11,21 +11,21 @@ export function CorrectionPreviewForm() {
     <section className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
       <div>
         <p className="text-sm font-semibold uppercase tracking-normal text-primary">
-          Preview form
+          Correction form
         </p>
         <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
           Correction request details
         </h2>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          Static preview fields show the future request shape. Nothing is
-          submitted, uploaded, or stored.
+          Provider information is reviewed before publication. Share the details
+          that need to be checked.
         </p>
       </div>
 
       <div
         className="mt-5 grid gap-4"
         role="form"
-        aria-label="Correction preview form"
+        aria-label="Correction form"
       >
         {correctionFields.map((field) => (
           <div className="grid gap-2" key={field.label}>
@@ -48,7 +48,7 @@ export function CorrectionPreviewForm() {
         </div>
 
         <div className="mt-1 flex min-h-12 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm">
-          Submit correction preview
+          Submit correction
         </div>
       </div>
     </section>

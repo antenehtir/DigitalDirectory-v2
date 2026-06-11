@@ -11,11 +11,11 @@ export function DoctorActionPanel({ doctor }: DoctorActionPanelProps) {
         Action panel
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-        Patient action previews
+        Patient actions
       </h2>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">
-        These controls preview future booking and contact actions only. Booking,
-        phone contact, schedules, and telemedicine are not active.
+        Contact and scheduling details are being verified. Use published
+        provider information when it is available.
       </p>
 
       <div className="mt-5 grid gap-3">
@@ -29,13 +29,13 @@ export function DoctorActionPanel({ doctor }: DoctorActionPanelProps) {
           className="min-h-12 rounded-md border border-border bg-background px-5 text-sm font-semibold text-primary shadow-sm"
           type="button"
         >
-          Contact preview
+          Contact provider
         </button>
         <button
           className="min-h-12 rounded-md border border-border bg-background px-5 text-sm font-semibold text-primary shadow-sm"
           type="button"
         >
-          Save doctor preview
+          Save doctor
         </button>
       </div>
     </aside>

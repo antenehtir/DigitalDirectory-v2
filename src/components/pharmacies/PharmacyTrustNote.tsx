@@ -14,11 +14,11 @@ export function PharmacyTrustNote() {
       </p>
       <div className="mt-5 rounded-md border border-border bg-card p-4">
         <p className="text-sm font-semibold text-foreground">
-          Frontend-only pharmacy page
+          Pharmacy information review
         </p>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          No medicine inventory, prescription upload, ordering, or payment
-          behavior is active on this page.
+          Medicine inventory, prescription upload, ordering, and payment
+          information will be updated after verification.
         </p>
       </div>
     </section>

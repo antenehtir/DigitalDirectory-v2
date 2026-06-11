@@ -5,14 +5,14 @@ export function PartnershipInquirySection() {
         Partnership inquiry
       </p>
       <h2 className="mt-2 text-xl font-semibold leading-tight text-foreground">
-        Collaboration preview
+        Collaboration inquiries
       </h2>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        This area prepares a future contact path for healthcare organizations,
+        This area guides contact for healthcare organizations,
         clinics, diagnostics networks, and trusted collaborators.
       </p>
       <div className="mt-5 rounded-md border border-border bg-muted px-4 py-3 text-sm font-semibold text-primary">
-        Partnership messages are not sent yet.
+        Partnership details are reviewed before follow-up.
       </div>
     </section>
   );

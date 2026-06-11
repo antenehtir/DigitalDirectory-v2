@@ -14,7 +14,7 @@ export function HeroSearchSection() {
             Find trusted doctors, facilities, pharmacies, and services faster.
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:mt-5 sm:text-lg sm:leading-8">
-            Search verified healthcare providers and clear sample listings from
+            Search reviewed healthcare providers and clear service information from
             one calm, mobile-first starting point.
           </p>
 
@@ -25,7 +25,7 @@ export function HeroSearchSection() {
           <div className="flex flex-col items-start gap-3 border-b border-border pb-5 min-[420px]:flex-row min-[420px]:justify-between">
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                Sample verified result
+                Reviewed provider information
               </p>
               <h2 className="mt-2 text-xl font-semibold leading-tight text-card-foreground sm:text-2xl">
                 Addis Health Center
@@ -63,7 +63,7 @@ export function HeroSearchSection() {
             className="flex min-h-12 items-center justify-center rounded-md border border-border bg-card px-4 text-sm font-semibold text-primary"
             href="/facilities"
           >
-            View sample facilities
+            View facilities
           </Link>
         </div>
       </PageContainer>

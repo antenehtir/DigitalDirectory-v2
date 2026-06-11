@@ -1,11 +1,11 @@
 const requestTypes = [
   {
     title: "Add a new listing",
-    description: "Prepare a doctor or facility profile for future review.",
+    description: "Request review for a doctor or facility profile.",
   },
   {
     title: "Verify an existing listing",
-    description: "Preview how verified status will be requested later.",
+    description: "Request review for verified status.",
   },
   {
     title: "Correct listing information",

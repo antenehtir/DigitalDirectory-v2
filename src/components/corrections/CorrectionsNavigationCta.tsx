@@ -13,7 +13,8 @@ export function CorrectionsNavigationCta() {
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-primary-foreground/85">
             Search first when you want to review an existing listing. Use
-            provider registration when the provider or facility is not listed yet.
+            provider registration when the provider or facility is missing from
+            the directory.
           </p>
         </div>
 

@@ -11,7 +11,7 @@ export function FacilityHoursSection({ facility }: FacilityHoursSectionProps) {
         Hours
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-        Working hours preview
+        Working hours
       </h2>
       <div className="mt-5 rounded-md border border-border bg-background p-4">
         <p className="text-sm font-semibold text-foreground">
@@ -25,7 +25,7 @@ export function FacilityHoursSection({ facility }: FacilityHoursSectionProps) {
           {facility.availabilityNote}
         </p>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          Live open status and holiday hours are not connected yet.
+          Hours will be updated after verification.
         </p>
       </div>
     </section>

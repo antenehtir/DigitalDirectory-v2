@@ -12,7 +12,7 @@ export function VerifiedFacilitiesPreview() {
           <SectionHeading
             eyebrow="Trust"
             title="Verified facilities should stand out clearly."
-            description="Sample facility cards show how verified healthcare information can be presented consistently."
+            description="Facility cards show reviewed healthcare information in a consistent, easy-to-scan format."
           />
           <Link
             className="inline-flex min-h-12 items-center justify-center rounded-md border border-border bg-card px-4 text-sm font-semibold text-primary"

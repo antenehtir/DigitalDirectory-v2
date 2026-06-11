@@ -11,7 +11,7 @@ export function FacilityDetailHeader({ facility }: FacilityDetailHeaderProps) {
       <div className="flex flex-col items-start gap-4 sm:flex-row sm:justify-between">
         <div className="min-w-0">
           <p className="mb-3 inline-flex rounded-full border border-border bg-muted px-3 py-2 text-sm font-medium text-primary">
-            Facility detail preview
+            Facility details
           </p>
           <h1 className="text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
             {facility.name}

@@ -12,7 +12,7 @@ export function PlatformExperienceFeedback() {
         cards, filters, and trust explanations in future passes.
       </p>
       <div className="mt-5 rounded-md border border-border bg-muted px-4 py-3 text-sm font-semibold text-primary">
-        Experience feedback is preview-only.
+        Experience feedback is reviewed before product changes are made.
       </div>
     </section>
   );

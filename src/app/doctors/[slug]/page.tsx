@@ -188,7 +188,8 @@ function DoctorPublicDetailPage({
                   ["Schedule", doctor.workingHours],
                   [
                     "Visit modes",
-                    doctor.availabilityPreview ?? "Visit modes not listed",
+                    doctor.availabilityPreview ??
+                      "Visit modes are being verified.",
                   ],
                   [
                     "Telemedicine",

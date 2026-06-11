@@ -2,7 +2,7 @@ const diagnostics = [
   {
     name: "Sunrise Diagnostic Lab",
     detail: "Blood tests and screening",
-    note: "Sample collection availability preview only.",
+    note: "Specimen collection availability is being verified.",
   },
   {
     name: "Megenagna Imaging Center",
@@ -18,7 +18,7 @@ export function DiagnosticsNearMePreview() {
         Diagnostics near me
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-        Lab and diagnostic preview
+        Lab and diagnostic information
       </h2>
       <div className="mt-5 grid gap-3">
         {diagnostics.map((diagnostic) => (

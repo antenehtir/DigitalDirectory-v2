@@ -39,7 +39,7 @@ export function FacilitiesPage({
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
               {isFiltered
                 ? `Showing facility matches${activeCategoryLabel ? ` for ${activeCategoryLabel.toLowerCase()}` : ""}${activeQuery ? ` matching "${activeQuery}"` : ""}.`
-                : "Sample facility cards using the reusable card system."}
+                : "Reviewed facility information."}
             </p>
           </div>
           {facilities.length > 0 ? (
@@ -53,8 +53,7 @@ export function FacilitiesPage({
                 No facility matches yet
               </h3>
               <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-                Try another facility category or return to all facilities while
-                category filtering is still using frontend-only data.
+                Try another facility category or return to all facilities.
               </p>
             </section>
           )}

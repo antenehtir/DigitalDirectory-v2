@@ -11,7 +11,6 @@ const quickLinks = [
 
 const providerLinks = [
   { label: "Provider registration", href: "/register" },
-  { label: "Provider dashboard preview", href: "/provider-dashboard-preview" },
   { label: "Suggest correction", href: "/corrections" },
   { label: "Contact", href: "/contact" },
   { label: "Feedback", href: "/feedback" },
@@ -36,32 +35,6 @@ export function Footer() {
           <p className="mt-2 leading-6">
             Trusted healthcare discovery for Ethiopia.
           </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Link
-              className="inline-flex min-h-9 items-center rounded-full border border-border bg-background px-3 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/35 hover:text-primary"
-              href="/account-preview"
-            >
-              Account preview
-            </Link>
-            <Link
-              className="inline-flex min-h-9 items-center rounded-full border border-border bg-background px-3 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/35 hover:text-primary"
-              href="/patient-account-preview"
-            >
-              Patient preview
-            </Link>
-            <Link
-              className="inline-flex min-h-9 items-center rounded-full border border-border bg-background px-3 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/35 hover:text-primary"
-              href="/booking-request-preview"
-            >
-              Booking preview
-            </Link>
-            <Link
-              className="inline-flex min-h-9 items-center rounded-full border border-border bg-background px-3 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/35 hover:text-primary"
-              href="/admin-review-preview"
-            >
-              Admin preview
-            </Link>
-          </div>
         </div>
 
         <nav aria-label="Footer quick links">

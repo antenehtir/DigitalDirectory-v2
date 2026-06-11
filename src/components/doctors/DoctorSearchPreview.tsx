@@ -27,8 +27,8 @@ export function DoctorSearchPreview({ query = "" }: DoctorSearchPreviewProps) {
         </button>
       </div>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        Preview only. No real doctor search, booking, or telemedicine logic is
-        active.
+        Doctor information is reviewed before publication. Booking and
+        telemedicine details are shown only when confirmed.
       </p>
     </section>
   );

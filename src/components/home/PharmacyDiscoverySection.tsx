@@ -3,8 +3,8 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { SectionHeading } from "./SectionHeading";
 
 const pharmacyItems = [
-  "Open pharmacy previews",
-  "Location-based sample listings",
+  "Open pharmacy information",
+  "Location-based listings",
   "Clear contact-ready cards",
 ];
 
@@ -19,7 +19,7 @@ export function PharmacyDiscoverySection() {
         />
         <div className="rounded-lg border border-border bg-background p-4 shadow-sm sm:p-5">
           <h3 className="text-lg font-semibold text-foreground sm:text-xl">
-            Pharmacy discovery preview
+            Pharmacy discovery
           </h3>
           <div className="mt-5 grid gap-3">
             {pharmacyItems.map((item) => (

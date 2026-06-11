@@ -10,7 +10,7 @@ export function CorrectionSupportSection() {
         Found outdated information?
       </h2>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        Use the correction preview when a listing has old contact details,
+        Use the correction request when a listing has old contact details,
         location, services, hours, or trust status.
       </p>
       <Link

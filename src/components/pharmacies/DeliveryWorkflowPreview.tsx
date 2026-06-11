@@ -1,8 +1,8 @@
 const deliveryItems = [
   "Delivery readiness status",
-  "Service area preview",
+  "Service area information",
   "Pickup versus delivery options",
-  "Future patient confirmation step",
+  "Patient confirmation step",
 ];
 
 export function DeliveryWorkflowPreview() {
@@ -15,8 +15,8 @@ export function DeliveryWorkflowPreview() {
         Delivery can be introduced later.
       </h2>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        This section reserves space for future delivery discovery without adding
-        ordering, payments, routing, or delivery logic.
+        Delivery information is shown only after provider confirmation. Ordering,
+        payments, routing, and delivery details remain under review.
       </p>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         {deliveryItems.map((item) => (

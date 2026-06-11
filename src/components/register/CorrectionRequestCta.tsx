@@ -10,7 +10,7 @@ export function CorrectionRequestCta() {
         Need to fix existing healthcare information?
       </h2>
       <p className="mt-3 text-sm leading-6 text-primary-foreground/85">
-        Preview the future correction path for outdated phone numbers,
+        Request review for outdated phone numbers,
         locations, services, or trust status.
       </p>
       <Link
@@ -18,7 +18,7 @@ export function CorrectionRequestCta() {
         href="/register"
         style={{ color: "#0F172A" }}
       >
-        Request correction preview
+        Request correction
       </Link>
     </section>
   );

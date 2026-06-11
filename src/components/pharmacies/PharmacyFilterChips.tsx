@@ -4,7 +4,7 @@ const pharmacyFilters = [
   "Prescription pickup",
   "Near me",
   "Wellness items",
-  "Refill preview",
+  "Refill information",
   "Community submitted",
 ];
 
@@ -15,7 +15,7 @@ export function PharmacyFilterChips() {
         Pharmacy filters
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-        Static chips for future filtering.
+        Filters for pharmacy discovery.
       </h2>
       <div className="mt-5 flex flex-wrap gap-2">
         {pharmacyFilters.map((filter) => (

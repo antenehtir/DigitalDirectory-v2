@@ -58,7 +58,7 @@ function mapPublicDoctorCardsToDoctors(cards: PublicProviderCard[]): Doctor[] {
     specialty: card.categoryLabel,
     facility: card.affiliations[0] ?? "Facility not listed",
     location: card.locationLabel,
-    availability: card.availabilityPreview ?? "Availability not listed",
+    availability: card.availabilityPreview ?? "Availability details are being verified.",
     verificationStatus: card.verificationStatus,
     telemedicineStatus: mapTelemedicinePreviewToStatus(
       card.telemedicinePreview,

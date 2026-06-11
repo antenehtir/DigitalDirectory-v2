@@ -1,7 +1,7 @@
 const pharmacies = [
   {
     name: "Bole Community Pharmacy",
-    detail: "Medicine access preview",
+    detail: "Medicine access information",
     note: "Open status will be confirmed in a future version.",
   },
   {
@@ -18,7 +18,7 @@ export function PharmacyNearMePreview() {
         Pharmacy near me
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-        Pharmacy discovery preview
+        Pharmacy discovery
       </h2>
       <div className="mt-5 grid gap-3">
         {pharmacies.map((pharmacy) => (

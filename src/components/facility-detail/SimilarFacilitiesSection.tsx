@@ -18,7 +18,7 @@ export function SimilarFacilitiesSection({
           Other healthcare options to compare
         </h2>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          Sample facilities use the existing reusable facility card system.
+          Compare facility information, services, and trust signals.
         </p>
       </div>
       <FacilityCardGrid facilities={facilities} />

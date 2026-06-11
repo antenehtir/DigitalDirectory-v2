@@ -20,12 +20,12 @@ export function PharmacyResultsSection({
           Pharmacy results
         </p>
         <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-          Sample pharmacy listings
+          Pharmacy listings
         </h2>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
           {isFiltered
-            ? `Showing pharmacy previews matching "${query}" with frontend-only sample data.`
-            : "Pharmacy cards reuse the existing facility card system with frontend-only sample data."}
+            ? `Showing pharmacies matching "${query}".`
+            : "Reviewed pharmacy information."}
         </p>
       </div>
       {pharmacies.length > 0 ? (
@@ -39,8 +39,7 @@ export function PharmacyResultsSection({
             No pharmacy matches yet
           </h3>
           <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-            Try a broader pharmacy name, area, pickup term, or wellness service
-            while pharmacy discovery remains frontend-only.
+            Try a broader pharmacy name, area, pickup term, or wellness service.
           </p>
         </section>
       )}

@@ -13,7 +13,7 @@ const purposes = [
   },
   {
     title: "Partnership inquiry",
-    description: "Preview a future path for organizations and collaborators.",
+    description: "Contact path for organizations and collaborators.",
   },
 ];
 

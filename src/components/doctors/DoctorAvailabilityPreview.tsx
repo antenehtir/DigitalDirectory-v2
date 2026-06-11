@@ -1,14 +1,14 @@
 const previewItems = [
   "Verified doctors are visually marked.",
-  "Availability is shown as sample schedule text.",
-  "Telemedicine is preview-only until a future phase.",
+  "Availability details are being verified.",
+  "Telemedicine details are shown only when confirmed.",
 ];
 
 export function DoctorAvailabilityPreview() {
   return (
     <section className="rounded-lg border border-border bg-muted p-5">
       <p className="text-sm font-semibold uppercase tracking-normal text-secondary">
-        Availability preview
+        Availability
       </p>
       <h2 className="mt-2 text-xl font-semibold text-foreground">
         Help patients understand doctor access at a glance.

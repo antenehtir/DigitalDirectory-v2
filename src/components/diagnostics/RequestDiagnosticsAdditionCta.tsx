@@ -12,9 +12,9 @@ export function RequestDiagnosticsAdditionCta() {
             Want a lab or imaging center to appear here?
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-primary-foreground/85">
-            This prepares the future diagnostics listing request flow without
-            forms, uploads, authentication, booking, test inventory, pricing, or
-            database logic.
+            Request review for a diagnostics listing. Service information,
+            pricing, booking, uploads, and result delivery details are reviewed
+            before publication.
           </p>
         </div>
         <Link

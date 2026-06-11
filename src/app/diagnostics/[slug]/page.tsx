@@ -107,7 +107,7 @@ function mapPublicProviderDetailToDiagnosticsFacility(
     verificationStatus: detail.verificationStatus,
     isOpen: false,
     availabilityNote:
-      detail.availabilityPreview ?? "Sample collection details not listed",
+      detail.availabilityPreview ?? "Specimen collection details are being verified.",
     contactActionLabel: detail.primaryActionLabel,
     directionsActionLabel: detail.secondaryActionLabel,
     contactChannels,

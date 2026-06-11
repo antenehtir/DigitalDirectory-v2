@@ -1,8 +1,8 @@
 const imagingServices = [
-  "X-ray preview",
-  "Ultrasound preview",
+  "X-ray information",
+  "Ultrasound information",
   "Imaging consultation",
-  "Radiology center preview",
+  "Radiology center information",
 ];
 
 export function ImagingServicesPreview() {
@@ -12,11 +12,11 @@ export function ImagingServicesPreview() {
         Imaging services
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-        Imaging discovery can come later.
+        Imaging service information.
       </h2>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        This static preview reserves space for imaging service discovery without
-        booking, schedules, payment, uploads, or results workflow.
+        Booking, schedules, payment, uploads, and result workflow details will
+        be updated after verification.
       </p>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         {imagingServices.map((service) => (

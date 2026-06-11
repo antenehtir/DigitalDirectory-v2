@@ -16,7 +16,7 @@ export function DiagnosticsResultsSection({
           Diagnostics results
         </p>
         <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-          Sample diagnostics listings
+          Diagnostics listings
         </h2>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
           Diagnostic cards reuse the existing facility card system with

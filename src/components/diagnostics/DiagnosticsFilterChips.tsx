@@ -4,7 +4,7 @@ const diagnosticsFilters = [
   "Laboratories",
   "Imaging",
   "Screening",
-  "Sample collection",
+  "Specimen collection",
   "Community submitted",
 ];
 
@@ -15,7 +15,7 @@ export function DiagnosticsFilterChips() {
         Diagnostics filters
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-        Static chips for future filtering.
+        Filters for diagnostics discovery.
       </h2>
       <div className="mt-5 flex flex-wrap gap-2">
         {diagnosticsFilters.map((filter) => (

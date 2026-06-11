@@ -14,11 +14,11 @@ export function TrustSafetyNote() {
       </p>
       <div className="mt-5 rounded-md border border-border bg-card p-4">
         <p className="text-sm font-semibold text-foreground">
-          Frontend-only preview
+          Correction review
         </p>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          No correction is submitted, no files are uploaded, and no listing data
-          is changed from this page.
+          Corrections are reviewed before any published listing information is
+          changed.
         </p>
       </div>
     </section>

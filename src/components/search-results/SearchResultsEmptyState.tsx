@@ -11,12 +11,12 @@ export function SearchResultsEmptyState({
         0
       </div>
       <h2 className="text-lg font-semibold text-foreground">
-        No matching healthcare providers preview
+        No matching healthcare providers
       </h2>
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
         {query
-          ? `No mock providers matched "${query}". Try a broader category, location, specialty, or service.`
-          : "Future search can suggest broader categories, nearby facilities, verified-only changes, or popular specialties when no results match."}
+          ? `No providers matched "${query}". Try a broader category, location, specialty, or service.`
+          : "Try a broader category, nearby facilities, verified-only filters, or popular specialties when no results match."}
       </p>
     </section>
   );

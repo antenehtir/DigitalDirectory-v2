@@ -10,14 +10,14 @@ export function ProviderSupportSection() {
         Need listing help?
       </h2>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        Doctors, facilities, pharmacies, and diagnostic providers can preview
-        the listing or verification request path.
+        Doctors, facilities, pharmacies, and diagnostic providers can request
+        listing or verification review.
       </p>
       <Link
         className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-md bg-primary px-5 text-center text-sm font-semibold text-primary-foreground"
         href="/register"
       >
-        Provider registration preview
+        Provider registration
       </Link>
     </section>
   );

@@ -8,9 +8,8 @@ export function FutureMapListExplanation() {
         Nearby will support map and list views later.
       </h2>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        This preview reserves the product shape for future map/list discovery
-        while keeping Task 14 frontend-only. No map library, location lookup, or
-        distance calculation is included.
+        List views help people scan reviewed provider information. Map, location
+        lookup, and distance details will be added only after verification.
       </p>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         <div className="rounded-md border border-border bg-card p-4">

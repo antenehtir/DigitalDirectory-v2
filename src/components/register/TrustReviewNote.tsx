@@ -14,11 +14,12 @@ export function TrustReviewNote() {
       </p>
       <div className="mt-5 rounded-md border border-border bg-card p-4">
         <p className="text-sm font-semibold text-foreground">
-          Frontend-only preview
+          Provider information review
         </p>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          This page does not collect documents, upload files, submit requests,
-          create accounts, or send details to a database.
+          Provider information is reviewed before publication. Documents,
+          account details, and private records should only be shared through an
+          approved intake path.
         </p>
       </div>
     </section>

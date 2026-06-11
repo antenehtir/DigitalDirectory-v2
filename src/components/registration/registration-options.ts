@@ -13,7 +13,7 @@ export const providerTypes = [
   },
   {
     title: "Laboratories",
-    description: "Show test services, locations, and trust status clearly.",
+    description: "Show diagnostic services, locations, and trust status clearly.",
   },
 ];
 

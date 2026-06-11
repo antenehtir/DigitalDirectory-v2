@@ -11,8 +11,7 @@ export function ProviderRegistrationPanel() {
       </h2>
       <p className="mt-3 max-w-2xl text-base leading-7 text-primary-foreground/85">
         Doctors, facilities, pharmacies, and diagnostic providers can prepare
-        for listing or verification without adding live forms or backend review
-        logic yet.
+        for listing or verification review.
       </p>
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <Link
@@ -20,13 +19,13 @@ export function ProviderRegistrationPanel() {
           href="/register"
           style={{ color: "#0F172A" }}
         >
-          Request listing preview
+          Request listing review
         </Link>
         <Link
           className="inline-flex min-h-12 w-full items-center justify-center rounded-md border border-primary-foreground/40 px-5 text-center text-sm font-semibold text-primary-foreground sm:w-auto"
           href="/register"
         >
-          Request verification preview
+          Request verification review
         </Link>
       </div>
     </div>

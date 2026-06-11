@@ -26,11 +26,11 @@ export function FacilityTrustSection({ facility }: FacilityTrustSectionProps) {
       </p>
       <div className="mt-5 rounded-md border border-border bg-card p-4">
         <p className="text-sm font-semibold text-foreground">
-          Frontend-only detail page
+          Provider information review
         </p>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          This page uses sample facility data only. It does not connect to a
-          database or verification workflow.
+          Provider information is reviewed before publication and may be updated
+          as facilities confirm details.
         </p>
       </div>
     </section>

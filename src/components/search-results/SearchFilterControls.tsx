@@ -10,7 +10,7 @@ const refinementFilters = [
   "Verified only",
   "Open now",
   "Accepting calls",
-  "Nearby preview",
+  "Nearby",
 ];
 
 export function SearchFilterControls() {
@@ -54,10 +54,10 @@ export function SearchFilterControls() {
 
       <div className="mt-6 rounded-md bg-muted p-4">
         <p className="text-sm font-semibold text-foreground">
-          Location preview
+          Location
         </p>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          Addis Ababa, Ethiopia. No geolocation or map logic is active.
+          Addis Ababa, Ethiopia. Location information is reviewed before publication.
         </p>
       </div>
     </aside>

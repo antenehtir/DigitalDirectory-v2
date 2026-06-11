@@ -13,7 +13,7 @@ export function FacilityServicesSection({
         Services
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-        Available care preview
+        Available care information
       </h2>
       <div className="mt-5 flex flex-wrap gap-2">
         {facility.services.map((service) => (

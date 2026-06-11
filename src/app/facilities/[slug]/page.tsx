@@ -101,7 +101,8 @@ function mapPublicProviderDetailToFacility(
     workingHours: detail.workingHours,
     verificationStatus: detail.verificationStatus,
     isOpen: false,
-    availabilityNote: detail.availabilityPreview ?? "Availability not listed",
+    availabilityNote:
+      detail.availabilityPreview ?? "Availability details are being verified.",
     contactActionLabel: detail.primaryActionLabel,
     directionsActionLabel: detail.secondaryActionLabel,
     contactChannels,

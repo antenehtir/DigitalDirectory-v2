@@ -3,7 +3,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { SectionHeading } from "./SectionHeading";
 
 const categories = [
-  { label: "Doctors", detail: "Find sample specialist profiles", href: "/doctors" },
+  { label: "Doctors", detail: "Find specialist profiles", href: "/doctors" },
   { label: "Hospitals", detail: "Browse major care facilities", href: "/facilities" },
   { label: "Clinics", detail: "Discover local outpatient care", href: "/facilities" },
   { label: "Pharmacies", detail: "Locate medicine access points", href: "/pharmacies" },
@@ -18,7 +18,7 @@ export function QuickCategoriesSection() {
         <SectionHeading
           eyebrow="Discover"
           title="Start with the care category you need."
-          description="Quick paths keep the homepage focused on healthcare discovery without adding search logic yet."
+          description="Quick paths keep the homepage focused on healthcare discovery."
         />
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category) => (

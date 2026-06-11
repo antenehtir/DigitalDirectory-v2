@@ -1,15 +1,15 @@
 const channels = [
   {
     title: "Platform support",
-    description: "Future help for search, listings, and profile discovery.",
+    description: "Help for search, listings, and profile discovery.",
   },
   {
     title: "Provider support",
-    description: "Future guidance for registration and verification requests.",
+    description: "Guidance for registration and verification requests.",
   },
   {
     title: "Correction support",
-    description: "Future review path for outdated healthcare information.",
+    description: "Review path for outdated healthcare information.",
   },
 ];
 
@@ -20,7 +20,7 @@ export function SupportChannelsPreview() {
         Support channels
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-        Support paths without live messaging.
+        Support paths for common requests.
       </h2>
       <div className="mt-5 grid gap-3">
         {channels.map((channel) => (

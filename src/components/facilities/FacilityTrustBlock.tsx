@@ -1,7 +1,7 @@
 const trustPoints = [
   "Verified facilities use clear badges.",
   "Open status and working hours stay visible.",
-  "Actions are preview-only until detail pages and workflows are added.",
+  "Contact details are reviewed before publication.",
 ];
 
 export function FacilityTrustBlock() {

@@ -13,11 +13,11 @@ export function FacilityActionPanel({ facility }: FacilityActionPanelProps) {
         Action panel
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">
-        Contact previews
+        Contact options
       </h2>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">
-        These controls preview the future actions only. Phone, directions, and
-        save functionality are not active.
+        Contact details are being verified. Use published channels when they
+        are available.
       </p>
 
       <div className="mt-5 grid gap-3">
@@ -37,7 +37,7 @@ export function FacilityActionPanel({ facility }: FacilityActionPanelProps) {
           className="min-h-12 rounded-md border border-border bg-background px-5 text-sm font-semibold text-primary shadow-sm"
           type="button"
         >
-          Save preview
+          Save provider
         </button>
       </div>
 

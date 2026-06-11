@@ -9,8 +9,7 @@ export function DoctorTrustBlock() {
       </h2>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
         The doctors page uses reusable cards with verification badges,
-        specialty labels, affiliated facilities, and preview actions so future
-        profile pages can build on a consistent pattern.
+        specialty labels, affiliated facilities, and clear profile actions.
       </p>
     </section>
   );

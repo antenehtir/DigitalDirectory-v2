@@ -4,7 +4,7 @@ export function VerificationProcessSteps() {
   return (
     <div>
       <p className="mb-3 text-sm font-semibold text-muted-foreground">
-        Verification process preview
+        Verification process
       </p>
       <div className="grid gap-3">
         {verificationSteps.map((step, index) => (

@@ -14,11 +14,11 @@ export function DiagnosticsTrustNote() {
       </p>
       <div className="mt-5 rounded-md border border-border bg-card p-4">
         <p className="text-sm font-semibold text-foreground">
-          Frontend-only diagnostics page
+          Diagnostics information review
         </p>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          No live test data, pricing, booking, upload, payment, or result
-          delivery behavior is active on this page.
+          Test availability, pricing, booking, upload, payment, and result
+          delivery information will be updated after verification.
         </p>
       </div>
     </section>
