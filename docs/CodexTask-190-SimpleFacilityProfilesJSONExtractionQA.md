@@ -6,7 +6,7 @@ DigitalDirectory-v2
 
 ## Goal
 
-Create a QA record for the simple JSON extraction created from the Tiru MedDirectory Facility Profiles source document.
+Create a documentation-only QA record for the simple JSON extraction created in Task 189 from the Tiru MedDirectory Facility Profiles source document.
 
 This task follows:
 
@@ -15,86 +15,53 @@ This task follows:
 * CodexTask-188-SimpleFacilityProfilesExtractionSourceSetup.md
 * CodexTask-189-SimpleFacilityProfilesJSONExtraction.md
 
-This is a documentation-only QA task.
+No source code, UI copy, `src/data`, SQL, RLS, schema, migrations, static app data, routes, probes, package scripts, Supabase imports, or test data were modified by this QA task.
 
-Do not import data into Supabase in this task.
+Task 191 was not created.
 
 ---
 
-## Important Context
+## Source And Output
 
-Task 189 created the extracted JSON file:
-
-```text
-docs/data-intake/simple-facility-profiles/tiru-med-directory-facility-profiles.simple.json
-```
-
-The source document is:
+Source document:
 
 ```text
 docs/data-intake/source/Tiru_MedDirectory_Facility_Profiles.docx
 ```
 
-The source document contains:
+Extracted JSON:
 
 ```text
-99 total facility/provider profiles in Addis Ababa
-```
-
-Expected category count summary:
-
-```text
-General Hospital: 25
-Specialty Center: 60
-Diagnostic Center: 7
-Ambulance Service: 1
-Home Care: 2
-Telemedicine: 1
-Pharmacy: 1
-Medical Plaza: 1
-Healthcare Financing: 1
-Total: 99
+docs/data-intake/simple-facility-profiles/tiru-med-directory-facility-profiles.simple.json
 ```
 
 ---
 
-## Main Objective
+## QA Checks
 
-Verify the extracted JSON file before it is used in the app.
-
-Recommended target file:
-
-```text
-docs/CodexTask-190-SimpleFacilityProfilesJSONExtractionQA.md
-```
-
----
-
-## Required QA Checks
-
-Verify and document:
-
-1. JSON file exists.
-2. JSON has a `meta` object.
-3. JSON has a `records` array.
-4. Record count is exactly 99.
-5. Category counts match expected source counts.
-6. Every record has `record_number`.
-7. Every record has `name`.
-8. Every record has `category`.
-9. Contact fields are preserved when present.
-10. Google Maps links are preserved when present.
-11. Missing optional fields use empty strings.
-12. No invented values are added.
-13. No Supabase import file was created.
-14. No `src/data` file was modified.
-15. No source code, SQL, RLS, schema, migrations, probes, or package scripts were modified.
+| Check | Result | Notes |
+| --- | --- | --- |
+| JSON file exists | Passed | Extracted JSON file is present at the expected path. |
+| JSON has `meta` | Passed | Top-level `meta` object exists. |
+| JSON has `records` array | Passed | Top-level `records` array exists. |
+| Record count is exactly 99 | Passed | Extracted record count is 99. |
+| Category counts match expected source counts | Passed | Counts match the Task 189/source summary. |
+| Every record has `record_number` | Passed | No missing `record_number` values found. |
+| Every record has `name` | Passed | No missing `name` values found. |
+| Every record has `category` | Passed | No missing `category` values found. |
+| Required simplified fields exist on each record | Passed | All 22 simplified fields exist on every record. |
+| Contact fields are preserved when present | Passed | Contact fields remain populated where present in the source extraction. |
+| Google Maps links are preserved when present | Passed | 95 records include preserved Google Maps values. Missing values remain blank strings. |
+| Missing optional fields use empty strings | Passed | Optional fields are present as strings, including blank strings when missing. |
+| No invented values are added | Passed | No generated slug/status/verification fields were added; source-only fields remain in `raw_text`. |
+| Known warning is recorded | Passed with warning | `Specialty Category`, `App Store`, and `Google Play` are preserved in `raw_text` and noted in `extraction_notes` where applicable. |
+| No source code, SQL, Supabase, `src/data`, probes, or package scripts were modified | Passed | QA task only updated this markdown record. |
 
 ---
 
-## Field QA
+## Required Field Verification
 
-Check these fields exist on every record:
+Every record includes:
 
 ```text
 record_number
@@ -121,49 +88,106 @@ raw_text
 extraction_notes
 ```
 
----
-
-## Known Extraction Warning To Record
-
-Task 189 reported that some source-only labels are outside the simplified schema.
-
-Record this warning:
+Verification result:
 
 ```text
-Specialty Category, App Store, and Google Play are preserved in raw_text and noted in extraction_notes where applicable.
+missing required fields: 0
+missing record_number: 0
+missing name: 0
+missing category: 0
+non-string optional field values: 0
+deferred/generated status fields found: 0
 ```
 
-This is acceptable for MVP extraction because the simplified schema is intentionally focused on public facility profile display fields.
+Deferred fields were not generated:
+
+```text
+slug
+listing_status
+visibility_status
+verification_status
+```
+
+---
+
+## Record Count
+
+```text
+Expected: 99
+Actual: 99
+Result: passed
+```
+
+---
+
+## Category Count Summary
+
+| Category | Expected | Actual | Result |
+| --- | ---: | ---: | --- |
+| General Hospital | 25 | 25 | Passed |
+| Specialty Center | 60 | 60 | Passed |
+| Diagnostic Center | 7 | 7 | Passed |
+| Ambulance Service | 1 | 1 | Passed |
+| Home Care | 2 | 2 | Passed |
+| Telemedicine | 1 | 1 | Passed |
+| Pharmacy | 1 | 1 | Passed |
+| Medical Plaza | 1 | 1 | Passed |
+| Healthcare Financing | 1 | 1 | Passed |
+| Total | 99 | 99 | Passed |
+
+---
+
+## Contact Field Preservation
+
+Observed populated contact fields in the extracted records:
+
+| Field | Populated records |
+| --- | ---: |
+| phone | 99 |
+| email | 79 |
+| website | 71 |
+| telegram | 69 |
+| whatsapp | 2 |
+| booking | 9 |
+| facebook | 13 |
+| instagram | 11 |
+| tiktok | 10 |
+| linkedin | 7 |
+| google_maps | 95 |
+
+Missing optional contact fields remain present as blank strings.
+
+---
+
+## Known Warning
+
+Status: Passed with warnings.
+
+The source document includes labels outside the simplified MVP JSON schema:
+
+```text
+Specialty Category
+App Store
+Google Play
+```
+
+These labels were not mapped to new dedicated fields because Task 189 required the simplified field set only. They are preserved in `raw_text` and noted in `extraction_notes` where applicable.
+
+This warning is acceptable for MVP extraction and should be revisited during later real-data modeling or provider profile enrichment work.
 
 ---
 
 ## QA Status
 
-Use one of:
+Passed with warnings.
 
-```text
-Passed
-Passed with warnings
-Blocked
-```
-
-Expected status:
-
-```text
-Passed with warnings
-```
-
-because the JSON count and category counts are correct, but source-only labels are intentionally preserved in raw_text rather than mapped to dedicated fields.
+The extracted JSON is ready for app-wiring planning/use as a real MVP facility data source, with the known warning above.
 
 ---
 
 ## Recommended Next Task
 
-The recommended next task should be:
-
-```text
 Task 191 — Wire Simple Facility Profiles JSON Into Facilities UI
-```
 
 Purpose:
 
@@ -171,75 +195,5 @@ Purpose:
 * Wire the facilities listing/detail UI to show real facility profiles.
 * Keep Supabase import for later.
 * Do not modify branding yet.
-
----
-
-## Scope
-
-Allowed:
-
-* Create/update this QA markdown record.
-* Inspect the extracted JSON file.
-* Record QA findings.
-* Recommend next task.
-
-Not allowed:
-
-* Do not modify source code.
-* Do not modify UI copy.
-* Do not modify `src/data`.
-* Do not modify Supabase SQL.
-* Do not modify RLS, schema, or migrations.
-* Do not import to Supabase.
-* Do not delete test rows.
-* Do not delete fallback data.
-* Do not modify package scripts.
-* Do not modify probes.
-* Do not create Task 191.
-
----
-
-## Validation
-
-Recommended checks:
-
-```bash
-git status
-```
-
-Also verify:
-
-```text
-JSON file exists
-record count = 99
-category counts match expected source counts
-no source code files changed
-no SQL files changed
-no Supabase files changed
-```
-
-No lint/build is required unless source code is modified, which it must not be.
-
----
-
-## Acceptance Criteria
-
-* QA markdown record exists.
-* JSON file path is documented.
-* Record count is verified as 99.
-* Category counts are verified.
-* Required fields are verified.
-* Known extraction warnings are documented.
-* No source code is modified.
-* No SQL/RLS/migration/schema files are modified.
-* No Supabase import is created.
-* No real data is imported to database.
-* Task 191 is not created.
-
----
-
-## Deliverable
-
-A focused QA record confirming the simple facility profiles JSON extraction is ready for app wiring.
 
 Do not proceed beyond Task 190.
