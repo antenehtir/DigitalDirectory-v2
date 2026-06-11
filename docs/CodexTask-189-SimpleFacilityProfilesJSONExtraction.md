@@ -278,3 +278,95 @@ No lint/build is required unless source code is modified, which it must not be.
 A simple MVP-ready JSON extraction of the 99 Tiru MedDirectory facility profiles.
 
 Do not proceed beyond Task 189.
+---
+
+## Extraction Results
+
+Status: Extracted.
+
+Created JSON output:
+
+```text
+docs/data-intake/simple-facility-profiles/tiru-med-directory-facility-profiles.simple.json
+```
+
+Source document:
+
+```text
+docs/data-intake/source/Tiru_MedDirectory_Facility_Profiles.docx
+```
+
+Record count verification:
+
+```text
+Expected: 99
+Extracted: 99
+Result: passed
+```
+
+Category count summary:
+
+* Ambulance Service: 1
+* Diagnostic Center: 7
+* General Hospital: 25
+* Healthcare Financing: 1
+* Home Care: 2
+* Medical Plaza: 1
+* Pharmacy: 1
+* Specialty Center: 60
+* Telemedicine: 1
+
+Simplified record fields used:
+
+```text
+record_number
+name
+category
+specialty_or_services
+special_services
+sub_city
+area
+address
+phone
+hours
+email
+website
+telegram
+whatsapp
+booking
+facebook
+instagram
+tiktok
+linkedin
+google_maps
+raw_text
+extraction_notes
+```
+
+Extraction warnings:
+
+* Unmapped source labels preserved in raw_text/extraction_notes: App Store (2), Google Play (2), Specialty Category (60)
+
+Unmapped source labels:
+
+* App Store: 2
+* Google Play: 2
+* Specialty Category: 60
+
+Notes:
+
+* Missing optional fields were written as blank strings.
+* Source-only labels outside the simplified schema were preserved in `raw_text` and identified in `extraction_notes`.
+* Contact fields and Google Maps links were preserved when present in the source document.
+* No slugs were generated.
+* No `listing_status`, `visibility_status`, or `verification_status` values were assigned.
+* No Supabase import was performed.
+* No source code, SQL, Supabase files, `src/data`, probes, or package scripts were modified by this task.
+
+## Task 189 QA Status
+
+Passed for simple JSON extraction.
+
+The generated JSON contains `meta`, a `records` array, and all 99 extracted facility/provider records from the source DOCX.
+
+Do not proceed beyond Task 189.
