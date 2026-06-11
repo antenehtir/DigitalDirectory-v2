@@ -1,6 +1,5 @@
 import { FacilityCardGrid } from "@/components/cards/FacilityCardGrid";
 import { PageContainer } from "@/components/layout/PageContainer";
-import { sampleFacilities } from "@/data/sampleFacilities";
 import type { Facility } from "@/types/facility";
 import { FacilitiesHero } from "./FacilitiesHero";
 import { FacilityCategoryFilters } from "./FacilityCategoryFilters";
@@ -20,7 +19,7 @@ export function FacilitiesPage({
   activeCategory,
   activeCategoryLabel,
   activeQuery = "",
-  facilities = sampleFacilities,
+  facilities = [],
 }: FacilitiesPageProps) {
   const isFiltered = Boolean(activeCategory || activeQuery);
 

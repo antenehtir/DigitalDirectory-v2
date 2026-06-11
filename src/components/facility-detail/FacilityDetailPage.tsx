@@ -1,5 +1,4 @@
 import { PageContainer } from "@/components/layout/PageContainer";
-import { sampleFacilities } from "@/data/sampleFacilities";
 import type { Facility } from "@/types/facility";
 import { FacilityActionPanel } from "./FacilityActionPanel";
 import { FacilityCorrectionCta } from "./FacilityCorrectionCta";
@@ -10,47 +9,43 @@ import { FacilityServicesSection } from "./FacilityServicesSection";
 import { FacilityTrustSection } from "./FacilityTrustSection";
 import { SimilarFacilitiesSection } from "./SimilarFacilitiesSection";
 
-const defaultFacility = sampleFacilities.find(
-  (sampleFacility) => sampleFacility.slug === "addis-health-center",
-);
-
 type FacilityDetailPageProps = {
   facility?: Facility;
+  similarFacilities?: Facility[];
 };
 
-export function FacilityDetailPage({ facility }: FacilityDetailPageProps = {}) {
-  const selectedFacility = facility ?? defaultFacility;
-
-  if (!selectedFacility) {
+export function FacilityDetailPage({
+  facility,
+  similarFacilities,
+}: FacilityDetailPageProps = {}) {
+  if (!facility) {
     return null;
   }
 
-  const similarFacilities = sampleFacilities.filter(
-    (sampleFacility) => sampleFacility.slug !== selectedFacility.slug,
-  );
+  const selectedSimilarFacilities = similarFacilities ?? [];
 
   return (
     <PageContainer className="py-8 sm:py-10 lg:py-14">
       <div className="grid gap-6">
         <div className="grid gap-6 lg:grid-cols-[1fr_22rem] lg:items-start">
-          <FacilityDetailHeader facility={selectedFacility} />
-          <FacilityActionPanel facility={selectedFacility} />
+          <FacilityDetailHeader facility={facility} />
+          <FacilityActionPanel facility={facility} />
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
           <div className="grid gap-6">
-            <FacilityInformationSection facility={selectedFacility} />
-            <FacilityServicesSection facility={selectedFacility} />
-            <FacilityHoursSection facility={selectedFacility} />
+            <FacilityInformationSection facility={facility} />
+            <FacilityServicesSection facility={facility} />
+            <FacilityHoursSection facility={facility} />
           </div>
 
           <div className="grid gap-6">
-            <FacilityTrustSection facility={selectedFacility} />
-            <FacilityCorrectionCta facility={selectedFacility} />
+            <FacilityTrustSection facility={facility} />
+            <FacilityCorrectionCta facility={facility} />
           </div>
         </div>
 
-        <SimilarFacilitiesSection facilities={similarFacilities} />
+        <SimilarFacilitiesSection facilities={selectedSimilarFacilities} />
       </div>
     </PageContainer>
   );

@@ -1,6 +1,6 @@
 import { FacilitiesPage } from "@/components/facilities/FacilitiesPage";
 import { PageShell } from "@/components/layout/PageShell";
-import { sampleFacilities } from "@/data/sampleFacilities";
+import { realFacilities } from "@/data/real-facility-profiles";
 import {
   filterFacilitiesByCategory,
   filterFacilitiesByQuery,
@@ -8,9 +8,6 @@ import {
   normalizeFacilityCategoryParam,
   normalizeSearchParam,
 } from "@/lib/frontend-search-filters";
-import { getPublicFacilityCardsFromSource } from "@/lib/public-listing-source";
-import type { PublicProviderCard } from "@/types/public-listings";
-import type { Facility } from "@/types/facility";
 
 export const dynamic = "force-dynamic";
 
@@ -27,14 +24,8 @@ export default async function FacilitiesRoute({
   const params = await searchParams;
   const category = normalizeFacilityCategoryParam(params?.category);
   const query = normalizeSearchParam(params?.q);
-  const facilitiesSource = await getPublicFacilityCardsFromSource({
-    mode: "supabase-facilities-preview",
-  });
   const facilities = filterFacilitiesByQuery(
-    filterFacilitiesByCategory(
-      mapPublicFacilityCardsToFacilities(facilitiesSource.cards),
-      category,
-    ),
+    filterFacilitiesByCategory(realFacilities, category),
     query,
   );
 
@@ -48,43 +39,4 @@ export default async function FacilitiesRoute({
       />
     </PageShell>
   );
-}
-
-const sampleFacilitiesById = new Map(
-  sampleFacilities.map((facility) => [facility.id, facility]),
-);
-
-function mapPublicFacilityCardsToFacilities(
-  cards: PublicProviderCard[],
-): Facility[] {
-  if (cards.length === 0) {
-    return sampleFacilities;
-  }
-
-  return cards.map((card) => {
-    const sampleFacility = sampleFacilitiesById.get(card.id);
-
-    if (sampleFacility) {
-      return sampleFacility;
-    }
-
-    return {
-      id: card.id,
-      name: card.name,
-      slug: card.slug,
-      category: card.categoryLabel,
-      subcategory: card.summary,
-      services: card.services,
-      location: card.locationLabel,
-      address: card.locationLabel,
-      workingHours: card.hoursPreview ?? "Hours will be added after verification.",
-      verificationStatus: card.verificationStatus,
-      isOpen: false,
-      availabilityNote:
-        card.availabilityPreview ?? "Availability details are being verified.",
-      contactActionLabel: card.primaryActionLabel,
-      directionsActionLabel: card.secondaryActionLabel,
-      detailHref: card.listingHref,
-    };
-  });
 }

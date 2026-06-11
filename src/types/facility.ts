@@ -4,6 +4,7 @@ export type FacilityVerificationStatus = VerificationStatus;
 
 export type FacilityContactChannelType =
   | "phone"
+  | "email"
   | "whatsapp"
   | "website"
   | "maps"

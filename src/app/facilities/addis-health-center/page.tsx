@@ -1,10 +1,5 @@
-import { FacilityDetailPage } from "@/components/facility-detail/FacilityDetailPage";
-import { PageShell } from "@/components/layout/PageShell";
+import { notFound } from "next/navigation";
 
 export default function AddisHealthCenterRoute() {
-  return (
-    <PageShell>
-      <FacilityDetailPage />
-    </PageShell>
-  );
+  notFound();
 }

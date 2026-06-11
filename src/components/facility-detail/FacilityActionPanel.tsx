@@ -61,7 +61,20 @@ export function FacilityActionPanel({ facility }: FacilityActionPanelProps) {
                   </p>
                 </div>
                 <p className="mt-1 break-words text-muted-foreground">
-                  {channel.href ?? channel.value}
+                  {channel.href ? (
+                    <a
+                      className="font-medium text-primary underline-offset-4 hover:underline"
+                      href={channel.href}
+                      rel={
+                        isExternalHref(channel.href) ? "noreferrer" : undefined
+                      }
+                      target={isExternalHref(channel.href) ? "_blank" : undefined}
+                    >
+                      {channel.value}
+                    </a>
+                  ) : (
+                    channel.value
+                  )}
                 </p>
               </div>
             ))}
@@ -85,5 +98,13 @@ function getChannelTypeLabel(channel: FacilityContactChannel): string {
     return "WhatsApp";
   }
 
+  if (channel.channelType === "email") {
+    return "Email";
+  }
+
   return channel.channelType;
+}
+
+function isExternalHref(href: string): boolean {
+  return /^https?:\/\//i.test(href);
 }
