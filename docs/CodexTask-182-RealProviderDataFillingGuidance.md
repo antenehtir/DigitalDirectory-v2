@@ -10,179 +10,235 @@ Create guidance for how the project owner should fill the real provider data int
 
 This task follows:
 
-* CodexTask-176-RealProviderDataIntakeFormatAndReplacementPlanning.md
-* CodexTask-177-RealProviderDataIntakeTemplateCreation.md
-* CodexTask-178-RealProviderDataIntakeTemplateQA.md
-* CodexTask-179-RealProviderDataSpreadsheetExportPlanning.md
-* CodexTask-180-RealProviderDataSpreadsheetTemplateExport.md
-* CodexTask-181-RealProviderDataSpreadsheetTemplateQA.md
+- `docs/CodexTask-176-RealProviderDataIntakeFormatAndReplacementPlanning.md`
+- `docs/CodexTask-177-RealProviderDataIntakeTemplateCreation.md`
+- `docs/CodexTask-178-RealProviderDataIntakeTemplateQA.md`
+- `docs/CodexTask-180-RealProviderDataSpreadsheetTemplateExport.md`
+- `docs/CodexTask-181-RealProviderDataSpreadsheetTemplateQA.md`
+- `docs/data-intake/RealProviderDataIntakeTemplate.md`
+- `docs/data-intake/exports/TiruMedicalDirectory_RealProviderDataIntake_Template.xlsx`
 
-This is a documentation-only guidance task.
-
-Do not insert, delete, import, or modify real provider data in this task.
+This is a documentation-only guidance task. No real provider data was inserted.
 
 ---
 
-## Important Context
+## Guidance Status
 
-The Excel provider intake template now exists at:
+```text
+Real provider data filling guidance complete.
+```
+
+The Task 180 workbook exists and Task 181 QA passed. The project owner can use this guidance to prepare a small, reviewable first batch of real provider rows in the approved spreadsheet template.
+
+Workbook to fill in a future task:
 
 ```text
 docs/data-intake/exports/TiruMedicalDirectory_RealProviderDataIntake_Template.xlsx
 ```
 
-Task 181 verified the workbook and marked QA status as:
-
-```text
-Passed
-```
-
-The next step is to guide the project owner on how to fill the spreadsheet safely.
+Do not fill or import real data as part of Task 182.
 
 ---
 
-## Main Objective
-
-Create a guidance document explaining:
-
-1. Which provider categories to fill first.
-2. How many providers to include in the first test batch.
-3. Which fields are required before import.
-4. Which fields can be optional.
-5. How to fill contact channels safely.
-6. How to handle verification and source tracking.
-7. How to avoid private or unsafe data.
-8. How to prepare the spreadsheet for later QA/import planning.
-
-Recommended target file:
-
-```text
-docs/CodexTask-182-RealProviderDataFillingGuidance.md
-```
-
----
-
-## Recommended First Data Batch
-
-The first real-data batch should be small and controlled.
+## Recommended First-Batch Size
 
 Recommended first batch:
 
 ```text
-5 facilities
-5 doctors
-5 pharmacies
-5 diagnostics providers
+10 providers total
 ```
 
-or, if the project owner wants to move faster:
+Recommended mix:
+
+| Category | Count | Reason |
+| --- | ---: | --- |
+| Facilities | 4 | Facilities are the directory anchor and help test core listing/detail fields. |
+| Pharmacies | 2 | Pharmacy listing/detail/contact paths are ready for focused review. |
+| Diagnostics | 2 | Diagnostics listing/detail/contact paths are ready, but claims must be verified carefully. |
+| Doctors | 2 | Doctor rows are useful for coverage, but require more privacy and affiliation review. |
+
+Why keep the first batch small:
+
+- Easier to review manually.
+- Easier to catch slug, status, source, and contact issues.
+- Safer than bulk-filling hundreds of rows before import QA.
+- Enough category coverage to test provider sheets, contact channels, source tracking, and import QA.
+
+If the project owner wants an even slower first pass, use:
 
 ```text
-10 providers total across mixed categories
+5 providers total
 ```
 
-Reason:
-
-* Easier to review.
-* Easier to catch schema/format issues.
-* Safer than importing many rows at once.
-* Allows listing, detail, contact, and search behavior to be tested before scaling.
+with at least one facility, one pharmacy, one diagnostics provider, and one doctor.
 
 ---
 
-## Recommended Category Priority
+## Provider Category Priority
 
 Recommended filling order:
 
-### Priority 1: Facilities
+| Priority | Category | Guidance |
+| --- | --- | --- |
+| 1 | Facilities | Fill first because facilities are the core directory records and may later connect to doctors, pharmacies, and diagnostics. |
+| 2 | Pharmacies | Fill next because pharmacy records are simpler and good for validating public contact channels. |
+| 3 | Diagnostics | Fill third because diagnostics records are important, but service claims, home collection, turnaround, and provider type require careful verification. |
+| 4 | Doctors | Fill after the first facility/pharmacy/diagnostics pass because doctor data requires extra privacy, schedule, specialty, and affiliation review. |
 
-Start with well-known private facilities in Addis Ababa.
-
-Reason:
-
-* Facilities are the core of the directory.
-* Doctors, pharmacies, and diagnostics can later connect to facilities.
-* Facility records help establish location and service trust.
-
-### Priority 2: Pharmacies
-
-Pharmacy module is MVP-stable.
-
-Reason:
-
-* Listing, detail, and contact channels already work.
-* Good category for first real import testing.
-
-### Priority 3: Diagnostics
-
-Diagnostics module is MVP-stable.
-
-Reason:
-
-* Listing, detail, and contact channels already work.
-* Test rows exist and can be replaced later after real data QA.
-
-### Priority 4: Doctors
-
-Doctors are important, but require more careful verification.
-
-Reason:
-
-* Specialty, schedule, affiliation, and public contact details need careful review.
-* Avoid private personal data.
+Do not add new provider categories during the first batch.
 
 ---
 
 ## Minimum Required Fields Before Review
 
-For each provider row, the project owner should fill at minimum:
+Before a row is submitted for review, each provider row should include at minimum:
+
+| Field | Requirement |
+| --- | --- |
+| `provider_category` | Required |
+| `display_name` | Required |
+| `slug` | Required |
+| `city` | Required |
+| `area` | Recommended before review |
+| `short_description` | Recommended before review |
+| Category-specific type field | Required where present, such as `facility_type`, `pharmacy_type`, or `diagnostic_provider_type` |
+| Services field | Recommended before review, such as `services` or `services_public` |
+| `verification_status` | Required |
+| `last_confirmed_at` | Required before marking verified |
+| `listing_status` | Required |
+| `visibility_status` | Required |
+| `source_note` | Recommended |
+| `internal_review_note` | Recommended when anything is uncertain |
+
+Use this default status set for first-batch rows:
+
+```text
+verification_status = pending
+listing_status = pending
+visibility_status = hidden
+```
+
+Use this only after review and owner approval:
+
+```text
+verification_status = verified
+listing_status = active
+visibility_status = public
+```
+
+Do not mark rows `active` and `public` just because the row is complete. Public display should wait for verification and approval.
+
+---
+
+## Category-Specific Filling Notes
+
+### Facilities
+
+Fill the `01_Facilities` sheet.
+
+Minimum review-ready fields:
 
 ```text
 provider_category
 display_name
 slug
+facility_type
 city
 area
 short_description
 services
 verification_status
-last_confirmed_at
 listing_status
 visibility_status
 source_note
 ```
 
-For public rows, use only:
+Use `unknown` for optional claims that are not verified, such as emergency availability, inpatient availability, diagnostics availability, pharmacy availability, walk-in availability, and home service availability.
+
+### Doctors
+
+Fill the `02_Doctors` sheet.
+
+Minimum review-ready fields:
 
 ```text
-listing_status = active
-visibility_status = public
+provider_category
+display_name
+slug
+doctor_name
+specialty
+city
+area
+verification_status
+listing_status
+visibility_status
+source_note
 ```
 
-when the provider is ready for public display.
+Do not include private personal phone numbers, private addresses, documents, credentials, or schedule claims unless approved for public display.
 
-If not ready, use:
+### Pharmacies
+
+Fill the `03_Pharmacies` sheet.
+
+Minimum review-ready fields:
 
 ```text
-listing_status = pending
-visibility_status = hidden
+provider_category
+display_name
+slug
+pharmacy_type
+city
+area
+short_description
+services
+verification_status
+listing_status
+visibility_status
+source_note
 ```
+
+Use `unknown` for delivery, pickup, walk-in, and home-service fields unless confirmed.
+
+### Diagnostics
+
+Fill the `04_Diagnostics` sheet.
+
+Minimum review-ready fields:
+
+```text
+provider_category
+display_name
+slug
+diagnostic_provider_type
+category
+city
+area
+short_description
+services_public
+verification_status
+listing_status
+visibility_status
+source_note
+```
+
+Do not publish test availability, pricing, result turnaround, booking, upload, or home collection claims unless verified and maintainable.
 
 ---
 
-## Contact Channel Guidance
+## Contact Channel Filling Guidance
 
-Use the `05_Contact_Channels` sheet.
+Fill the `05_Contact_Channels` sheet only with contact details approved for review.
 
-Each contact method should be one row.
+Use one row per public contact method.
 
-Example:
+Example pattern only:
 
 ```text
-One provider with two phone numbers and one website = three contact channel rows
+One provider with one phone number and one website should have two contact-channel rows.
 ```
 
-Required contact fields:
+Minimum contact-channel fields before review:
 
 ```text
 provider_category
@@ -194,80 +250,105 @@ is_public
 verification_status
 last_confirmed_at
 source_note
+internal_review_note
 ```
 
-Use `is_public = true` only if the contact detail is approved for public display.
+Contact guidance:
 
-Do not include:
+- `provider_slug` must exactly match the provider row slug.
+- Use `is_public = false` until the contact detail is approved for public display.
+- Use `verification_status = pending` until the contact detail is confirmed.
+- Keep private or staff-only contact details out of public fields.
+- Do not include unverified WhatsApp numbers, personal doctor numbers, private staff emails, internal extensions, payment links, upload links, or booking links unless explicitly approved.
+- Use `internal_review_note` to flag uncertainty.
 
-```text
-private staff phone numbers
-personal doctor phone numbers unless approved
-internal hospital extensions not intended for public use
-private emails
-unverified WhatsApp numbers
-```
+Allowed contact-channel categories should match the workbook allowed values. Diagnostics contact rows should follow the workbook's contact-channel guidance for diagnostics.
 
 ---
 
 ## Slug Guidance
 
-Every provider needs a stable slug.
+Every provider row needs a stable slug before review.
 
-Rules:
+Slug rules:
 
 ```text
 lowercase only
-use hyphens
+hyphen-separated
+ASCII letters and numbers only, plus hyphen
 no spaces
+no underscores
 no special characters except hyphen
+no leading or trailing hyphen
+no consecutive hyphens
 unique within provider category
-do not include private/internal notes
+stable after publication
 ```
 
-Examples:
+Format examples only:
 
 ```text
-kadisco-general-hospital
-bole-community-pharmacy
-addis-diagnostic-imaging-center
-dr-example-cardiology
+example-general-hospital
+example-community-pharmacy
+example-diagnostic-center
+dr-example-name
 ```
 
-If unsure, leave a note in `internal_review_note`.
+Do not include:
+
+```text
+verification status
+listing status
+private notes
+internal review comments
+temporary labels
+```
+
+If two providers would have the same slug, add a stable public-safe area or category suffix.
 
 ---
 
 ## Verification Guidance
 
-Use verification statuses carefully:
+Use verification statuses conservatively.
 
-```text
-verified = confirmed directly or from reliable official source
-unverified = collected but not confirmed
-pending = waiting for review
-disputed = conflicting information exists
-```
+| Status | Use when |
+| --- | --- |
+| `pending` | The row is waiting for review. Recommended default for first-batch rows. |
+| `unverified` | The information was collected but not confirmed. |
+| `verified` | The information was confirmed by an approved source and has a confirmation date. |
+| `disputed` | Sources conflict or the project owner needs to resolve accuracy. |
+| `expired` | Previously confirmed information is stale and needs reconfirmation. |
 
-Do not mark a provider as `verified` unless the information has been checked.
+Before marking `verified`, confirm:
 
-Recommended first-batch status:
+- public name is correct
+- provider category is correct
+- location fields are public-safe
+- public contact details are approved
+- services and availability claims are verified
+- `last_confirmed_at` is filled using `YYYY-MM-DD`
+- source tracking exists
 
-```text
-verification_status = pending
-listing_status = pending
-visibility_status = hidden
-```
-
-until reviewed.
+Use `internal_review_note` or the `06_Verification_Notes` sheet for unresolved questions.
 
 ---
 
 ## Source Tracking Guidance
 
-Use the `07_Source_Tracking` sheet.
+Fill the `07_Source_Tracking` sheet for every provider row before import QA.
 
-Every provider should have at least one source row.
+Minimum source-tracking fields:
+
+```text
+provider_category
+provider_slug
+source_type
+source_name
+source_date
+review_status
+review_note
+```
 
 Recommended source types:
 
@@ -282,129 +363,114 @@ internal_staff_confirmation
 unknown
 ```
 
-If the source is uncertain, use:
+Source tracking rules:
 
-```text
-source_type = unknown
-review_status = needs_correction
-```
+- Use one source row per meaningful source.
+- Use `source_url` only for public web sources.
+- Use `source_date` in `YYYY-MM-DD` format.
+- Use `unknown` rather than guessing.
+- Keep reviewer names, collector notes, and uncertainty in internal fields only.
+- Do not treat source tracking as import approval by itself.
 
 ---
 
 ## Import QA Guidance
 
-Before import, the spreadsheet should pass these checks:
+Use `08_Import_QA_Checklist` before any future import or replacement task.
 
-```text
-No duplicate slugs
-All display names are present
-All provider categories are valid
-All listing_status values are valid
-All visibility_status values are valid
-No private contact details are included
-All public contact details are approved
-All active/public rows have minimum location information
-All verified rows have last_confirmed_at
-Contact provider_slug values match provider rows
-Rows marked hidden/internal will not appear publicly
-```
+The first batch should pass these checks before import planning:
+
+| QA check | Requirement |
+| --- | --- |
+| No duplicate slugs | Required |
+| All required display names are present | Required |
+| All provider categories are valid | Required |
+| All `listing_status` values are valid | Required |
+| All `visibility_status` values are valid | Required |
+| No private staff contact details are included | Required |
+| All public contact details are approved | Required |
+| Active/public rows have minimum location information | Required |
+| Verified rows have `last_confirmed_at` | Required |
+| Diagnostics provider types match approved values | Required |
+| Contact-channel slugs match provider rows | Required |
+| Hidden/internal rows will not appear publicly | Required |
+| Pending rows are not imported as public active listings | Required |
+| Source tracking exists for each provider row | Required |
+
+Recommended first-batch QA workflow:
+
+1. Fill provider rows.
+2. Fill contact-channel rows.
+3. Fill verification notes when needed.
+4. Fill source tracking.
+5. Run the import QA checklist.
+6. Keep rows `pending` and `hidden` until review passes.
+7. Prepare a future first-batch preparation record before any import.
 
 ---
 
 ## What Not To Do Yet
 
-The guidance must clearly state:
+Do not do any of the following in Task 182 or before a future approved import task:
 
 ```text
 Do not import real data yet.
+Do not insert real provider data into source code.
 Do not delete diagnostics test rows yet.
 Do not delete fallback data yet.
 Do not remove QA fixtures yet.
 Do not bulk-fill hundreds of rows before the first QA batch.
 Do not include private contact details.
 Do not mark unverified rows as public active listings.
+Do not modify SQL, RLS, schema, or migrations.
+Do not modify static data.
+Do not change routes, probes, or package scripts.
 ```
+
+The spreadsheet should remain a controlled preparation artifact until a future task explicitly approves first-batch data entry and review.
 
 ---
 
 ## Recommended Next Task
 
-The recommended next task should be:
+Recommended next task:
 
 ```text
-Task 183 — Real Provider Data First Batch Preparation
+Task 183 - Real Provider Data First Batch Preparation
 ```
 
 Purpose:
 
-* Prepare the first small real provider batch.
-* Use the approved Excel template.
-* Keep the batch small enough for careful review.
-* Do not import yet.
+- Prepare the first small real provider batch in the approved Excel template.
+- Keep the batch to approximately 10 providers total.
+- Include provider rows, contact channels, verification notes, source tracking, and import QA checklist preparation.
+- Do not import data yet.
+
+Task 183 was not created as part of this task.
 
 ---
 
-## Scope
+## Scope Confirmation
 
-Allowed:
+For Task 182:
 
-* Create/update `docs/CodexTask-182-RealProviderDataFillingGuidance.md`.
-* Document how the project owner should fill the Excel template.
-* Recommend first-batch size and category priority.
-* Document safety rules.
-* Recommend next task.
-
-Not allowed:
-
-* Do not modify source code.
-* Do not modify UI copy.
-* Do not delete test data.
-* Do not insert real data.
-* Do not modify SQL, RLS, schema, or migrations.
-* Do not modify static data.
-* Do not change routes.
-* Do not modify probes.
-* Do not modify package scripts.
-* Do not create Task 183.
+- Only `docs/CodexTask-182-RealProviderDataFillingGuidance.md` was updated.
+- No source code was modified.
+- No UI copy was modified.
+- No test data was deleted.
+- No real provider data was inserted.
+- No SQL was modified.
+- No RLS was modified.
+- No schema was modified.
+- No migrations were modified.
+- No static data was modified.
+- No routes were changed.
+- No probes were modified.
+- No package scripts were modified.
+- Task 183 was not created.
 
 ---
 
-## Validation
+## Guidance Summary
 
-No code validation is required.
-
-Recommended check:
-
-```bash
-git status
-```
-
-No lint/build is required unless Codex modifies source code, which it must not do.
-
----
-
-## Acceptance Criteria
-
-* Real provider data filling guidance document exists.
-* Recommended first-batch size is documented.
-* Category priority is documented.
-* Required minimum fields are documented.
-* Contact channel guidance is documented.
-* Slug guidance is documented.
-* Verification guidance is documented.
-* Source tracking guidance is documented.
-* Import QA guidance is documented.
-* What-not-to-do-yet warning is included.
-* Recommended next task is identified.
-* No source code is modified.
-* No SQL/RLS/migration/schema files are modified.
-* No real provider data is inserted.
-* Task 183 is not created.
-
----
-
-## Deliverable
-
-A focused guidance document for filling the real provider data spreadsheet safely.
-
-Do not proceed beyond Task 182.
+The project owner should fill a small first batch of about 10 providers, starting with facilities and then pharmacies, diagnostics, and doctors. Rows should default to `pending` and `hidden` until verification and review pass. Contact channels, source tracking, verification notes, and import QA should be completed before any future import planning. No real provider data was added in this task.
