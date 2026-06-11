@@ -6,119 +6,114 @@ DigitalDirectory-v2
 
 ## Goal
 
-Create a QA record for the real provider data intake template created in Task 177.
+Record QA verification for the real provider data intake template created in Task 177.
 
-This task verifies that the intake template is complete, spreadsheet-ready, and usable by the project owner before real provider data collection begins.
-
-This is a documentation-only QA task.
-
-Do not insert, delete, import, or modify real provider data in this task.
-
----
-
-## Important Context
-
-Task 177 created:
-
-```text
-docs/data-intake/RealProviderDataIntakeTemplate.md
-```
-
-Task 177 also updated:
-
-```text
-docs/CodexTask-177-RealProviderDataIntakeTemplateCreation.md
-```
-
-The template is intended to help collect real provider information for:
-
-```text
-Facilities
-Doctors
-Pharmacies
-Diagnostics
-Contact Channels
-Verification Notes
-Source Tracking
-Import QA Checklist
-```
-
----
-
-## Main Objective
-
-Create a QA record confirming the real provider data intake template is ready for project-owner review and later data filling.
-
-Recommended target file:
-
-```text
-docs/CodexTask-178-RealProviderDataIntakeTemplateQA.md
-```
-
----
-
-## Required QA Checks
-
-Verify and document that the template includes:
-
-1. Facilities section.
-2. Doctors section.
-3. Pharmacies section.
-4. Diagnostics section.
-5. Contact Channels section.
-6. Verification Notes section.
-7. Source Tracking section.
-8. Import QA Checklist section.
-9. Field name column or equivalent guidance.
-10. Required/optional guidance.
-11. Example values.
-12. Notes/guidance.
-13. Allowed values reference.
-14. Slug rules.
-15. Contact channel guidance.
-16. Diagnostics provider type guidance.
-17. Do-not-delete/import warning.
-18. Recommended next task.
-
----
-
-## Required Safety Checks
-
-Document that the template:
-
-* Does not include real provider data.
-* Does not modify source code.
-* Does not modify SQL, RLS, schema, or migrations.
-* Does not insert data.
-* Does not delete test data.
-* Does not modify static fallback data.
-* Does not create Task 179.
+This is a documentation-only QA task. No source code, UI copy, test data, real data, SQL, RLS, schema, migrations, static data, routes, probes, or package scripts were modified for this task.
 
 ---
 
 ## QA Status
 
-The QA record should state one of:
-
 ```text
-Passed
-Passed with minor follow-up
-Blocked
+Passed.
 ```
 
-Expected status:
+The intake template exists, is spreadsheet-ready, and includes the required provider intake sections, field-level guidance, allowed values, safety warnings, and next-task recommendation.
+
+Template verified:
 
 ```text
-Passed
+docs/data-intake/RealProviderDataIntakeTemplate.md
 ```
 
-if the template contains all required sections and guidance.
+---
+
+## Context Reviewed
+
+Required context reviewed:
+
+- `docs/CodexTask-177-RealProviderDataIntakeTemplateCreation.md`
+- `docs/CodexTask-178-RealProviderDataIntakeTemplateQA.md`
+- `docs/data-intake/RealProviderDataIntakeTemplate.md`
+
+---
+
+## Template Sections Verified
+
+| Required template section | Verified | Notes |
+| --- | --- | --- |
+| Facilities section | Yes | Includes facility-specific spreadsheet fields. |
+| Doctors section | Yes | Includes doctor-specific spreadsheet fields and privacy guidance. |
+| Pharmacies section | Yes | Includes pharmacy-specific fields and workflow caution. |
+| Diagnostics section | Yes | Includes diagnostics-specific fields and provider type guidance. |
+| Contact Channels section | Yes | Includes one-to-many public contact channel format. |
+| Verification Notes section | Yes | Includes review and verification tracking fields. |
+| Source Tracking section | Yes | Includes source provenance and review fields. |
+| Import QA Checklist section | Yes | Includes checklist row format and required checks. |
+
+---
+
+## Field Format Verified
+
+The template includes the required spreadsheet-ready columns across the provider and QA sections:
+
+| Required format item | Verified | Notes |
+| --- | --- | --- |
+| Field name guidance | Yes | Each section uses a `Field name` column. |
+| Required/optional guidance | Yes | Each field table uses a `Required or optional` column. |
+| Example values | Yes | Each field table includes an `Example value` column. |
+| Notes/guidance | Yes | Each field table includes a `Notes/guidance` column. |
+
+The template uses example values only and does not include real provider data.
+
+---
+
+## Supporting Guidance Verified
+
+| Required guidance | Verified | Notes |
+| --- | --- | --- |
+| Allowed values reference | Yes | Provider category, status, boolean, review, type, contact, and source values are listed. |
+| Slug rules | Yes | Lowercase, hyphen-separated, stable, unique slug rules are documented. |
+| Contact channel guidance | Yes | Public contact safety, provider slug matching, and private-number warnings are included. |
+| Diagnostics provider type guidance | Yes | Diagnostics provider type and contact-provider type guidance are included. |
+| Do-not-delete/import warning | Yes | Test rows, fallback data, QA fixtures, and import warnings are included. |
+| Recommended next task | Yes | Task 179 is named as the recommended next task. |
+
+---
+
+## Safety Checks
+
+| Safety item | Status |
+| --- | --- |
+| No real provider data was inserted | Confirmed |
+| No source code was modified | Confirmed |
+| No UI copy was modified | Confirmed |
+| No SQL files were modified | Confirmed |
+| No RLS files were modified | Confirmed |
+| No schema files were modified | Confirmed |
+| No migration files were modified | Confirmed |
+| No test data was deleted | Confirmed |
+| No static data was modified | Confirmed |
+| No routes were changed | Confirmed |
+| No probes were modified | Confirmed |
+| No package scripts were modified | Confirmed |
+| Task 179 was not created | Confirmed |
+
+---
+
+## Remaining Issues
+
+```text
+None for this documentation-only QA task.
+```
+
+Future work remains outside this task: deciding whether to export the markdown template into Excel/CSV files for project-owner data entry.
 
 ---
 
 ## Recommended Next Task
 
-The recommended next task should be:
+Recommended next task:
 
 ```text
 Task 179 — Real Provider Data Spreadsheet Export Planning
@@ -126,69 +121,34 @@ Task 179 — Real Provider Data Spreadsheet Export Planning
 
 Purpose:
 
-* Decide whether to convert the markdown intake template into Excel/CSV files.
-* Prepare spreadsheet tabs for Facilities, Doctors, Pharmacies, Diagnostics, Contact Channels, Verification Notes, Source Tracking, and Import QA Checklist.
-* Make it easy for the project owner to fill real provider data outside the codebase.
+- Decide whether to convert the markdown intake template into Excel/CSV files.
+- Prepare spreadsheet tabs for Facilities, Doctors, Pharmacies, Diagnostics, Contact Channels, Verification Notes, Source Tracking, and Import QA Checklist.
+- Make it easy for the project owner to fill real provider data outside the codebase.
+
+Task 179 was not created as part of this task.
 
 ---
 
-## Scope
+## Scope Confirmation
 
-Allowed:
+For Task 178:
 
-* Create/update `docs/CodexTask-178-RealProviderDataIntakeTemplateQA.md`.
-* Inspect `docs/data-intake/RealProviderDataIntakeTemplate.md`.
-* Record QA findings.
-* Recommend next task.
-
-Not allowed:
-
-* Do not modify source code.
-* Do not modify UI copy.
-* Do not delete test data.
-* Do not insert real data.
-* Do not modify SQL, RLS, schema, or migrations.
-* Do not modify static data.
-* Do not change routes.
-* Do not modify probes.
-* Do not modify package scripts.
-* Do not create Task 179.
+- No source code was modified.
+- No UI copy was modified.
+- No test data was deleted.
+- No real data was inserted.
+- No SQL was modified.
+- No RLS was modified.
+- No schema was modified.
+- No migrations were modified.
+- No static data was modified.
+- No routes were changed.
+- No probes were modified.
+- No package scripts were modified.
+- Task 179 was not created.
 
 ---
 
-## Validation
+## QA Summary
 
-No code validation is required.
-
-Recommended check:
-
-```bash
-git status
-```
-
-No lint/build is required unless Codex modifies source code, which it must not do.
-
----
-
-## Acceptance Criteria
-
-* QA markdown record exists.
-* Intake template sections are verified.
-* Required/optional/example/guidance format is verified.
-* Allowed values are verified.
-* Slug rules are verified.
-* Contact channel guidance is verified.
-* Diagnostics provider type guidance is verified.
-* Do-not-delete/import warning is verified.
-* No real provider data is inserted.
-* No source code is modified.
-* No SQL/RLS/migration/schema files are modified.
-* Task 179 is not created.
-
----
-
-## Deliverable
-
-A focused QA record for the real provider data intake template.
-
-Do not proceed beyond Task 178.
+Task 178 passed. The real provider data intake template contains all required sections, spreadsheet-ready field guidance, allowed values, slug rules, contact channel guidance, diagnostics provider type guidance, and do-not-delete/import warnings. No real provider data or implementation files were changed.
