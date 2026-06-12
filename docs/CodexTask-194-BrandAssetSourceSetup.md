@@ -10,82 +10,101 @@ Create a stable source folder and documentation record for Tiru MedDirectory bra
 
 This task follows:
 
-* CodexTask-193-BrandAssetsUploadAndFrontendRefinementPlanning.md
+- `docs/CodexTask-193-BrandAssetsUploadAndFrontendRefinementPlanning.md`
 
-This is a documentation and folder setup task.
-
-Do not apply brand assets to the public app in this task.
+This is a documentation and folder setup task. No brand assets were applied to the public app.
 
 ---
 
-## Important Context
+## Source Setup Status
 
-Real facility profiles are now visible in the app.
+```text
+Brand asset source setup complete.
+```
 
-The project is entering the branding and frontend refinement phase.
-
-The next step is to create a safe location for brand source files such as logos, icons, color palette references, and brand guidelines.
-
----
-
-## Main Objective
-
-Create the brand source folder:
+Created brand source folder:
 
 ```text
 docs/brand/source/
 ```
 
-Because Git does not track empty folders, create a placeholder file:
+Created placeholder file:
 
 ```text
 docs/brand/source/.gitkeep
 ```
 
-Create or update this task record:
-
-```text
-docs/CodexTask-194-BrandAssetSourceSetup.md
-```
+The `.gitkeep` file allows the empty brand source folder to be tracked until actual brand files are provided.
 
 ---
 
-## Brand Assets Expected Later
-
-The project owner may later provide:
+## Brand Files Pending Status
 
 ```text
-primary logo SVG
-primary logo PNG
-icon-only SVG
-icon-only PNG
-dark logo variant
-light logo variant
-brand guideline document
-color palette reference
-typography notes
-Figma export or screenshots
+Actual brand files are pending.
 ```
 
-Do not invent or generate brand files in this task.
+No project-owner logo, icon, color, typography, or guideline files were added in Task 194 unless they already existed outside this task. This task only prepared the folder and documentation record.
 
 ---
 
-## Current Source Folder Status
+## Expected Future Brand Asset Types
 
-Record that the brand source folder is prepared at:
+Future brand intake may include:
+
+| Asset type | Preferred format | Notes |
+| --- | --- | --- |
+| Primary logo | SVG, PNG | Use the highest-quality source available. |
+| Icon-only logo | SVG, PNG | Useful for favicon, compact navigation, and app icon contexts. |
+| Light-background logo | SVG, PNG | For light UI surfaces. |
+| Dark-background logo | SVG, PNG | For dark footer or dark panel contexts. |
+| Favicon/app icon source | SVG, PNG, ICO | Should be reviewed before public app use. |
+| Brand guideline document | PDF, MD, DOCX | Should define brand usage if available. |
+| Color palette reference | MD, PDF, image | Prefer exact hex values when possible. |
+| Typography notes | MD, PDF, image | Include typeface names, fallbacks, or screenshots. |
+| UI reference screenshots | PNG, JPG | Optional examples of preferred visual direction. |
+| Figma export/reference | Figma export, PNG, PDF | Optional design reference for future refinement. |
+
+Do not invent or generate brand files as part of the source setup task.
+
+---
+
+## Branding Safety Rules
+
+Future branding work must preserve:
 
 ```text
-docs/brand/source/
+/facilities
+/facilities/[slug]
+real facility profile data
+real facility names
+facility detail routes by slug
+pharmacy routes
+diagnostics routes
+doctor routes
 ```
 
-Record that actual brand files are still pending unless already provided by the project owner.
+Task 194 did not modify:
+
+```text
+source code
+UI components
+CSS/theme files
+public app assets
+real facility JSON/data
+Supabase SQL/RLS/schema/migrations
+pharmacy behavior
+diagnostics behavior
+doctor behavior
+```
+
+Brand assets should not be copied into public app asset folders or applied to UI components until a later reviewed implementation task explicitly authorizes that work.
 
 ---
 
 ## Future App Asset Direction
 
-Later implementation tasks may copy reviewed brand assets into app/public folders such as:
+Later tasks may review and, if approved, copy selected brand files into app-facing locations such as:
 
 ```text
 public/brand/
@@ -94,104 +113,70 @@ src/components/layout/
 src/styles/
 ```
 
-Do not create or modify these app/public asset folders in Task 194.
-
----
-
-## Branding Safety Rules
-
-Branding work must not break:
-
-```text
-/facilities
-/facilities/[slug]
-real facility profile data
-pharmacy routes
-diagnostics routes
-doctor routes
-```
-
-Do not modify real facility JSON/data in this task.
+Task 194 did not create or modify those app/public asset folders.
 
 ---
 
 ## Recommended Next Task
 
-The recommended next task should be:
+Recommended next task:
 
 ```text
-Task 195 — Brand Asset Intake and File Inventory
+Task 195 - Brand Asset Intake and File Inventory
 ```
 
 Purpose:
 
-* Add the project owner’s actual logo/brand files into `docs/brand/source/`.
-* Record the exact file names and types.
-* Decide which files are suitable for app integration.
-* Do not apply assets to the UI yet until reviewed.
+- Add the project owner's actual logo and brand files into `docs/brand/source/`.
+- Record exact file names, formats, sizes, and available variants.
+- Decide which files are suitable for future app integration.
+- Do not apply assets to the UI until reviewed.
+
+Task 195 was not created as part of this task.
 
 ---
 
-## Scope
-
-Allowed:
-
-* Create `docs/brand/source/`.
-* Create `docs/brand/source/.gitkeep`.
-* Create/update this Task 194 markdown record.
-* Document the expected brand files.
-* Recommend next task.
-
-Not allowed:
-
-* Do not modify source code.
-* Do not modify UI components.
-* Do not modify CSS/theme files.
-* Do not add logo to the app yet.
-* Do not modify public app assets yet.
-* Do not modify real facility JSON/data.
-* Do not modify Supabase SQL, RLS, schema, or migrations.
-* Do not import data to Supabase.
-* Do not modify pharmacy, diagnostics, or doctors behavior.
-* Do not create Task 195.
-
----
-
-## Validation
-
-Recommended checks:
-
-```bash
-git status
-```
-
-Confirm:
+## Files Created
 
 ```text
-docs/brand/source/.gitkeep exists
+docs/brand/source/.gitkeep
 ```
 
-No lint/build is required because no app code should be modified.
+---
+
+## Files Modified
+
+```text
+docs/CodexTask-194-BrandAssetSourceSetup.md
+```
 
 ---
 
-## Acceptance Criteria
+## Scope Confirmation
 
-* Brand source folder exists.
-* `.gitkeep` exists inside the brand source folder.
-* Task 194 markdown record exists.
-* Expected brand assets are documented.
-* Brand safety rules are documented.
-* Recommended next task is identified.
-* No source code is modified.
-* No UI/theme/app assets are modified.
-* No real facility data is modified.
-* Task 195 is not created.
+For Task 194:
+
+- `docs/brand/source/` was created.
+- `docs/brand/source/.gitkeep` was created.
+- Only `docs/CodexTask-194-BrandAssetSourceSetup.md` was updated.
+- No source code was modified.
+- No UI components were modified.
+- No CSS/theme files were modified.
+- No logo was added to the app.
+- No public app assets were modified.
+- No real facility JSON/data was modified.
+- No Supabase SQL was modified.
+- No RLS was modified.
+- No schema was modified.
+- No migrations were modified.
+- No Supabase import was performed.
+- Pharmacy behavior was not modified.
+- Diagnostics behavior was not modified.
+- Doctors behavior was not modified.
+- Task 195 was not created.
 
 ---
 
-## Deliverable
+## Setup Summary
 
-A safe brand source setup record and folder ready for future brand asset intake.
-
-Do not proceed beyond Task 194.
+Task 194 created a safe source location for future Tiru MedDirectory brand files at `docs/brand/source/` with a `.gitkeep` placeholder. Actual brand files remain pending and should be inventoried in a future Task 195 before any public app branding changes are made.
