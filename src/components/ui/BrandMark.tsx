@@ -8,14 +8,24 @@ export function BrandMark() {
       href="/"
       aria-label="Tiru MedDirectory home"
     >
-      <Image
-        src="/brand/tiru-primary-logo.svg"
-        alt="Tiru MedDirectory"
-        width={1200}
-        height={420}
-        priority
-        className="h-12 w-auto max-w-[180px] sm:max-w-[220px]"
-      />
+      <span className="brand-logo-frame">
+        <Image
+          src="/brand/tiru-primary-logo.svg"
+          alt="Tiru MedDirectory"
+          width={1200}
+          height={420}
+          priority
+          className="brand-logo brand-logo-light"
+        />
+        <Image
+          src="/brand/tiru-primary-logo-dark.svg"
+          alt="Tiru MedDirectory"
+          width={1200}
+          height={420}
+          priority
+          className="brand-logo brand-logo-dark"
+        />
+      </span>
     </Link>
   );
 }
