@@ -10,56 +10,70 @@ Create a planning record for the Tiru MedDirectory branding and frontend refinem
 
 This task follows:
 
-* CodexTask-191-WireSimpleFacilityProfilesJSONIntoFacilitiesUI.md
-* CodexTask-192-RealFacilitiesUIQAAndRefinementBacklog.md
+- `docs/CodexTask-191-WireSimpleFacilityProfilesJSONIntoFacilitiesUI.md`
+- `docs/CodexTask-192-RealFacilitiesUIQAAndRefinementBacklog.md`
 
-This is a documentation-only branding planning task.
-
-Do not modify source code in this task.
+This is a documentation-only branding planning task. No source code, UI components, CSS/theme files, app logo/assets, facility JSON/data, Supabase SQL, RLS, schema, migrations, or route behavior were modified.
 
 ---
 
-## Important Context
-
-Real facility profiles are now visible on:
+## Planning Status
 
 ```text
-/facilities
+Brand assets upload and frontend refinement planning complete.
 ```
 
-Task 192 recorded known frontend/UI refinement backlog items, including:
-
-```text
-Facility detail tabs/interactions
-Facility detail action panels
-Contact link behavior
-Mobile spacing
-Desktop spacing
-Card height consistency
-Facility category filters
-Search/filter behavior
-Missing-field display behavior
-Legacy sample route behavior
-Overall visual polish
-```
-
-The next phase is to bring in the Tiru MedDirectory brand assets and refine the UI around the real facility data.
+This record prepares the next branding/refinement phase only. It does not apply brand assets to the public app.
 
 ---
 
-## Main Objective
+## Current App Context
 
-Prepare the project for branding and frontend refinement.
+Real facilities are now visible in the app.
 
-Recommended target file:
+Recorded preview status from Task 192:
 
 ```text
-docs/CodexTask-193-BrandAssetsUploadAndFrontendRefinementPlanning.md
+Real facilities are visible on /facilities.
+Real facility names are displayed from the extracted facility profiles JSON.
+Facility detail routes are available by slug.
 ```
+
+Known deferred UI issue:
+
+```text
+Some facility detail tabs or interactive sections are not working correctly.
+```
+
+This issue should be addressed during the frontend refinement phase, not in Task 193.
 
 ---
 
-## Brand Asset Source Folder
+## Brand Asset Needs
+
+The project owner should provide the strongest available source files for the Tiru MedDirectory brand.
+
+Recommended requested assets:
+
+| Asset | Priority | Notes |
+| --- | --- | --- |
+| Primary logo | Required | Prefer SVG; PNG acceptable as fallback. |
+| Icon-only logo | Recommended | Useful for favicon, compact nav, app icon, and social preview. |
+| SVG logo version | Required if available | Best for crisp UI scaling. |
+| PNG logo version | Recommended | Useful for fallback, previews, and quick comparison. |
+| Light-background logo | Recommended | For current light UI surfaces. |
+| Dark-background logo | Recommended | For footer, dark panels, or future dark contexts. |
+| Brand guideline document | Recommended | PDF, markdown, or image reference. |
+| Color palette | Required if available | Include hex values if known. |
+| Typography notes | Recommended | Include typeface names, fallbacks, or screenshots. |
+| Favicon/app icon source | Recommended | Helps avoid low-quality cropped logo usage. |
+| Preferred UI examples/screenshots | Optional | Useful for tone and spacing direction. |
+
+Do not apply these assets to the public app until a later implementation task explicitly approves it.
+
+---
+
+## Recommended Brand Source Folder
 
 Recommended future folder:
 
@@ -67,46 +81,35 @@ Recommended future folder:
 docs/brand/source/
 ```
 
-This folder may later contain:
+Purpose:
+
+- Store uploaded brand source files before app integration.
+- Preserve original filenames and source quality.
+- Record what the project owner provided.
+- Keep brand review separate from app implementation.
+
+Future contents may include:
 
 ```text
-logo SVG
-logo PNG
-icon-only SVG
-icon-only PNG
-dark logo variant
-brand guideline PDF or markdown
-color palette reference
-typography reference
-Figma export or screenshots
+logo.svg
+logo.png
+icon.svg
+icon.png
+logo-light.svg
+logo-dark.svg
+brand-guidelines.pdf
+brand-colors.md
+typography-reference.md
+ui-reference-screenshots/
 ```
 
-Do not create or modify app assets in this task unless explicitly instructed later.
+Task 193 does not create this folder and does not add brand files.
 
 ---
 
-## Brand Assets Needed From Project Owner
+## Known Tiru MedDirectory Brand Direction
 
-The project owner should provide any available:
-
-```text
-Primary logo
-Icon-only logo
-SVG version if available
-PNG version if available
-Dark background version
-Light background version
-Color palette
-Typography notes
-Brand guideline document
-App screenshots or preferred UI examples
-```
-
----
-
-## Known Brand Direction
-
-The Tiru MedDirectory brand has previously used a healthcare/directory identity direction with:
+Current known direction:
 
 ```text
 Tiru MedDirectory
@@ -115,155 +118,139 @@ healthcare navigation / map-to-care concept
 professional, trustworthy, clean UI
 ```
 
-Brand integration should support the tagline direction:
+Known tagline direction:
 
 ```text
 Your Map To Trace Private Health Care in Addis
 ```
 
-Do not force the tagline everywhere. Use it only where it improves clarity.
+Brand planning guidance:
+
+- Use the brand to build trust and clarity around real healthcare facility data.
+- Keep the interface clean, calm, and directory-focused.
+- Avoid visual changes that make facility data harder to scan.
+- Use the tagline selectively where it improves clarity.
+- Do not force the tagline into every header, card, or route.
 
 ---
 
 ## Frontend Refinement Goals
 
-The branding/frontend phase should focus on:
+Frontend refinement should address the real-data UI while preserving existing app behavior.
 
-```text
-Header/nav polish
-Logo placement
-Color palette alignment
-Button styling
-Card spacing
-Facility listing card consistency
-Facility detail page polish
-Contact/action panel usability
-Mobile layout
-Desktop layout
-Search/filter visual clarity
-Trust-building copy
-Footer cleanup
-```
+Goals:
+
+| Goal | Planning notes |
+| --- | --- |
+| Header/nav polish | Improve brand presence, navigation clarity, and logo placement after assets are reviewed. |
+| Logo placement | Use approved source assets only; avoid stretched, cropped, or low-resolution display. |
+| Color palette alignment | Apply brand colors carefully in a future implementation task. |
+| Typography pass | Align headings, labels, and body rhythm with brand direction. |
+| Button styling | Improve action clarity without changing workflows prematurely. |
+| Facility listing card consistency | Improve real-data card spacing, height, and scannability. |
+| Facility detail page polish | Improve hierarchy, tabs/interactions, and section clarity. |
+| Facility detail action panels | Improve contact/action placement and missing-field states. |
+| Contact link behavior | Verify safe click behavior for phone, email, web, maps, and social/booking links. |
+| Mobile spacing | Improve small-screen spacing for listings and detail pages. |
+| Desktop spacing | Improve page density and section alignment on wider screens. |
+| Search/filter visual clarity | Make facility category filters and search behavior easier to understand. |
+| Missing-field display behavior | Hide missing fields or show production-safe wording consistently. |
+| Legacy sample route behavior | Review old/sample routes after real facility wiring. |
+| Overall visual polish | Improve consistency while preserving real facility data wiring. |
 
 ---
 
-## Real Facilities Must Stay Stable
+## Real Facilities Stability Requirements
 
-Branding changes must not break:
+Branding/frontend refinement must preserve:
 
 ```text
 /facilities
 /facilities/[slug]
 real facility listing data
 real facility detail data
-pharmacy routes
-diagnostics routes
-doctor routes
+facility detail routes by slug
+real facility names
 ```
 
-No Supabase import should be done in the branding phase unless separately planned.
+Branding/frontend refinement must not modify:
+
+```text
+real facility JSON/data
+Supabase SQL/RLS/schema/migrations
+pharmacy behavior
+diagnostics behavior
+doctor behavior
+package scripts
+probes
+```
+
+No Supabase import should be performed during branding unless a later task explicitly plans and approves it.
 
 ---
 
-## Recommended Brand Implementation Sequence
+## Recommended Implementation Sequence
 
-Recommended next implementation sequence:
+Recommended future sequence:
 
-### Step 1: Brand asset source setup
+| Step | Task type | Purpose |
+| --- | --- | --- |
+| 1 | Brand asset source setup | Create `docs/brand/source/` and store uploaded brand files without applying them to the app. |
+| 2 | Brand asset QA | Verify file formats, dimensions, transparency, variants, and source quality. |
+| 3 | Brand audit | Compare current UI against provided brand assets and guidelines. |
+| 4 | Frontend refinement planning | Break the UI backlog into safe, focused implementation tasks. |
+| 5 | Header/logo implementation | Apply approved logo assets carefully in public UI. |
+| 6 | Color/typography pass | Apply brand color and type refinements in controlled files. |
+| 7 | Facilities UI interaction fix | Fix facility detail tabs/interactions and related action panels. |
+| 8 | Facilities listing/detail polish | Improve cards, spacing, filters, contact links, missing fields, and detail layout. |
+| 9 | Mobile/desktop QA | Verify main public routes across viewport sizes. |
+| 10 | Regression check | Confirm real facilities remain visible and no adjacent provider routes were broken. |
 
-Create a stable place for brand assets.
-
-### Step 2: Brand audit
-
-Inspect current UI against the brand direction.
-
-### Step 3: Header and logo integration
-
-Apply logo carefully.
-
-### Step 4: Color and typography pass
-
-Align buttons, cards, headings, links, and highlights.
-
-### Step 5: Facilities UI refinement
-
-Fix known facility detail tabs/interactions and improve real-data presentation.
-
-### Step 6: Mobile/desktop QA
-
-Check the main public routes on both screen sizes.
+Each implementation task should keep scope narrow and include validation.
 
 ---
 
 ## Recommended Next Task
 
-The recommended next task should be:
+Recommended next task:
 
 ```text
-Task 194 — Brand Asset Source Setup
+Task 194 - Brand Asset Source Setup
 ```
 
 Purpose:
 
-* Create the project brand source folder.
-* Add uploaded logo/brand files into a stable location.
-* Document the exact files available.
-* Do not apply them to the app yet until files are reviewed.
+- Create the project brand source folder.
+- Add uploaded logo and brand files into a stable documentation/source location.
+- Document exact file names, formats, and available variants.
+- Do not apply brand files to the public app yet.
+
+Task 194 was not created as part of this task.
 
 ---
 
-## Scope
+## Scope Confirmation
 
-Allowed:
+For Task 193:
 
-* Create/update this planning document.
-* Define brand asset requirements.
-* Define frontend refinement sequence.
-* Document known UI backlog.
-* Recommend next task.
-
-Not allowed:
-
-* Do not modify source code.
-* Do not modify UI components.
-* Do not modify CSS/theme files.
-* Do not change logo/assets in public app yet.
-* Do not modify real facility JSON/data.
-* Do not modify Supabase SQL, RLS, schema, or migrations.
-* Do not import data to Supabase.
-* Do not modify pharmacy, diagnostics, or doctors behavior.
-* Do not create Task 194.
+- Only `docs/CodexTask-193-BrandAssetsUploadAndFrontendRefinementPlanning.md` was updated.
+- No source code was modified.
+- No UI components were modified.
+- No CSS/theme files were modified.
+- No logo/assets were changed in the public app.
+- No real facility JSON/data was modified.
+- No Supabase SQL was modified.
+- No RLS was modified.
+- No schema was modified.
+- No migrations were modified.
+- No Supabase import was performed.
+- Pharmacy behavior was not modified.
+- Diagnostics behavior was not modified.
+- Doctors behavior was not modified.
+- Task 194 was not created.
 
 ---
 
-## Validation
+## Planning Summary
 
-No code validation is required.
-
-Recommended check:
-
-```bash
-git status
-```
-
----
-
-## Acceptance Criteria
-
-* Branding/frontend refinement planning document exists.
-* Brand asset needs are documented.
-* Future brand source folder is documented.
-* Frontend refinement goals are documented.
-* Real facilities stability requirement is documented.
-* Recommended next task is identified.
-* No source code is modified.
-* No app branding is changed yet.
-* Task 194 is not created.
-
----
-
-## Deliverable
-
-A focused planning record for entering the Tiru MedDirectory branding and frontend refinement phase.
-
-Do not proceed beyond Task 193.
+Task 193 confirms that real facilities are visible in the app and prepares the brand/frontend refinement phase. The project should first collect source brand assets under a future `docs/brand/source/` folder, verify those assets, then proceed through a controlled UI refinement sequence that preserves real facility data and avoids unrelated provider, database, or routing changes.
