@@ -10,268 +10,258 @@ Improve the first-pass brand integration by adding a light/dark mode option and 
 
 This task follows:
 
-* CodexTask-197-ApplyBrandAssetsToHeaderAndThemeFoundation.md
+- `docs/CodexTask-197-ApplyBrandAssetsToHeaderAndThemeFoundation.md`
 
-The current brand foundation is working, but review showed:
-
-* Desktop view feels too bright because the UI is mostly white with light mint contrast.
-* Mobile layout is strong.
-* Header logo is too small/thin.
-* The logo slogan is not readable at header size.
+This was a focused refinement task. It did not perform a full UI redesign.
 
 ---
 
-## Main Objectives
-
-1. Add a safe light/dark mode toggle.
-2. Improve header logo visibility.
-3. Improve desktop contrast without making the interface heavy.
-4. Keep mobile layout stable.
-5. Preserve real facility data and routes.
-6. Avoid full UI redesign.
-
----
-
-## Theme Toggle Requirements
-
-Add a user-facing light/dark mode toggle in the header/nav area.
-
-Preferred behavior:
-
-* Default theme can remain light.
-* User can toggle between light and dark.
-* Store user choice in localStorage if simple and safe.
-* Apply theme by setting a class or data attribute on the root/html element.
-* Avoid hydration errors.
-* Keep the implementation simple.
-
-Suggested labels/icons:
+## Implementation Status
 
 ```text
-Light
-Dark
+Theme toggle and logo visibility refinement implemented.
 ```
 
-or compact icons if the project already has an icon pattern.
+Completed:
 
-On mobile, the toggle should not crowd the header. If needed, use compact text/icons.
+- Added a light/dark mode toggle in the header/nav area.
+- Default theme remains light.
+- Theme choice is persisted in `localStorage`.
+- Theme is applied with `data-theme` on the root `html` element.
+- Header logo visibility was improved with a framed, larger responsive presentation.
+- Light theme desktop contrast was strengthened carefully.
+- Dark theme was added using the Tiru palette.
+- Existing route/data behavior was preserved.
 
 ---
 
-## Light Theme Direction
-
-Keep current brand direction but reduce overly bright desktop feeling.
-
-Use:
+## Files Created
 
 ```text
-White: #FFFFFF
-Mint: #E1F5EE
-Teal: #1D9E75
-Light Teal: #5DCAA5
-Deep Ink: #1A2E2A
+src/components/ui/ThemeToggle.tsx
 ```
-
-Improve contrast by:
-
-* using Deep Ink more clearly for headings and major text
-* slightly strengthening borders where cards feel too pale
-* using Mint as a controlled section background, not everywhere
-* keeping cards mostly white for readability
-* avoiding excessive bright empty white space on desktop
-* preserving the calm medical/directory feeling
-
-Do not make the light theme dark. Just make it more balanced and less washed out.
 
 ---
 
-## Dark Theme Direction
-
-Create a clean dark mode based on the same brand identity.
-
-Recommended dark mode direction:
+## Files Modified
 
 ```text
-Background: deep ink / near-deep ink
-Cards: slightly lighter dark surface
-Text: white or soft white
-Muted text: pale mint/gray
-Primary actions: teal
-Borders: subtle teal/deep ink mix
-Focus rings: light teal
+src/components/layout/Header.tsx
+src/components/ui/BrandMark.tsx
+src/app/globals.css
+docs/CodexTask-198-ThemeToggleAndLogoVisibilityRefinement.md
 ```
 
-Dark mode should feel professional, calm, and readable.
+---
 
-Avoid:
+## Theme Toggle Implementation Details
 
-* pure black everywhere
-* neon colors
-* low contrast text
-* changing layout structure
-* hiding existing content
+Added:
+
+```text
+src/components/ui/ThemeToggle.tsx
+```
+
+Implementation notes:
+
+- Client component.
+- Uses `useSyncExternalStore` to read `localStorage` safely.
+- Stores the selected theme under `tiru-theme`.
+- Applies theme using `document.documentElement.dataset.theme`.
+- Sets browser `color-scheme` to match the selected theme.
+- Avoids effect-driven state initialization that can cause hydration/lint issues.
+- Uses compact text labels: `Dark` and `Light`.
+
+Header placement:
+
+```text
+src/components/layout/Header.tsx
+```
+
+The toggle was added to the header/nav area and header spacing was tightened slightly on small screens to preserve the existing mobile layout.
 
 ---
 
-## Header Logo Visibility Requirements
+## Logo Visibility Changes
 
-The current header logo is too small and thin.
+Updated:
 
-Improve the header logo so that:
+```text
+src/components/ui/BrandMark.tsx
+```
 
-* it is clearly visible on desktop
-* it is clearly visible on mobile
-* it does not stretch or distort
-* it does not break header height
-* it still links to `/`
-* alt text remains `Tiru MedDirectory`
+Logo behavior:
 
-Recommended approach:
+- Logo remains linked to `/`.
+- Alt text remains `Tiru MedDirectory`.
+- Light theme uses `/brand/tiru-primary-logo.svg`.
+- Dark theme uses `/brand/tiru-primary-logo-dark.svg`.
+- Logo is wrapped in a subtle framed surface for stronger visibility.
+- Logo size is responsive:
+  - compact enough for mobile
+  - larger and clearer on desktop
+  - not stretched or distorted
 
-* increase logo width/height slightly on desktop
-* increase mobile logo visibility without crowding navigation
-* use the current `/brand/tiru-primary-logo.svg` on light theme
-* use `/brand/tiru-primary-logo-dark.svg` on dark theme if needed
-* if the slogan remains unreadable at nav size, do not force it; prioritize clean logo visibility
-
-Important brand note:
-
-The slogan/tagline is valuable, but it may not be readable in a compact header logo. It can be preserved in hero or brand sections later.
+The tagline inside the logo asset is not forced separately into the header.
 
 ---
 
-## Mobile Requirements
+## Light Theme Contrast Changes
 
-Current mobile view is strong and should be preserved.
+Updated:
 
-Do not break:
+```text
+src/app/globals.css
+```
 
-* mobile header spacing
-* bottom navigation
-* hero section layout
-* search card spacing
-* category chips
-* facility list visibility
+Light theme adjustments:
 
-The theme toggle should fit naturally on mobile.
+- Background now uses a subtle mint/white mix instead of flat white.
+- Borders were strengthened from the first brand pass.
+- Muted surfaces remain mint-based but are slightly controlled.
+- Deep Ink remains the main foreground color.
+- Teal remains the primary action/accent color.
+
+Brand colors used:
+
+| Token | Value |
+| --- | --- |
+| Deep Ink | `#1A2E2A` |
+| Teal | `#1D9E75` |
+| Light Teal | `#5DCAA5` |
+| Mint | `#E1F5EE` |
+| White | `#FFFFFF` |
 
 ---
 
-## Routes/Data To Protect
+## Dark Theme Behavior
 
-Do not break:
+Dark theme is activated by:
+
+```text
+data-theme="dark"
+```
+
+Dark theme direction:
+
+- Background uses near Deep Ink.
+- Cards use a slightly lighter dark green surface.
+- Text uses soft white.
+- Muted text uses pale mint/gray.
+- Primary action color uses Light Teal.
+- Borders use a subdued teal/deep ink mix.
+- Focus ring uses Light Teal.
+- Header logo switches to the dark logo variant.
+
+Dark theme is professional and conservative; it avoids pure black, neon styling, and layout restructuring.
+
+---
+
+## Route And Data Stability
+
+Preserved:
 
 ```text
 /
- /facilities
- /facilities/[slug]
- /doctors
- /diagnostics
- /pharmacies
- /search
- /nearby
- /register
+/facilities
+/facilities/[slug]
+/doctors
+/diagnostics
+/pharmacies
+/search
+/nearby
+/register
 ```
 
-Do not modify:
+Not modified:
 
 ```text
 docs/data-intake/simple-facility-profiles/tiru-med-directory-facility-profiles.simple.json
 src/data/real-facility-profiles.ts
+Supabase SQL/RLS/schema/migration files
+package.json
+package-lock.json
+seed/import scripts
 ```
 
-Do not modify Supabase SQL, RLS, schema, migrations, or seed/import scripts.
+Facility detail tabs/interactions were not broadly fixed in this task.
 
 ---
 
-## Scope
+## Validation Results
 
-Allowed:
+Requested commands:
 
-* Add a simple theme toggle.
-* Add a small theme provider/client component if needed.
-* Update global CSS variables for light and dark themes.
-* Improve header logo sizing and visibility.
-* Use the dark logo variant in dark mode if safe.
-* Adjust conservative contrast-related styles.
-* Run lint and build.
-
-Not allowed:
-
-* Do not perform a full UI redesign.
-* Do not modify real facility data.
-* Do not import data to Supabase.
-* Do not modify SQL/RLS/schema/migrations.
-* Do not fix all facility detail tabs/interactions yet.
-* Do not rewrite the homepage.
-* Do not redesign cards globally beyond theme contrast needs.
-* Do not create Task 199.
-
----
-
-## Validation
-
-Run:
-
-```bash
+```text
 npm.cmd run lint
 npm.cmd run build
 ```
 
-Manual checks:
+Environment note:
 
 ```text
-http://localhost:3000
-http://localhost:3000/facilities
+npm.cmd was not available on PATH in the Codex shell.
 ```
 
-Check:
+Equivalent validation was run with the available bundled/local Node runtime path.
 
-* Light theme loads by default.
-* Dark mode toggle works.
-* Toggling theme does not break layout.
-* Header logo is more visible.
-* Mobile layout remains clean.
-* Real facilities still show.
-* No facility data changed.
+| Validation | Result |
+| --- | --- |
+| `npm.cmd run lint` | Could not run; `npm.cmd` not available on PATH |
+| Bundled-runtime ESLint equivalent | Passed |
+| `npm.cmd run build` | Could not run; `npm.cmd` not available on PATH |
+| Bundled-runtime Next build equivalent | Passed |
 
----
+Build note:
 
-## Acceptance Criteria
+- An initial build attempt failed on stale/corrupt generated `.next/dev` route type cache.
+- The generated `.next/dev` cache directory was cleared.
+- The follow-up production build passed.
 
-* Light/dark mode toggle exists.
-* Theme choice works without hydration errors.
-* Theme choice is persisted if localStorage implementation is safe.
-* Desktop light theme contrast is improved.
-* Dark theme is readable and professional.
-* Header logo is larger/clearer.
-* Mobile layout remains stable.
-* Real facility routes still work.
-* `npm.cmd run lint` passes.
-* `npm.cmd run build` passes.
-* No Supabase SQL/RLS/schema/migration files are modified.
-* No real facility data files are modified.
-* Task 199 is not created.
+Final build summary:
+
+```text
+Compiled successfully.
+TypeScript completed.
+Static pages generated successfully.
+/facilities and /facilities/[slug] remained buildable dynamic routes.
+```
 
 ---
 
-## Recommended Next Task
+## Remaining Issues
 
-Task 199 — Facility Detail Tabs and Contact Action Refinement
+Deferred:
 
-Purpose:
+- Facility detail tabs/interactions still need focused refinement.
+- Facility detail action panels still need focused refinement.
+- Contact action/link behavior still needs focused refinement.
+- Broader mobile/desktop visual polish remains future work.
 
-* Fix facility detail tabs/interactions.
-* Improve contact action panels.
-* Improve call/directions/link behavior.
-* Keep branding stable.
-
-Do not create Task 199 in this task.
+No new validation blockers remain after the final lint/build pass.
 
 ---
 
-## Deliverable
+## Scope Confirmation
 
-A safe theme toggle and logo visibility refinement applied on top of the existing Tiru brand foundation.
+For Task 198:
 
-Do not proceed beyond Task 198.
+- No full UI redesign was performed.
+- Real facility data was not modified.
+- No Supabase import was performed.
+- No SQL was modified.
+- No RLS was modified.
+- No schema was modified.
+- No migrations were modified.
+- No seed/import scripts were modified.
+- Facility detail tabs/interactions were not broadly fixed.
+- Pharmacy behavior was not modified.
+- Diagnostics behavior was not modified.
+- Doctors behavior was not modified.
+- Task 199 was not created.
+
+---
+
+## Completion Summary
+
+Task 198 added a simple persistent light/dark theme toggle, improved Tiru header logo visibility, strengthened the light theme contrast, and added a professional dark theme using the Tiru palette. The existing route/data behavior was preserved, and equivalent local lint/build validation passed.

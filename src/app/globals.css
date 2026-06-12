@@ -7,7 +7,7 @@
   --tiru-mint: #E1F5EE;
   --tiru-white: #FFFFFF;
 
-  --background: var(--tiru-white);
+  --background: color-mix(in srgb, var(--tiru-mint) 18%, var(--tiru-white));
   --foreground: var(--tiru-deep-ink);
 
   --primary: var(--tiru-teal);
@@ -23,12 +23,33 @@
   --card: var(--tiru-white);
   --card-foreground: var(--tiru-deep-ink);
 
-  --muted: var(--tiru-mint);
-  --muted-foreground: #55706A;
+  --muted: color-mix(in srgb, var(--tiru-mint) 82%, var(--tiru-white));
+  --muted-foreground: #3F5F58;
 
-  --border: #D6E8E1;
+  --border: #BFDCD2;
   --input: var(--tiru-white);
   --ring: var(--tiru-teal);
+}
+
+[data-theme="dark"] {
+  --background: #12231F;
+  --foreground: #F6FFFB;
+
+  --primary: var(--tiru-light-teal);
+  --primary-foreground: var(--tiru-deep-ink);
+
+  --secondary: var(--tiru-teal);
+  --secondary-foreground: var(--tiru-white);
+
+  --card: #18342E;
+  --card-foreground: #F6FFFB;
+
+  --muted: #203D36;
+  --muted-foreground: #B8D8CE;
+
+  --border: #31564D;
+  --input: #17302A;
+  --ring: var(--tiru-light-teal);
 }
 
 @theme inline {
@@ -66,6 +87,51 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   overflow-x: hidden;
+}
+
+.brand-logo-frame {
+  display: flex;
+  width: min(38vw, 150px);
+  align-items: center;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--tiru-white) 88%, var(--tiru-mint));
+  padding: 7px 9px;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--tiru-deep-ink) 10%, transparent);
+}
+
+.brand-logo {
+  height: auto;
+  width: 100%;
+}
+
+.brand-logo-dark {
+  display: none;
+}
+
+[data-theme="dark"] .brand-logo-frame {
+  background: color-mix(in srgb, var(--tiru-deep-ink) 70%, black);
+  box-shadow: 0 8px 28px color-mix(in srgb, black 26%, transparent);
+}
+
+[data-theme="dark"] .brand-logo-light {
+  display: none;
+}
+
+[data-theme="dark"] .brand-logo-dark {
+  display: block;
+}
+
+@media (min-width: 640px) {
+  .brand-logo-frame {
+    width: 190px;
+    padding: 8px 10px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .brand-logo-frame {
+    width: 230px;
+  }
 }
 
 button,
