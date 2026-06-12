@@ -1,0 +1,16 @@
+{
+  "brand": "Tiru",
+  "tagline": "Trace the right care.",
+  "colors": {
+    "deepInk": "#1A2E2A",
+    "teal": "#1D9E75",
+    "lightTeal": "#5DCAA5",
+    "mint": "#E1F5EE",
+    "white": "#FFFFFF"
+  },
+  "typography": {
+    "wordmark": "Bold geometric sans-serif",
+    "tagline": "Clean modern sans-serif",
+    "body": "Inter or equivalent"
+  }
+}
