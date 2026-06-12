@@ -10,228 +10,188 @@ Review the available Tiru brand source assets and create a safe app integration 
 
 This task follows:
 
-* CodexTask-193-BrandAssetsUploadAndFrontendRefinementPlanning.md
-* CodexTask-194-BrandAssetSourceSetup.md
-* CodexTask-195-BrandAssetIntakeAndFileInventory.md
+- `docs/CodexTask-193-BrandAssetsUploadAndFrontendRefinementPlanning.md`
+- `docs/CodexTask-194-BrandAssetSourceSetup.md`
+- `docs/CodexTask-195-BrandAssetIntakeAndFileInventory.md`
+- `docs/brand/source/`
+- `docs/brand/source/tiru-brand-assets-app-ready/`
 
-This is a documentation-only brand review and integration planning task.
-
-Do not apply brand assets to the app in this task.
+This is a documentation-only brand review and integration planning task. No brand assets were applied to the app.
 
 ---
 
-## Important Context
+## Planning Status
 
-Brand assets are now available in:
+```text
+Brand asset review and app integration planning complete.
+```
+
+This record reviews available source assets and defines a safe future integration plan. It does not copy assets into `public/`, modify source code, modify UI components, modify CSS/theme files, or apply the logo to the public app.
+
+---
+
+## Reviewed Brand Assets
+
+Brand source folder:
 
 ```text
 docs/brand/source/
 ```
 
-Task 195 inventoried the available files:
+Extracted app-ready draft folder:
 
 ```text
-tiru_brand_assets_app_ready.zip
-tiru-brand-assets-app-ready/
-tiru-primary-logo.svg
-tiru-primary-logo-dark.svg
-tiru-icon.svg
-tiru-app-icon.svg
-tiru-brand-tokens.css
-tiru-brand-tokens.json
-source-brand-reference.jpg
-README.md
+docs/brand/source/tiru-brand-assets-app-ready/
 ```
 
-The project owner approved proceeding with the branding phase after real facility profiles became visible in the app.
+Reviewed files:
+
+| File | Source path | Likely use | Review notes |
+| --- | --- | --- | --- |
+| `tiru-primary-logo.svg` | `docs/brand/source/tiru-brand-assets-app-ready/tiru-primary-logo.svg` | Primary header/nav logo on light backgrounds | Best candidate for first public logo integration after approval. |
+| `tiru-primary-logo-dark.svg` | `docs/brand/source/tiru-brand-assets-app-ready/tiru-primary-logo-dark.svg` | Dark footer, dark panel, or dark banner logo | Use only where the background supports the dark variant. |
+| `tiru-icon.svg` | `docs/brand/source/tiru-brand-assets-app-ready/tiru-icon.svg` | Compact brand mark, mobile header accent, small UI mark, favicon exploration | Useful where full wordmark is too wide. |
+| `tiru-app-icon.svg` | `docs/brand/source/tiru-brand-assets-app-ready/tiru-app-icon.svg` | App icon/PWA icon reference, favicon planning | Review dimensions and safe padding before app-icon use. |
+| `tiru-brand-tokens.css` | `docs/brand/source/tiru-brand-assets-app-ready/tiru-brand-tokens.css` | CSS custom property reference | Source-only reference for future theme token mapping. |
+| `tiru-brand-tokens.json` | `docs/brand/source/tiru-brand-assets-app-ready/tiru-brand-tokens.json` | Design token reference | Source-only reference for documenting color and typography direction. |
+| `source-brand-reference.jpg` | `docs/brand/source/tiru-brand-assets-app-ready/source-brand-reference.jpg` | Original visual reference | Keep as reference; not recommended as production logo. |
+| `README.md` | `docs/brand/source/tiru-brand-assets-app-ready/README.md` | Asset usage guidance | Notes that SVG is preferred for app logo use and draft SVGs can be refined. |
+| `tiru_brand_assets_app_ready.zip` | `docs/brand/source/tiru_brand_assets_app_ready.zip` | Source archive | Preserve as archive of the extracted app-ready draft asset set. |
 
 ---
 
-## Main Objective
+## Recommended Public App Asset Paths
 
-Create an app integration plan for the available Tiru brand assets.
+Recommended future app-facing asset paths:
 
-Recommended target file:
+| Source asset | Recommended future app path | Purpose |
+| --- | --- | --- |
+| `tiru-primary-logo.svg` | `public/brand/tiru-primary-logo.svg` | Main app header/nav logo. |
+| `tiru-primary-logo-dark.svg` | `public/brand/tiru-primary-logo-dark.svg` | Dark footer or dark-section logo. |
+| `tiru-icon.svg` | `public/brand/tiru-icon.svg` | Compact mark for mobile/header/icon contexts. |
+| `tiru-app-icon.svg` | `public/brand/tiru-app-icon.svg` | App icon/fav icon planning source. |
 
-```text
-docs/CodexTask-196-BrandAssetReviewAndAppIntegrationPlanning.md
-```
+Do not copy these files in Task 196.
 
----
+Optional future documentation/reference paths:
 
-## Brand Asset Review
-
-Review and document the likely use of each asset:
-
-```text
-tiru-primary-logo.svg
-```
-
-Recommended use:
-
-```text
-Primary header/nav logo on light backgrounds.
-```
-
-```text
-tiru-icon.svg
-```
-
-Recommended use:
-
-```text
-Compact icon mark, mobile header, favicon/app icon source, empty-state visual accent, or small brand mark.
-```
-
-```text
-tiru-app-icon.svg
-```
-
-Recommended use:
-
-```text
-App icon reference or future PWA/app icon source.
-```
-
-```text
-tiru-primary-logo-dark.svg
-```
-
-Recommended use:
-
-```text
-Dark hero/footer/section variant only.
-```
-
-```text
-tiru-brand-tokens.css
-```
-
-Recommended use:
-
-```text
-Color token reference for future CSS/theme integration.
-```
-
-```text
-tiru-brand-tokens.json
-```
-
-Recommended use:
-
-```text
-Design-token documentation and future automated theme reference.
-```
-
-```text
-source-brand-reference.jpg
-```
-
-Recommended use:
-
-```text
-Original visual reference only; not preferred for final app logo rendering.
-```
-
----
-
-## Recommended App Asset Paths
-
-Plan to copy reviewed app-ready assets later into:
-
-```text
-public/brand/tiru-primary-logo.svg
-public/brand/tiru-icon.svg
-public/brand/tiru-app-icon.svg
-public/brand/tiru-primary-logo-dark.svg
-```
-
-Do not copy files in Task 196.
+| Source asset | Recommended future reference path | Purpose |
+| --- | --- | --- |
+| `tiru-brand-tokens.css` | Keep in `docs/brand/source/` until theme integration is planned | Source token reference; do not import directly without review. |
+| `tiru-brand-tokens.json` | Keep in `docs/brand/source/` until design token mapping is planned | Source token reference; useful for implementation planning. |
+| `source-brand-reference.jpg` | Keep in `docs/brand/source/` | Visual reference only. |
 
 ---
 
 ## Recommended Theme Direction
 
-Based on the brand token files, plan to use:
+Use the Task 195 token values as the base brand palette:
 
-```text
-Deep Ink: #1A2E2A
-Teal: #1D9E75
-Light Teal: #5DCAA5
-Mint: #E1F5EE
-White: #FFFFFF
-```
+| Token | Hex | Recommended use |
+| --- | --- | --- |
+| Deep Ink | `#1A2E2A` | Primary text, strong headings, dark surfaces, footer text/background accents. |
+| Teal | `#1D9E75` | Primary actions, active states, links, selected filters, key highlights. |
+| Light Teal | `#5DCAA5` | Secondary accents, icon highlights, subtle interactive states. |
+| Mint | `#E1F5EE` | Soft backgrounds, trust panels, selected cards, lightweight section bands. |
+| White | `#FFFFFF` | Main backgrounds, cards, and high-contrast surface areas. |
 
-Recommended UI application:
+Theme guidance:
 
-```text
-Deep Ink: main text, dark surfaces, strong headings
-Teal: primary actions, links, active states
-Light Teal: accents, icons, highlights
-Mint: soft backgrounds, info panels, subtle sections
-White: main background and cards
-```
+- Preserve readability and contrast before increasing brand color coverage.
+- Use Teal for clear action/active states rather than broad decoration.
+- Use Mint sparingly for soft healthcare/trust surfaces.
+- Use Deep Ink as the stabilizing text and structural color.
+- Avoid changing unrelated provider route behavior while applying theme foundation.
 
-Typography direction:
+---
 
-```text
-Wordmark: bold geometric sans-serif
-Tagline: clean modern sans-serif
-Body: Inter or equivalent
-```
+## Typography Direction
+
+Observed typography direction from the token file:
+
+| Area | Direction |
+| --- | --- |
+| Wordmark | Bold geometric sans-serif. |
+| Tagline | Clean modern sans-serif. |
+| Body | Inter or equivalent. |
+
+Recommended implementation planning:
+
+- Keep body typography aligned with the existing app stack unless a later task explicitly changes fonts.
+- Use brand typography mainly through logo/wordmark assets at first.
+- Avoid introducing new font files before licensing and performance are reviewed.
+- Use weight, spacing, and hierarchy refinements before broad font replacement.
 
 ---
 
 ## Recommended First Branding Implementation Scope
 
-The first actual implementation task should be intentionally focused.
+The first implementation task should be intentionally narrow.
 
-Recommended first app branding scope:
+Recommended first scope:
 
-```text
-Copy approved SVG assets into public/brand/
-Use primary logo in header/nav
-Use icon mark in compact/mobile contexts if safe
-Add or align brand color tokens
-Refine primary buttons and links using teal/deep ink
-Preserve existing route behavior
-Preserve real facility data display
-```
+1. Create `public/brand/`.
+2. Copy reviewed SVG assets into `public/brand/`.
+3. Add the primary logo to the header/nav.
+4. Use the icon mark only in compact/mobile contexts if safe.
+5. Add or align foundational theme tokens for Deep Ink, Teal, Light Teal, Mint, and White.
+6. Apply a small button/link polish pass using Teal and Deep Ink.
+7. Preserve existing route behavior.
+8. Preserve real facility listing and detail data.
+9. Run lint/build and a quick route smoke check.
 
-Do not include a full redesign in the first implementation task.
+Do not include a full UI redesign in the first implementation task.
+
+Out of scope for the first implementation task unless explicitly added later:
+
+- Full facility detail redesign.
+- Full card system redesign.
+- Provider data changes.
+- Supabase import.
+- Pharmacy, diagnostics, or doctors behavior changes.
+- Large typography/font replacement.
 
 ---
 
-## Frontend Refinement Items To Carry Forward
+## Frontend Refinement Backlog Carried Forward
 
-Carry forward the known refinement backlog from Task 192:
+Carry forward the Task 192 refinement backlog:
 
-```text
-Facility detail tabs/interactions
-Facility detail action panels
-Contact link behavior
-Mobile spacing
-Desktop spacing
-Card height consistency
-Facility category filters
-Search/filter behavior
-Missing-field display behavior
-Legacy sample route behavior
-Overall visual polish
-```
+| Backlog item | Carry-forward status |
+| --- | --- |
+| Facility detail tabs/interactions | Carry forward for frontend refinement. |
+| Facility detail action panels | Carry forward for frontend refinement. |
+| Contact link behavior | Carry forward for frontend refinement. |
+| Mobile spacing | Carry forward for frontend refinement. |
+| Desktop spacing | Carry forward for frontend refinement. |
+| Card height consistency | Carry forward for frontend refinement. |
+| Facility category filters | Carry forward for frontend refinement. |
+| Search/filter behavior | Carry forward for frontend refinement. |
+| Missing-field display behavior | Carry forward for frontend refinement. |
+| Legacy sample route behavior | Carry forward for frontend refinement. |
+| Overall visual polish | Carry forward for frontend refinement. |
 
-Some of these may be handled after the first brand integration step.
+Recommended ordering:
+
+1. Brand header/theme foundation.
+2. Facilities detail tabs/interactions.
+3. Contact/action panel behavior.
+4. Listing cards, spacing, filters, and missing-field polish.
+5. Mobile/desktop QA.
 
 ---
 
 ## Stability Requirements
 
-Brand integration must not break:
+Future brand integration must preserve:
 
 ```text
 /facilities
 /facilities/[slug]
-real facility profile data
+real facility listing data
+real facility detail data
+real facility names
+facility detail routes by slug
 pharmacy routes
 diagnostics routes
 doctor routes
@@ -239,88 +199,68 @@ search routes
 correction/contact/register routes
 ```
 
-No Supabase import should be performed.
+Future brand integration must not modify unless explicitly scoped:
 
-No SQL/RLS/schema/migration files should be modified.
+```text
+real facility JSON/data
+Supabase SQL/RLS/schema/migrations
+pharmacy behavior
+diagnostics behavior
+doctor behavior
+package scripts
+probes
+```
+
+No Supabase import should be performed as part of brand asset integration.
 
 ---
 
 ## Recommended Next Task
 
-The recommended next task should be:
+Recommended next task:
 
 ```text
-Task 197 — Apply Brand Assets To Header And Theme Foundation
+Task 197 - Apply Brand Assets To Header And Theme Foundation
 ```
 
 Purpose:
 
-* Copy selected SVG assets into `public/brand/`.
-* Add the primary logo to the app header/nav.
-* Add or align theme color tokens.
-* Apply a first safe button/link polish pass.
-* Keep real facility data stable.
-* Avoid full UI redesign until this foundation is verified.
+- Copy selected SVG assets into `public/brand/`.
+- Add the primary logo to the app header/nav.
+- Add or align foundational theme color tokens.
+- Apply a first safe button/link polish pass.
+- Keep real facility data stable.
+- Avoid full UI redesign until the brand foundation is verified.
+
+Task 197 was not created as part of this task.
 
 ---
 
-## Scope
+## Scope Confirmation
 
-Allowed:
+For Task 196:
 
-* Create/update this Task 196 markdown record.
-* Review available brand files.
-* Recommend app asset paths.
-* Recommend first brand implementation scope.
-* Carry forward refinement backlog.
-* Recommend next task.
-
-Not allowed:
-
-* Do not modify source code.
-* Do not modify UI components.
-* Do not modify CSS/theme files.
-* Do not copy assets into `public/`.
-* Do not apply logo to the app yet.
-* Do not modify real facility JSON/data.
-* Do not modify Supabase SQL, RLS, schema, or migrations.
-* Do not import data to Supabase.
-* Do not modify pharmacy, diagnostics, or doctors behavior.
-* Do not create Task 197.
-
----
-
-## Validation
-
-Recommended check:
-
-```bash
-git status
-```
-
-No lint/build is required because no app code should be modified.
+- Only `docs/CodexTask-196-BrandAssetReviewAndAppIntegrationPlanning.md` was updated.
+- `docs/brand/source/` was inspected.
+- `docs/brand/source/tiru-brand-assets-app-ready/` was inspected.
+- No source code was modified.
+- No UI components were modified.
+- No CSS/theme files were modified.
+- No assets were copied into `public/`.
+- No logo was applied to the app.
+- No real facility JSON/data was modified.
+- No Supabase SQL was modified.
+- No RLS was modified.
+- No schema was modified.
+- No migrations were modified.
+- No Supabase import was performed.
+- Pharmacy behavior was not modified.
+- Diagnostics behavior was not modified.
+- Doctors behavior was not modified.
+- Task 197 was not created.
 
 ---
 
-## Acceptance Criteria
+## Planning Summary
 
-* Brand review and integration planning markdown exists.
-* Available brand assets are reviewed.
-* Recommended app asset paths are documented.
-* Recommended theme direction is documented.
-* First implementation scope is documented.
-* Real facilities stability requirement is documented.
-* Frontend refinement backlog is carried forward.
-* Recommended next task is identified.
-* No app source code is modified.
-* No public app assets are modified.
-* No real facility data is modified.
-* Task 197 is not created.
-
----
-
-## Deliverable
-
-A focused brand asset review and app integration planning record.
-
-Do not proceed beyond Task 196.
+Task 196 reviews the available Tiru brand files and recommends a narrow first integration scope: copy approved SVGs into `public/brand/`, place the primary logo in the header/nav, establish foundational color tokens, and apply a small button/link polish pass while preserving real facilities and adjacent routes. No assets were applied to the app in this task.
