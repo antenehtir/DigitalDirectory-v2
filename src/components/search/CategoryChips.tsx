@@ -14,7 +14,7 @@ const categoryRoutes: Record<string, string> = {
 export function CategoryChips() {
   return (
     <div aria-label="Healthcare categories">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-normal text-muted-foreground">
+      <p className="mb-2 text-xs font-semibold text-muted-foreground">
         Search by category
       </p>
       <div className="flex flex-wrap gap-2">

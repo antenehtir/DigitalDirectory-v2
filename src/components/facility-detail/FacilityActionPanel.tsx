@@ -16,7 +16,7 @@ export function FacilityActionPanel({ facility }: FacilityActionPanelProps) {
   );
 
   return (
-    <aside className="rounded-2xl border border-border bg-card p-5 shadow-[0_12px_30px_rgba(17,24,39,0.035)] sm:p-6">
+    <aside className="rounded-3xl border border-border bg-card p-5 shadow-[0_18px_50px_rgba(11,31,51,0.06)] sm:p-6">
       <h2 className="text-2xl font-semibold leading-tight text-foreground">
         Contact options
       </h2>
@@ -29,7 +29,7 @@ export function FacilityActionPanel({ facility }: FacilityActionPanelProps) {
         <div className="mt-5 grid gap-3">
           {primaryActions.map((action, index) => (
             <a
-              className={`flex min-h-12 items-center justify-center rounded-md px-5 text-center text-sm font-semibold shadow-sm ${
+              className={`flex min-h-12 items-center justify-center rounded-2xl px-5 text-center text-sm font-semibold transition ${
                 index === 0
                   ? "bg-primary text-primary-foreground"
                   : "border border-border bg-card text-foreground"
@@ -63,7 +63,7 @@ export function FacilityActionPanel({ facility }: FacilityActionPanelProps) {
 
               return (
               <div
-                className="rounded-xl border border-border bg-muted p-3 text-sm leading-6"
+                className="rounded-2xl border border-border bg-muted p-3 text-sm leading-6"
                 key={channel.id}
               >
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -77,7 +77,7 @@ export function FacilityActionPanel({ facility }: FacilityActionPanelProps) {
                 <div className="mt-3 flex flex-wrap gap-2">
                   {channelActions.map((action) => (
                     <a
-                      className="inline-flex min-h-10 items-center justify-center rounded-lg border border-border bg-card px-3 text-sm font-semibold text-foreground transition hover:border-strong-border"
+                      className="inline-flex min-h-10 items-center justify-center rounded-2xl border border-border bg-card px-3 text-sm font-semibold text-foreground transition hover:border-strong-border"
                       href={action.href}
                       key={action.id}
                       {...getExternalLinkProps(action)}

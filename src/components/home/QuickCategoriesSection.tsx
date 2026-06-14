@@ -2,12 +2,42 @@ import Link from "next/link";
 import { PageContainer } from "@/components/layout/PageContainer";
 
 const categories = [
-  { label: "General Hospitals", href: "/facilities?category=hospital" },
-  { label: "Specialty Centers", href: "/facilities?category=specialty" },
-  { label: "Clinics", href: "/facilities?category=clinic" },
-  { label: "Doctors", href: "/doctors" },
-  { label: "Diagnostics", href: "/diagnostics" },
-  { label: "Pharmacies", href: "/pharmacies" },
+  {
+    label: "General Hospitals",
+    description: "Full-service private hospitals",
+    marker: "H",
+    href: "/facilities?category=hospital",
+  },
+  {
+    label: "Specialty Centers",
+    description: "Focused care and specialist units",
+    marker: "S",
+    href: "/facilities?category=specialty",
+  },
+  {
+    label: "Clinics",
+    description: "Primary and outpatient care",
+    marker: "C",
+    href: "/facilities?category=clinic",
+  },
+  {
+    label: "Doctors",
+    description: "Doctor profiles and specialties",
+    marker: "D",
+    href: "/doctors",
+  },
+  {
+    label: "Diagnostics",
+    description: "Labs, imaging, and tests",
+    marker: "L",
+    href: "/diagnostics",
+  },
+  {
+    label: "Pharmacies",
+    description: "Medicine access points",
+    marker: "P",
+    href: "/pharmacies",
+  },
 ];
 
 export function QuickCategoriesSection() {
@@ -17,11 +47,11 @@ export function QuickCategoriesSection() {
         <div className="mx-auto max-w-4xl">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-sm font-semibold text-muted-foreground">
-                Browse
+              <p className="text-sm font-semibold text-[#0F8B6E]">
+                Care wayfinding
               </p>
               <h2 className="text-2xl font-semibold leading-tight text-foreground">
-                Care categories
+                Choose the care path you need.
               </h2>
             </div>
             <Link
@@ -31,14 +61,27 @@ export function QuickCategoriesSection() {
               Find nearby care
             </Link>
           </div>
-          <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category) => (
             <Link
               key={category.label}
-              className="flex min-h-13 items-center rounded-2xl border border-border bg-card px-4 text-sm font-semibold text-foreground shadow-[0_10px_24px_rgba(17,24,39,0.025)] transition-colors hover:border-strong-border"
+              className="group flex min-h-24 items-center gap-3 rounded-3xl border border-border bg-card p-4 shadow-[0_12px_30px_rgba(11,31,51,0.035)] transition-colors hover:border-strong-border"
               href={category.href}
             >
-              {category.label}
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#E6F4EF] text-sm font-bold text-[#0F8B6E]">
+                {category.marker}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-foreground">
+                  {category.label}
+                </span>
+                <span className="mt-1 block text-sm leading-5 text-muted-foreground">
+                  {category.description}
+                </span>
+              </span>
+              <span className="text-lg text-muted-foreground transition group-hover:text-foreground">
+                &rarr;
+              </span>
             </Link>
           ))}
           </div>

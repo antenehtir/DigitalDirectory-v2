@@ -11,7 +11,7 @@ const badgeContent: Record<
 > = {
   verified: {
     label: "Verified",
-    className: "border border-[#A7F3D0] bg-[#ECFDF5] text-[#0F766E]",
+    className: "border border-[#B7E4D6] bg-[#E6F4EF] text-[#0F8B6E]",
   },
   pending: {
     label: "Pending",

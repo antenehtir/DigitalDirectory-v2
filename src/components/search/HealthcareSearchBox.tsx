@@ -22,7 +22,7 @@ export function HealthcareSearchBox() {
   }
 
   return (
-    <div className="mt-6 rounded-2xl border border-border bg-card p-3 shadow-[0_16px_40px_rgba(17,24,39,0.05)] sm:mt-8 sm:p-5">
+    <div className="mt-6 rounded-3xl border border-border bg-card p-3 shadow-[0_18px_50px_rgba(11,31,51,0.08)] sm:mt-8 sm:p-5">
       <form
         className="grid gap-3 sm:gap-4 lg:grid-cols-[1fr_auto]"
         onSubmit={handleSubmit}
@@ -32,18 +32,18 @@ export function HealthcareSearchBox() {
             className="mb-2 block text-sm font-semibold text-foreground"
             htmlFor="home-healthcare-search"
           >
-            What healthcare service do you need?
+            Reception search
           </label>
           <input
             id="home-healthcare-search"
-            className="min-h-13 w-full rounded-lg border border-border bg-input px-3 text-base text-foreground outline-none placeholder:text-muted-foreground focus:border-strong-border sm:min-h-14 sm:px-4"
+            className="min-h-13 w-full rounded-2xl border border-border bg-input px-3 text-base text-foreground outline-none placeholder:text-muted-foreground focus:border-strong-border sm:min-h-14 sm:px-4"
             placeholder="Search doctors, facilities, specialties, pharmacies"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
         </div>
         <button
-          className="min-h-12 rounded-lg bg-primary px-6 text-sm font-semibold text-primary-foreground transition hover:opacity-90 lg:min-h-14 lg:self-end"
+          className="min-h-12 rounded-2xl bg-primary px-6 text-sm font-semibold text-primary-foreground transition hover:opacity-90 lg:min-h-14 lg:self-end"
           type="submit"
         >
           Search
