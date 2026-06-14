@@ -11,11 +11,11 @@ const badgeContent: Record<
 > = {
   verified: {
     label: "Verified",
-    className: "bg-success text-white",
+    className: "bg-foreground text-background",
   },
   pending: {
     label: "Pending",
-    className: "bg-warning text-foreground",
+    className: "bg-muted text-foreground",
   },
   "community-submitted": {
     label: "Community",

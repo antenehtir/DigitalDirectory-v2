@@ -7,7 +7,7 @@
   --tiru-mint: #F5F5F5;
   --tiru-white: #FFFFFF;
 
-  --background: #FAFAFA;
+  --background: #F7F7F7;
   --foreground: var(--tiru-deep-ink);
 
   --primary: #111111;
@@ -23,10 +23,10 @@
   --card: var(--tiru-white);
   --card-foreground: var(--tiru-deep-ink);
 
-  --muted: #F2F2F2;
-  --muted-foreground: #5F5F5F;
+  --muted: #F3F4F6;
+  --muted-foreground: #525252;
 
-  --border: #DDDDDD;
+  --border: #E2E2E2;
   --input: var(--tiru-white);
   --ring: #111111;
 }
@@ -87,6 +87,8 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 button,

@@ -21,10 +21,10 @@ export function FacilityCard({ facility }: FacilityCardProps) {
   const mapAction = contactActions.find((action) => action.kind === "maps");
 
   return (
-    <article className="flex h-full min-w-0 flex-col rounded-lg border border-border bg-background p-4 shadow-sm sm:p-5">
+    <article className="flex h-full min-w-0 flex-col rounded-2xl border border-border bg-card p-4 shadow-[0_12px_30px_rgba(0,0,0,0.035)] sm:p-5">
       <div className="flex flex-col items-start gap-3 min-[420px]:flex-row min-[420px]:justify-between">
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-primary">
+          <p className="text-sm font-semibold text-muted-foreground">
             {facility.category}
           </p>
           <h3 className="mt-2 break-words text-lg font-semibold leading-tight text-foreground sm:text-xl">
@@ -45,13 +45,13 @@ export function FacilityCard({ facility }: FacilityCardProps) {
           {facility.services.slice(0, 3).map((service) => (
             <span
               key={service}
-              className="rounded-full bg-muted px-3 py-1.5 text-xs font-medium text-foreground"
+              className="rounded-full border border-border bg-muted px-3 py-1.5 text-xs font-medium text-foreground"
             >
               {service}
             </span>
           ))}
         </div>
-        <div className="grid gap-2 rounded-md bg-card p-3">
+        <div className="grid gap-2 rounded-xl bg-muted p-3">
           <p className="text-muted-foreground">{facility.location}</p>
           <p className="text-muted-foreground">{facility.workingHours}</p>
           <p
@@ -67,7 +67,7 @@ export function FacilityCard({ facility }: FacilityCardProps) {
       <div className="mt-auto grid gap-2 pt-5 min-[520px]:grid-cols-3">
         {callAction ? (
           <a
-            className="flex min-h-12 items-center justify-center rounded-md border border-border bg-card px-3 text-center text-sm font-semibold text-primary"
+            className="flex min-h-12 items-center justify-center rounded-xl border border-border bg-background px-3 text-center text-sm font-semibold text-foreground"
             href={callAction.href}
             {...getExternalLinkProps(callAction)}
           >
@@ -76,7 +76,7 @@ export function FacilityCard({ facility }: FacilityCardProps) {
         ) : null}
         {mapAction ? (
           <a
-            className="flex min-h-12 items-center justify-center rounded-md border border-border bg-card px-3 text-center text-sm font-semibold text-primary"
+            className="flex min-h-12 items-center justify-center rounded-xl border border-border bg-background px-3 text-center text-sm font-semibold text-foreground"
             href={mapAction.href}
             {...getExternalLinkProps(mapAction)}
           >
@@ -84,7 +84,7 @@ export function FacilityCard({ facility }: FacilityCardProps) {
           </a>
         ) : null}
         <Link
-          className="flex min-h-12 items-center justify-center rounded-md bg-primary px-3 text-center text-sm font-semibold text-primary-foreground"
+          className="flex min-h-12 items-center justify-center rounded-xl bg-primary px-3 text-center text-sm font-semibold text-primary-foreground"
           href={detailHref}
         >
           View details

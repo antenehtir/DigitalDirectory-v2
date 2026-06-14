@@ -1,76 +1,395 @@
+"use client";
+
 import Link from "next/link";
-import { FacilityCardGrid } from "@/components/cards/FacilityCardGrid";
-import { PageContainer } from "@/components/layout/PageContainer";
-import { NearbyHero } from "./NearbyHero";
+import { useMemo, useState } from "react";
+import { VerificationBadge } from "@/components/trust/VerificationBadge";
+import {
+  createPublicContactActions,
+  getExternalLinkProps,
+} from "@/lib/contact-actions";
+import {
+  calculateDistanceKm,
+  formatDistanceKm,
+  type Coordinates,
+} from "@/lib/nearby-distance";
 import type { Facility } from "@/types/facility";
+
+export type NearbyFacility = Facility & {
+  coordinates?: Coordinates;
+};
 
 type NearbyPageProps = {
   areaOptions: string[];
-  facilities: Facility[];
+  facilities: NearbyFacility[];
+  initialCategory: string;
   selectedArea: string;
 };
+
+type LocationState = "idle" | "loading" | "ready" | "denied" | "unsupported";
+
+const categoryOptions = [
+  { label: "All", value: "all" },
+  { label: "General Hospitals", value: "hospital" },
+  { label: "Specialty Centers", value: "specialty" },
+  { label: "Clinics", value: "clinic" },
+  { label: "Doctors", value: "doctors" },
+  { label: "Diagnostics", value: "diagnostics" },
+  { label: "Pharmacies", value: "pharmacies" },
+];
 
 export function NearbyPage({
   areaOptions,
   facilities,
+  initialCategory,
   selectedArea,
 }: NearbyPageProps) {
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+  const [locationState, setLocationState] = useState<LocationState>("idle");
+  const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
+
+  const categoryFacilities = useMemo(
+    () => filterFacilitiesByCategory(facilities, selectedCategory),
+    [facilities, selectedCategory],
+  );
+
+  const rankedFacilities = useMemo(() => {
+    if (!userLocation) {
+      return [];
+    }
+
+    return categoryFacilities
+      .filter((facility) => facility.coordinates)
+      .map((facility) => ({
+        facility,
+        distanceKm: calculateDistanceKm(userLocation, facility.coordinates!),
+      }))
+      .sort((left, right) => left.distanceKm - right.distanceKm);
+  }, [categoryFacilities, userLocation]);
+
+  const unavailableDistanceFacilities = categoryFacilities.filter(
+    (facility) => !facility.coordinates,
+  );
+  const areaFacilities = selectedArea
+    ? categoryFacilities.filter((facility) => facility.location === selectedArea)
+    : [];
+
+  function requestLocation() {
+    if (!("geolocation" in navigator)) {
+      setLocationState("unsupported");
+      return;
+    }
+
+    setLocationState("loading");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        setLocationState("ready");
+      },
+      () => {
+        setLocationState("denied");
+        setUserLocation(null);
+      },
+      { enableHighAccuracy: true, maximumAge: 60000, timeout: 10000 },
+    );
+  }
+
   return (
-    <PageContainer className="py-8 sm:py-10 lg:py-14">
-      <div className="grid gap-6">
-        <NearbyHero />
+    <main className="mx-auto grid w-full max-w-6xl gap-5 px-3 py-6 min-[360px]:px-4 sm:px-6 sm:py-10 lg:px-8">
+      <section className="rounded-2xl border border-border bg-card p-5 shadow-[0_18px_45px_rgba(0,0,0,0.04)] sm:p-7">
+        <p className="text-sm font-semibold text-muted-foreground">Nearby</p>
+        <h1 className="mt-2 text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
+          Find care near your current location.
+        </h1>
+        <p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">
+          Choose a category, share your location, and Tiru will show real
+          facilities with available coordinates nearest first.
+        </p>
+      </section>
 
-        <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
-          <h2 className="text-2xl font-semibold leading-tight text-foreground">
-            Browse by Sub-city / Area
-          </h2>
-          {areaOptions.length > 0 ? (
-            <div className="mt-5 flex flex-wrap gap-2">
-              {areaOptions.map((area) => {
-                const isActive = area === selectedArea;
+      <section className="rounded-2xl border border-border bg-card p-4 shadow-[0_14px_35px_rgba(0,0,0,0.035)] sm:p-5">
+        <p className="text-sm font-semibold text-foreground">Category</p>
+        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+          {categoryOptions.map((category) => {
+            const isActive = category.value === selectedCategory;
 
-                return (
-                  <Link
-                    aria-current={isActive ? "page" : undefined}
-                    className={`rounded-full border px-3 py-2 text-sm font-semibold ${
-                      isActive
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border bg-background text-foreground"
-                    }`}
-                    href={`/nearby?area=${encodeURIComponent(area)}`}
-                    key={area}
-                  >
-                    {area}
-                  </Link>
-                );
-              })}
+            return (
+              <button
+                aria-pressed={isActive}
+                className={`min-h-11 shrink-0 rounded-full border px-4 text-sm font-semibold transition ${
+                  isActive
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-background text-foreground hover:border-foreground"
+                }`}
+                key={category.value}
+                onClick={() => setSelectedCategory(category.value)}
+                type="button"
+              >
+                {category.label}
+              </button>
+            );
+          })}
+        </div>
+
+        <button
+          className="mt-5 flex min-h-12 w-full items-center justify-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:opacity-90 disabled:cursor-wait disabled:opacity-70 sm:w-auto"
+          disabled={locationState === "loading"}
+          onClick={requestLocation}
+          type="button"
+        >
+          {locationState === "loading" ? "Finding nearby care..." : "Use my location"}
+        </button>
+
+        {locationState === "denied" ? (
+          <p className="mt-4 rounded-xl border border-border bg-muted p-4 text-sm leading-6 text-muted-foreground">
+            Location access was not shared. You can still browse by Sub-city /
+            Area below.
+          </p>
+        ) : null}
+
+        {locationState === "unsupported" ? (
+          <p className="mt-4 rounded-xl border border-border bg-muted p-4 text-sm leading-6 text-muted-foreground">
+            Location is not available in this browser. Browse by Sub-city / Area
+            below.
+          </p>
+        ) : null}
+      </section>
+
+      {locationState === "ready" ? (
+        <section className="grid gap-4">
+          <div>
+            <h2 className="text-2xl font-semibold text-foreground">
+              Nearest matching facilities
+            </h2>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+              Distances are shown only where real coordinates are available.
+            </p>
+          </div>
+
+          {rankedFacilities.length > 0 ? (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {rankedFacilities.map(({ facility, distanceKm }) => (
+                <NearbyFacilityCard
+                  distanceLabel={formatDistanceKm(distanceKm)}
+                  facility={facility}
+                  key={facility.id}
+                />
+              ))}
             </div>
           ) : (
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              Area options will be added soon.
-            </p>
+            <EmptyNearbyState message="No matching facilities with coordinates are available yet." />
+          )}
+
+          {unavailableDistanceFacilities.length > 0 ? (
+            <section className="grid gap-3">
+              <h3 className="text-lg font-semibold text-foreground">
+                Distance unavailable
+              </h3>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {unavailableDistanceFacilities.slice(0, 12).map((facility) => (
+                  <NearbyFacilityCard
+                    distanceLabel="Distance unavailable"
+                    facility={facility}
+                    key={facility.id}
+                  />
+                ))}
+              </div>
+            </section>
+          ) : null}
+        </section>
+      ) : null}
+
+      <section className="rounded-2xl border border-border bg-card p-4 sm:p-5">
+        <h2 className="text-xl font-semibold leading-tight text-foreground">
+          Browse by Sub-city / Area
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+          Use this when location sharing is unavailable or when a facility has
+          no coordinates.
+        </p>
+
+        {areaOptions.length > 0 ? (
+          <div className="mt-4 flex max-h-56 flex-wrap gap-2 overflow-y-auto pr-1">
+            {areaOptions.map((area) => {
+              const isActive = area === selectedArea;
+              const href =
+                selectedCategory === "all"
+                  ? `/nearby?area=${encodeURIComponent(area)}`
+                  : `/nearby?area=${encodeURIComponent(area)}&category=${selectedCategory}`;
+
+              return (
+                <Link
+                  aria-current={isActive ? "page" : undefined}
+                  className={`rounded-full border px-3 py-2 text-sm font-semibold ${
+                    isActive
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-background text-foreground hover:border-foreground"
+                  }`}
+                  href={href}
+                  key={area}
+                >
+                  {area}
+                </Link>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">
+            Area options will be added soon.
+          </p>
+        )}
+      </section>
+
+      {selectedArea ? (
+        <section className="grid gap-4">
+          <h2 className="text-2xl font-semibold text-foreground">
+            Facilities in {selectedArea}
+          </h2>
+          {areaFacilities.length > 0 ? (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {areaFacilities.map((facility) => (
+                <NearbyFacilityCard
+                  distanceLabel={
+                    facility.coordinates
+                      ? "Use my location for distance"
+                      : "Distance unavailable"
+                  }
+                  facility={facility}
+                  key={facility.id}
+                />
+              ))}
+            </div>
+          ) : (
+            <EmptyNearbyState message="No matching facilities found for this area yet." />
           )}
         </section>
-
-        {selectedArea ? (
-          <section>
-            <div className="mb-4">
-              <h2 className="text-2xl font-semibold text-foreground">
-                Facilities in {selectedArea}
-              </h2>
-            </div>
-            {facilities.length > 0 ? (
-              <FacilityCardGrid facilities={facilities} />
-            ) : (
-              <section className="rounded-lg border border-dashed border-border bg-card p-5 text-center">
-                <h3 className="text-lg font-semibold text-foreground">
-                  No facilities found for this area yet.
-                </h3>
-              </section>
-            )}
-          </section>
-        ) : null}
-      </div>
-    </PageContainer>
+      ) : null}
+    </main>
   );
+}
+
+function NearbyFacilityCard({
+  distanceLabel,
+  facility,
+}: {
+  distanceLabel: string;
+  facility: NearbyFacility;
+}) {
+  const contactActions = createPublicContactActions(facility.contactChannels);
+  const callAction = contactActions.find((action) => action.kind === "phone");
+  const mapAction = contactActions.find((action) => action.kind === "maps");
+
+  return (
+    <article className="flex min-w-0 flex-col rounded-2xl border border-border bg-card p-4 shadow-[0_12px_30px_rgba(0,0,0,0.035)]">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold uppercase text-muted-foreground">
+            {facility.category}
+          </p>
+          <h3 className="mt-2 text-lg font-semibold leading-snug text-foreground">
+            {facility.name}
+          </h3>
+        </div>
+        <VerificationBadge status={facility.verificationStatus} />
+      </div>
+
+      <p className="mt-3 text-sm font-semibold text-foreground">
+        {distanceLabel}
+      </p>
+      <p className="mt-2 text-sm leading-6 text-muted-foreground">
+        {facility.location || facility.address}
+      </p>
+
+      <div className="mt-auto grid gap-2 pt-4">
+        <Link
+          className="flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground"
+          href={facility.detailHref ?? `/facilities/${facility.slug}`}
+        >
+          View details
+        </Link>
+        <div className="grid gap-2 min-[420px]:grid-cols-2">
+          {callAction ? (
+            <a
+              className="flex min-h-11 items-center justify-center rounded-xl border border-border bg-background px-4 text-sm font-semibold text-foreground"
+              href={callAction.href}
+              {...getExternalLinkProps(callAction)}
+            >
+              {callAction.label}
+            </a>
+          ) : null}
+          {mapAction ? (
+            <a
+              className="flex min-h-11 items-center justify-center rounded-xl border border-border bg-background px-4 text-sm font-semibold text-foreground"
+              href={mapAction.href}
+              {...getExternalLinkProps(mapAction)}
+            >
+              Open map
+            </a>
+          ) : null}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function EmptyNearbyState({ message }: { message: string }) {
+  return (
+    <section className="rounded-2xl border border-dashed border-border bg-card p-5 text-center">
+      <p className="text-sm font-medium leading-6 text-muted-foreground">
+        {message}
+      </p>
+    </section>
+  );
+}
+
+function filterFacilitiesByCategory(
+  facilities: NearbyFacility[],
+  category: string,
+): NearbyFacility[] {
+  if (category === "all") {
+    return facilities;
+  }
+
+  if (category === "doctors") {
+    return [];
+  }
+
+  return facilities.filter((facility) => {
+    const searchableText = [
+      facility.category,
+      facility.subcategory,
+      facility.name,
+      ...facility.services,
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    if (category === "hospital") {
+      return searchableText.includes("hospital");
+    }
+
+    if (category === "specialty") {
+      return searchableText.includes("specialty");
+    }
+
+    if (category === "clinic") {
+      return (
+        searchableText.includes("clinic") ||
+        searchableText.includes("health center") ||
+        searchableText.includes("primary care")
+      );
+    }
+
+    if (category === "diagnostics") {
+      return /diagnostic|laboratory|lab|imaging|radiology/.test(searchableText);
+    }
+
+    if (category === "pharmacies") {
+      return searchableText.includes("pharmacy");
+    }
+
+    return true;
+  });
 }

@@ -21,10 +21,10 @@ export function CategoryChips() {
         {healthcareCategories.map((category, index) => (
           <Link
             key={category}
-            className={`flex min-h-10 items-center rounded-full border px-3 text-sm font-semibold sm:px-4 ${
+            className={`flex min-h-10 items-center rounded-full border px-3 text-sm font-semibold transition sm:px-4 ${
               index === 0
                 ? "border-primary bg-primary text-primary-foreground"
-                : "border-border bg-card text-foreground"
+                : "border-border bg-card text-foreground hover:border-foreground"
             }`}
             href={categoryRoutes[category]}
             aria-current={index === 0 ? "page" : undefined}

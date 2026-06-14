@@ -7,7 +7,7 @@ export function BrandMark() {
       href="/"
       aria-label="Tiru home"
     >
-      <span className="text-2xl font-semibold tracking-normal text-foreground">
+      <span className="text-2xl font-semibold tracking-normal text-foreground sm:text-[1.7rem]">
         Tiru
       </span>
       <span className="mt-1 text-xs font-medium text-muted-foreground">
