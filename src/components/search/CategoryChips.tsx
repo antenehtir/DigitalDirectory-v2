@@ -3,11 +3,12 @@ import { healthcareCategories } from "./search-options";
 
 const categoryRoutes: Record<string, string> = {
   All: "/search",
-  Doctors: "/doctors",
-  Hospitals: "/facilities?category=hospital",
+  "General Hospitals": "/facilities?category=hospital",
+  "Specialty Centers": "/facilities?category=specialty",
   Clinics: "/facilities?category=clinic",
+  Doctors: "/doctors",
+  Diagnostics: "/diagnostics",
   Pharmacies: "/pharmacies",
-  Laboratories: "/facilities?category=laboratory",
 };
 
 export function CategoryChips() {

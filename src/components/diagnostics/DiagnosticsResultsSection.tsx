@@ -1,5 +1,4 @@
 import { FacilityCardGrid } from "@/components/cards/FacilityCardGrid";
-import { sampleDiagnostics } from "@/data/sampleDiagnostics";
 import type { Facility } from "@/types/facility";
 
 type DiagnosticsResultsSectionProps = {
@@ -7,7 +6,7 @@ type DiagnosticsResultsSectionProps = {
 };
 
 export function DiagnosticsResultsSection({
-  diagnostics = sampleDiagnostics,
+  diagnostics = [],
 }: DiagnosticsResultsSectionProps) {
   return (
     <section>
@@ -19,11 +18,18 @@ export function DiagnosticsResultsSection({
           Diagnostics listings
         </h2>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          Diagnostic cards reuse the existing facility card system with
-          safe public discovery data.
+          Real diagnostics providers from the current facility data.
         </p>
       </div>
-      <FacilityCardGrid facilities={diagnostics} />
+      {diagnostics.length > 0 ? (
+        <FacilityCardGrid facilities={diagnostics} />
+      ) : (
+        <section className="rounded-lg border border-dashed border-border bg-card p-5 text-center">
+          <h3 className="text-lg font-semibold text-foreground">
+            Diagnostics listings will be added soon.
+          </h3>
+        </section>
+      )}
     </section>
   );
 }

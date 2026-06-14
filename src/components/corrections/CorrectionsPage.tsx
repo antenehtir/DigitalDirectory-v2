@@ -1,11 +1,8 @@
 import { PageContainer } from "@/components/layout/PageContainer";
 import { CorrectionPreviewForm } from "./CorrectionPreviewForm";
-import { CorrectionReviewProcess } from "./CorrectionReviewProcess";
 import { CorrectionTypeOptions } from "./CorrectionTypeOptions";
 import { CorrectionsHero } from "./CorrectionsHero";
-import { CorrectionsNavigationCta } from "./CorrectionsNavigationCta";
 import { CorrectableItems } from "./CorrectableItems";
-import { TrustSafetyNote } from "./TrustSafetyNote";
 
 export function CorrectionsPage() {
   return (
@@ -21,13 +18,6 @@ export function CorrectionsPage() {
 
           <CorrectionPreviewForm />
         </div>
-
-        <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-          <CorrectionReviewProcess />
-          <TrustSafetyNote />
-        </div>
-
-        <CorrectionsNavigationCta />
       </div>
     </PageContainer>
   );

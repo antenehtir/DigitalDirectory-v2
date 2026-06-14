@@ -1,10 +1,7 @@
 import { DoctorCardGrid } from "@/components/cards/DoctorCardGrid";
 import { PageContainer } from "@/components/layout/PageContainer";
-import { sampleDoctors } from "@/data/sampleDoctors";
 import type { Doctor } from "@/types/doctor";
-import { DoctorAvailabilityPreview } from "./DoctorAvailabilityPreview";
 import { DoctorSearchPreview } from "./DoctorSearchPreview";
-import { DoctorTrustBlock } from "./DoctorTrustBlock";
 import { DoctorsHero } from "./DoctorsHero";
 import { RequestDoctorProfileCta } from "./RequestDoctorProfileCta";
 import { SpecialtyFilterChips } from "./SpecialtyFilterChips";
@@ -18,7 +15,7 @@ type DoctorsPageProps = {
 export function DoctorsPage({
   activeQuery = "",
   activeSpecialty = "",
-  doctors = sampleDoctors,
+  doctors = [],
 }: DoctorsPageProps) {
   const isFiltered = Boolean(activeQuery || activeSpecialty);
 
@@ -48,20 +45,11 @@ export function DoctorsPage({
                 0
               </div>
               <h3 className="text-lg font-semibold text-foreground">
-                No doctor matches yet
+                Doctor profiles will be added soon.
               </h3>
-              <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-                Try a broader specialty, doctor name, facility, or location.
-              </p>
             </section>
           )}
         </section>
-
-        <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-          <DoctorAvailabilityPreview />
-          <DoctorTrustBlock />
-        </div>
-
         <RequestDoctorProfileCta />
       </div>
     </PageContainer>

@@ -6,7 +6,7 @@ export function ContactHero() {
           Contact and support
         </p>
         <h1 className="text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
-          Reach DigitalDirectory-v2 support.
+          Reach Tiru support.
         </h1>
         <p className="mt-4 text-base leading-7 text-muted-foreground">
           Find support paths for healthcare discovery questions, provider

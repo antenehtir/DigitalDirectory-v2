@@ -1,9 +1,9 @@
 const correctionFields = [
-  { label: "Listing name", value: "Provider or facility name" },
-  { label: "Listing type", value: "Facility, doctor, pharmacy, or lab" },
-  { label: "Current information", value: "Old phone number or address" },
-  { label: "Suggested correction", value: "Updated phone number or address" },
-  { label: "Your contact", value: "+251 900 000 000" },
+  { label: "Listing name", placeholder: "Provider or facility name" },
+  { label: "Listing type", placeholder: "Facility, doctor, pharmacy, or diagnostics" },
+  { label: "Current information", placeholder: "Information to correct" },
+  { label: "Suggested correction", placeholder: "Updated information" },
+  { label: "Your contact", placeholder: "Phone or email for review" },
 ];
 
 export function CorrectionPreviewForm() {
@@ -29,27 +29,32 @@ export function CorrectionPreviewForm() {
       >
         {correctionFields.map((field) => (
           <div className="grid gap-2" key={field.label}>
-            <p className="text-sm font-semibold text-foreground">
+            <label className="text-sm font-semibold text-foreground">
               {field.label}
-            </p>
-            <div className="flex min-h-12 items-center rounded-md border border-border bg-input px-4 text-sm text-foreground shadow-sm">
-              {field.value}
-            </div>
+            </label>
+            <input
+              className="min-h-12 rounded-md border border-border bg-input px-4 text-sm text-foreground shadow-sm"
+              placeholder={field.placeholder}
+            />
           </div>
         ))}
 
         <div className="grid gap-2">
-          <p className="text-sm font-semibold text-foreground">
+          <label className="text-sm font-semibold text-foreground">
             Notes for review
-          </p>
-          <div className="min-h-28 rounded-md border border-border bg-input px-4 py-3 text-sm leading-6 text-foreground shadow-sm">
-            Briefly explain what is wrong and what should appear instead.
-          </div>
+          </label>
+          <textarea
+            className="min-h-28 rounded-md border border-border bg-input px-4 py-3 text-sm leading-6 text-foreground shadow-sm"
+            placeholder="Briefly explain what is wrong and what should appear instead."
+          />
         </div>
 
-        <div className="mt-1 flex min-h-12 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm">
+        <button
+          className="mt-1 min-h-12 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm"
+          type="button"
+        >
           Submit correction
-        </div>
+        </button>
       </div>
     </section>
   );

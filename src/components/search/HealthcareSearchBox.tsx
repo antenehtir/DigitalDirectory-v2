@@ -3,10 +3,6 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CategoryChips } from "./CategoryChips";
-import { EmptyStatePreview } from "./EmptyStatePreview";
-import { FilterChips } from "./FilterChips";
-import { LocationPreview } from "./LocationPreview";
-import { PopularSearchSuggestions } from "./PopularSearchSuggestions";
 
 export function HealthcareSearchBox() {
   const router = useRouter();
@@ -56,10 +52,6 @@ export function HealthcareSearchBox() {
 
       <div className="mt-4 grid gap-4 sm:mt-5 sm:gap-5">
         <CategoryChips />
-        <LocationPreview />
-        <FilterChips />
-        <PopularSearchSuggestions />
-        <EmptyStatePreview />
       </div>
     </div>
   );

@@ -1,7 +1,11 @@
 import type { Doctor } from "@/types/doctor";
 import type { Facility } from "@/types/facility";
 
-export type FacilityCategoryFilter = "hospital" | "clinic" | "laboratory";
+export type FacilityCategoryFilter =
+  | "hospital"
+  | "specialty"
+  | "clinic"
+  | "diagnostics";
 
 export function normalizeSearchParam(
   value: string | string[] | undefined,
@@ -18,10 +22,12 @@ export function normalizeFacilityCategoryParam(
 
   if (
     normalized === "hospital" ||
+    normalized === "specialty" ||
     normalized === "clinic" ||
+    normalized === "diagnostics" ||
     normalized === "laboratory"
   ) {
-    return normalized;
+    return normalized === "laboratory" ? "diagnostics" : normalized;
   }
 
   return undefined;
@@ -108,13 +114,25 @@ export function filterFacilitiesByCategory(
     }
 
     if (category === "hospital") {
-      return searchableText.includes("hospital");
+      return (
+        searchableText.includes("general hospital") ||
+        searchableText.includes("hospital")
+      );
+    }
+
+    if (category === "specialty") {
+      return (
+        searchableText.includes("specialty center") ||
+        searchableText.includes("specialty")
+      );
     }
 
     return (
       searchableText.includes("laboratory") ||
       searchableText.includes("diagnostic") ||
-      searchableText.includes("lab")
+      searchableText.includes("lab") ||
+      searchableText.includes("imaging") ||
+      searchableText.includes("radiology")
     );
   });
 }
@@ -138,15 +156,19 @@ export function getFacilityCategoryLabel(
   category: FacilityCategoryFilter | undefined,
 ): string | undefined {
   if (category === "hospital") {
-    return "Hospitals";
+    return "General Hospitals";
+  }
+
+  if (category === "specialty") {
+    return "Specialty Centers";
   }
 
   if (category === "clinic") {
     return "Clinics";
   }
 
-  if (category === "laboratory") {
-    return "Laboratories";
+  if (category === "diagnostics") {
+    return "Diagnostics";
   }
 
   return undefined;

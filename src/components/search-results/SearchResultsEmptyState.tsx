@@ -16,7 +16,7 @@ export function SearchResultsEmptyState({
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
         {query
           ? `No providers matched "${query}". Try a broader category, location, specialty, or service.`
-          : "Try a broader category, nearby facilities, verified-only filters, or popular specialties when no results match."}
+          : "Search real facility names, areas, services, or categories."}
       </p>
     </section>
   );

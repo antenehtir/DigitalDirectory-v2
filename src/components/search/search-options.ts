@@ -1,23 +1,13 @@
 export const healthcareCategories = [
   "All",
-  "Doctors",
-  "Hospitals",
+  "General Hospitals",
+  "Specialty Centers",
   "Clinics",
+  "Doctors",
+  "Diagnostics",
   "Pharmacies",
-  "Laboratories",
 ];
 
-export const healthcareFilters = [
-  "Verified only",
-  "Open now",
-  "Accepting calls",
-  "Near me",
-];
+export const healthcareFilters: string[] = [];
 
-export const popularSearchSuggestions = [
-  "Cardiologist in Addis Ababa",
-  "Pediatric clinic near Bole",
-  "Open pharmacy",
-  "Diagnostic laboratory",
-  "Dentist accepting calls",
-];
+export const popularSearchSuggestions: string[] = [];

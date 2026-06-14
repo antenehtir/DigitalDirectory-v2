@@ -9,9 +9,7 @@ export function RegisterHero() {
           Request a trusted healthcare listing.
         </h1>
         <p className="mt-4 text-base leading-7 text-muted-foreground">
-          Doctors, facilities, pharmacies, and diagnostic providers can request
-          listing, verification, or correction review for
-          DigitalDirectory-v2.
+          Submit provider details for Tiru review before publication.
         </p>
       </div>
     </header>

@@ -6,6 +6,10 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { PageShell } from "@/components/layout/PageShell";
 import { VerificationBadge } from "@/components/trust/VerificationBadge";
 import {
+  createPublicContactActions,
+  getExternalLinkProps,
+} from "@/lib/contact-actions";
+import {
   getSupabasePublicDoctorDetailBySlug,
   type DoctorPublicDetailReadResult,
 } from "@/lib/supabase/doctors-public-read";
@@ -239,7 +243,14 @@ function DoctorPublicDetailPage({
                     Public contact channels
                   </p>
                   <div className="mt-3 grid gap-2">
-                    {contactChannels.map((channel) => (
+                    {contactChannels.map((channel) => {
+                      const channelActions = createPublicContactActions([channel]);
+
+                      if (channelActions.length === 0) {
+                        return null;
+                      }
+
+                      return (
                       <div
                         className="rounded-md border border-border bg-background p-3 text-sm leading-6"
                         key={channel.id}
@@ -252,11 +263,21 @@ function DoctorPublicDetailPage({
                             {getChannelTypeLabel(channel)}
                           </p>
                         </div>
-                        <p className="mt-1 break-words text-muted-foreground">
-                          {channel.href ?? channel.value}
-                        </p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {channelActions.map((action) => (
+                            <a
+                              className="inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-card px-3 text-sm font-semibold text-primary"
+                              href={action.href}
+                              key={action.id}
+                              {...getExternalLinkProps(action)}
+                            >
+                              {action.label}
+                            </a>
+                          ))}
+                        </div>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               ) : null}

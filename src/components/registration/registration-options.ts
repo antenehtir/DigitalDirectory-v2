@@ -12,7 +12,7 @@ export const providerTypes = [
     description: "Prepare medicine access listings for future discovery.",
   },
   {
-    title: "Laboratories",
+    title: "Diagnostics",
     description: "Show diagnostic services, locations, and trust status clearly.",
   },
 ];

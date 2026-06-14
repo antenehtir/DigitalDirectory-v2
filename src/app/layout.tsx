@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "DigitalDirectory-v2",
-  description: "Trusted healthcare discovery for Ethiopia.",
+  title: "Tiru",
+  description: "Trace the right care.",
 };
 
 export default function RootLayout({

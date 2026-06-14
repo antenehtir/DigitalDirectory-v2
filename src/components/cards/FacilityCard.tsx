@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { VerificationBadge } from "@/components/trust/VerificationBadge";
+import {
+  createPublicContactActions,
+  getExternalLinkProps,
+} from "@/lib/contact-actions";
 import type { Facility } from "@/types/facility";
 
 type FacilityCardProps = {
@@ -12,6 +16,9 @@ export function FacilityCard({ facility }: FacilityCardProps) {
     (facility.slug === "addis-health-center"
       ? "/facilities/addis-health-center"
       : "/facilities");
+  const contactActions = createPublicContactActions(facility.contactChannels);
+  const callAction = contactActions.find((action) => action.kind === "phone");
+  const mapAction = contactActions.find((action) => action.kind === "maps");
 
   return (
     <article className="flex h-full min-w-0 flex-col rounded-lg border border-border bg-background p-4 shadow-sm sm:p-5">
@@ -58,18 +65,24 @@ export function FacilityCard({ facility }: FacilityCardProps) {
       </div>
 
       <div className="mt-auto grid gap-2 pt-5 min-[520px]:grid-cols-3">
-        <button
-          className="min-h-12 rounded-md border border-border bg-card px-3 text-center text-sm font-semibold text-primary"
-          type="button"
-        >
-          {facility.contactActionLabel}
-        </button>
-        <button
-          className="min-h-12 rounded-md border border-border bg-card px-3 text-center text-sm font-semibold text-primary"
-          type="button"
-        >
-          {facility.directionsActionLabel}
-        </button>
+        {callAction ? (
+          <a
+            className="flex min-h-12 items-center justify-center rounded-md border border-border bg-card px-3 text-center text-sm font-semibold text-primary"
+            href={callAction.href}
+            {...getExternalLinkProps(callAction)}
+          >
+            {callAction.label}
+          </a>
+        ) : null}
+        {mapAction ? (
+          <a
+            className="flex min-h-12 items-center justify-center rounded-md border border-border bg-card px-3 text-center text-sm font-semibold text-primary"
+            href={mapAction.href}
+            {...getExternalLinkProps(mapAction)}
+          >
+            {mapAction.label}
+          </a>
+        ) : null}
         <Link
           className="flex min-h-12 items-center justify-center rounded-md bg-primary px-3 text-center text-sm font-semibold text-primary-foreground"
           href={detailHref}

@@ -1,4 +1,8 @@
 import type { Facility, FacilityContactChannel } from "@/types/facility";
+import {
+  createPublicContactActions,
+  getExternalLinkProps,
+} from "@/lib/contact-actions";
 
 type FacilityActionPanelProps = {
   facility: Facility;
@@ -6,6 +10,10 @@ type FacilityActionPanelProps = {
 
 export function FacilityActionPanel({ facility }: FacilityActionPanelProps) {
   const contactChannels = facility.contactChannels ?? [];
+  const contactActions = createPublicContactActions(contactChannels);
+  const primaryActions = contactActions.filter((action) =>
+    ["phone", "maps", "website", "email", "whatsapp"].includes(action.kind),
+  );
 
   return (
     <aside className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
@@ -20,26 +28,28 @@ export function FacilityActionPanel({ facility }: FacilityActionPanelProps) {
         are available.
       </p>
 
-      <div className="mt-5 grid gap-3">
-        <button
-          className="min-h-12 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm"
-          type="button"
-        >
-          {facility.contactActionLabel}
-        </button>
-        <button
-          className="min-h-12 rounded-md border border-border bg-background px-5 text-sm font-semibold text-primary shadow-sm"
-          type="button"
-        >
-          {facility.directionsActionLabel}
-        </button>
-        <button
-          className="min-h-12 rounded-md border border-border bg-background px-5 text-sm font-semibold text-primary shadow-sm"
-          type="button"
-        >
-          Save provider
-        </button>
-      </div>
+      {primaryActions.length > 0 ? (
+        <div className="mt-5 grid gap-3">
+          {primaryActions.map((action, index) => (
+            <a
+              className={`flex min-h-12 items-center justify-center rounded-md px-5 text-center text-sm font-semibold shadow-sm ${
+                index === 0
+                  ? "bg-primary text-primary-foreground"
+                  : "border border-border bg-background text-primary"
+              }`}
+              href={action.href}
+              key={action.id}
+              {...getExternalLinkProps(action)}
+            >
+              {action.label}
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-5 rounded-md border border-border bg-background p-4 text-sm leading-6 text-muted-foreground">
+          Contact details are being verified.
+        </p>
+      )}
 
       {contactChannels.length > 0 ? (
         <div className="mt-5 border-t border-border pt-5">
@@ -47,7 +57,14 @@ export function FacilityActionPanel({ facility }: FacilityActionPanelProps) {
             Public contact channels
           </p>
           <div className="mt-3 grid gap-2">
-            {contactChannels.map((channel) => (
+            {contactChannels.map((channel) => {
+              const channelActions = createPublicContactActions([channel]);
+
+              if (channelActions.length === 0) {
+                return null;
+              }
+
+              return (
               <div
                 className="rounded-md border border-border bg-background p-3 text-sm leading-6"
                 key={channel.id}
@@ -60,24 +77,21 @@ export function FacilityActionPanel({ facility }: FacilityActionPanelProps) {
                     {getChannelTypeLabel(channel)}
                   </p>
                 </div>
-                <p className="mt-1 break-words text-muted-foreground">
-                  {channel.href ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {channelActions.map((action) => (
                     <a
-                      className="font-medium text-primary underline-offset-4 hover:underline"
-                      href={channel.href}
-                      rel={
-                        isExternalHref(channel.href) ? "noreferrer" : undefined
-                      }
-                      target={isExternalHref(channel.href) ? "_blank" : undefined}
+                      className="inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-card px-3 text-sm font-semibold text-primary"
+                      href={action.href}
+                      key={action.id}
+                      {...getExternalLinkProps(action)}
                     >
-                      {channel.value}
+                      {action.label}
                     </a>
-                  ) : (
-                    channel.value
-                  )}
-                </p>
+                  ))}
+                </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       ) : null}
@@ -103,8 +117,4 @@ function getChannelTypeLabel(channel: FacilityContactChannel): string {
   }
 
   return channel.channelType;
-}
-
-function isExternalHref(href: string): boolean {
-  return /^https?:\/\//i.test(href);
 }

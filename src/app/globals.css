@@ -1,55 +1,55 @@
 @import "tailwindcss";
 
 :root {
-  --tiru-deep-ink: #1A2E2A;
-  --tiru-teal: #1D9E75;
-  --tiru-light-teal: #5DCAA5;
-  --tiru-mint: #E1F5EE;
+  --tiru-deep-ink: #171717;
+  --tiru-teal: #2F2F2F;
+  --tiru-light-teal: #E5E5E5;
+  --tiru-mint: #F5F5F5;
   --tiru-white: #FFFFFF;
 
-  --background: color-mix(in srgb, var(--tiru-mint) 18%, var(--tiru-white));
+  --background: #FAFAFA;
   --foreground: var(--tiru-deep-ink);
 
-  --primary: var(--tiru-teal);
+  --primary: #111111;
   --primary-foreground: var(--tiru-white);
 
-  --secondary: var(--tiru-light-teal);
-  --secondary-foreground: var(--tiru-deep-ink);
+  --secondary: #4B5563;
+  --secondary-foreground: var(--tiru-white);
 
-  --success: #16A34A;
-  --warning: #F59E0B;
+  --success: #166534;
+  --warning: #92400E;
   --error: #DC2626;
 
   --card: var(--tiru-white);
   --card-foreground: var(--tiru-deep-ink);
 
-  --muted: color-mix(in srgb, var(--tiru-mint) 82%, var(--tiru-white));
-  --muted-foreground: #3F5F58;
+  --muted: #F2F2F2;
+  --muted-foreground: #5F5F5F;
 
-  --border: #BFDCD2;
+  --border: #DDDDDD;
   --input: var(--tiru-white);
-  --ring: var(--tiru-teal);
+  --ring: #111111;
 }
 
 [data-theme="dark"] {
-  --background: #12231F;
-  --foreground: #F6FFFB;
+  --background: #111111;
+  --foreground: #F5F5F5;
 
-  --primary: var(--tiru-light-teal);
-  --primary-foreground: var(--tiru-deep-ink);
+  --primary: #F5F5F5;
+  --primary-foreground: #111111;
 
-  --secondary: var(--tiru-teal);
+  --secondary: #D4D4D4;
   --secondary-foreground: var(--tiru-white);
 
-  --card: #18342E;
-  --card-foreground: #F6FFFB;
+  --card: #1A1A1A;
+  --card-foreground: #F5F5F5;
 
-  --muted: #203D36;
-  --muted-foreground: #B8D8CE;
+  --muted: #262626;
+  --muted-foreground: #C7C7C7;
 
-  --border: #31564D;
-  --input: #17302A;
-  --ring: var(--tiru-light-teal);
+  --border: #333333;
+  --input: #202020;
+  --ring: #E5E5E5;
 }
 
 @theme inline {
@@ -87,51 +87,6 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   overflow-x: hidden;
-}
-
-.brand-logo-frame {
-  display: flex;
-  width: min(38vw, 150px);
-  align-items: center;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--tiru-white) 88%, var(--tiru-mint));
-  padding: 7px 9px;
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--tiru-deep-ink) 10%, transparent);
-}
-
-.brand-logo {
-  height: auto;
-  width: 100%;
-}
-
-.brand-logo-dark {
-  display: none;
-}
-
-[data-theme="dark"] .brand-logo-frame {
-  background: color-mix(in srgb, var(--tiru-deep-ink) 70%, black);
-  box-shadow: 0 8px 28px color-mix(in srgb, black 26%, transparent);
-}
-
-[data-theme="dark"] .brand-logo-light {
-  display: none;
-}
-
-[data-theme="dark"] .brand-logo-dark {
-  display: block;
-}
-
-@media (min-width: 640px) {
-  .brand-logo-frame {
-    width: 190px;
-    padding: 8px 10px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .brand-logo-frame {
-    width: 230px;
-  }
 }
 
 button,

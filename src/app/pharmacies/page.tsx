@@ -1,13 +1,11 @@
 import { PageShell } from "@/components/layout/PageShell";
 import { PharmaciesPage } from "@/components/pharmacies/PharmaciesPage";
-import { samplePharmacies } from "@/data/samplePharmacies";
+import { realFacilities } from "@/data/real-facility-profiles";
 import {
   filterFacilitiesByQuery,
   normalizeSearchParam,
 } from "@/lib/frontend-search-filters";
-import { getSupabasePublicPharmacyCards } from "@/lib/supabase/pharmacies-public-read";
 import type { Facility } from "@/types/facility";
-import type { PublicProviderCard } from "@/types/public-listings";
 
 export const dynamic = "force-dynamic";
 
@@ -31,57 +29,11 @@ export default async function PharmaciesRoute({
   );
 }
 
-const samplePharmaciesById = new Map(
-  samplePharmacies.map((pharmacy) => [pharmacy.id, pharmacy]),
-);
-
 async function getPharmaciesForRoute(): Promise<Facility[]> {
-  const supabaseResult = await getSupabasePublicPharmacyCards();
-
-  if (supabaseResult.cards.length === 0) {
-    return samplePharmacies.map(addPharmacyDetailHref);
-  }
-
-  return mapPublicPharmacyCardsToFacilities(supabaseResult.cards);
-}
-
-function mapPublicPharmacyCardsToFacilities(
-  cards: PublicProviderCard[],
-): Facility[] {
-  return cards.map((card) => {
-    const samplePharmacy = samplePharmaciesById.get(card.id);
-
-    if (samplePharmacy) {
-      return {
-        ...samplePharmacy,
-        detailHref: card.listingHref,
-      };
-    }
-
-    return {
-      id: card.id,
-      name: card.name,
-      slug: card.slug,
-      category: card.categoryLabel,
-      subcategory: card.summary,
-      services: card.services,
-      location: card.locationLabel,
-      address: card.locationLabel,
-      workingHours: card.hoursPreview ?? "Hours will be added after verification.",
-      verificationStatus: card.verificationStatus,
-      isOpen: false,
-      availabilityNote:
-        card.availabilityPreview ?? "Availability details are being verified.",
-      contactActionLabel: card.primaryActionLabel,
-      directionsActionLabel: card.secondaryActionLabel,
-      detailHref: card.listingHref,
-    };
-  });
-}
-
-function addPharmacyDetailHref(pharmacy: Facility): Facility {
-  return {
-    ...pharmacy,
-    detailHref: `/pharmacies/${pharmacy.slug}`,
-  };
+  return realFacilities.filter((facility) =>
+    [facility.category, facility.subcategory, facility.name, ...facility.services]
+      .join(" ")
+      .toLowerCase()
+      .includes("pharmacy"),
+  );
 }

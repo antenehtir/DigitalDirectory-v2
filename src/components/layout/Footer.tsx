@@ -13,27 +13,16 @@ const providerLinks = [
   { label: "Provider registration", href: "/register" },
   { label: "Suggest correction", href: "/corrections" },
   { label: "Contact", href: "/contact" },
-  { label: "Feedback", href: "/feedback" },
-];
-
-const communityLinks = [
-  { label: "Telegram", href: "#" },
-  { label: "LinkedIn", href: "#" },
-  { label: "Facebook", href: "#" },
-  { label: "Instagram", href: "#" },
-  { label: "TikTok", href: "#" },
-  { label: "Email updates", href: "#" },
-  { label: "WhatsApp", href: "#" },
 ];
 
 export function Footer() {
   return (
     <footer className="border-t border-border bg-card">
-      <div className="mx-auto grid w-full max-w-6xl gap-7 px-4 py-8 pb-28 text-sm text-muted-foreground sm:px-6 md:grid-cols-2 md:gap-8 md:pb-8 lg:grid-cols-[1.1fr_1fr_0.8fr_0.8fr] lg:px-8">
+      <div className="mx-auto grid w-full max-w-6xl gap-7 px-4 py-8 pb-28 text-sm text-muted-foreground sm:px-6 md:grid-cols-2 md:gap-8 md:pb-8 lg:grid-cols-[1.1fr_1fr_0.8fr] lg:px-8">
         <div className="max-w-sm">
-          <p className="font-medium text-foreground">DigitalDirectory-v2</p>
+          <p className="font-medium text-foreground">Tiru</p>
           <p className="mt-2 leading-6">
-            Trusted healthcare discovery for Ethiopia.
+            Trace the right care.
           </p>
         </div>
 
@@ -63,27 +52,6 @@ export function Footer() {
               >
                 {link.label}
               </Link>
-            ))}
-          </div>
-        </nav>
-
-        <nav aria-label="Footer community links">
-          <p className="font-semibold text-foreground">Community</p>
-          <div className="mt-3 flex flex-wrap items-center gap-x-1 gap-y-0.5 text-sm leading-6">
-            {communityLinks.map((link, index) => (
-              <span className="inline-flex items-center gap-x-1" key={link.label}>
-                {index > 0 ? (
-                  <span className="text-border" aria-hidden="true">
-                    &middot;
-                  </span>
-                ) : null}
-                <a
-                  className="inline-flex min-h-8 items-center text-muted-foreground transition-colors hover:text-primary"
-                  href={link.href}
-                >
-                  {link.label}
-                </a>
-              </span>
             ))}
           </div>
         </nav>

@@ -1,6 +1,5 @@
 import { DoctorsPage } from "@/components/doctors/DoctorsPage";
 import { PageShell } from "@/components/layout/PageShell";
-import { sampleDoctors } from "@/data/sampleDoctors";
 import {
   filterDoctorsByQuery,
   filterDoctorsBySpecialty,
@@ -44,7 +43,7 @@ async function getDoctorsForRoute(): Promise<Doctor[]> {
   const supabaseResult = await getSupabasePublicDoctorCards();
 
   if (supabaseResult.status !== "success" || supabaseResult.cards.length === 0) {
-    return sampleDoctors;
+    return [];
   }
 
   return mapPublicDoctorCardsToDoctors(supabaseResult.cards);

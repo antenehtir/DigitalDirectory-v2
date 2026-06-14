@@ -1,9 +1,9 @@
 const previewFields = [
-  { label: "Provider or facility name", value: "Provider or facility name" },
-  { label: "Contact person", value: "Primary contact name" },
-  { label: "Phone or email", value: "+251 900 000 000" },
-  { label: "City or area", value: "Addis Ababa" },
-  { label: "Category or specialty", value: "Clinic, doctor, pharmacy, lab" },
+  { label: "Provider or facility name", placeholder: "Name to review" },
+  { label: "Contact person", placeholder: "Primary contact" },
+  { label: "Phone or email", placeholder: "Contact for review" },
+  { label: "City or area", placeholder: "Sub-city or area" },
+  { label: "Category or specialty", placeholder: "Facility, doctor, pharmacy, or diagnostics" },
 ];
 
 export function RegistrationPreviewForm() {
@@ -25,27 +25,32 @@ export function RegistrationPreviewForm() {
       <div className="mt-5 grid gap-4" aria-label="Registration form">
         {previewFields.map((field) => (
           <div className="grid gap-2" key={field.label}>
-            <p className="text-sm font-semibold text-foreground">
+            <label className="text-sm font-semibold text-foreground">
               {field.label}
-            </p>
-            <div className="flex min-h-12 items-center rounded-md border border-border bg-input px-4 text-sm text-foreground shadow-sm">
-              {field.value}
-            </div>
+            </label>
+            <input
+              className="min-h-12 rounded-md border border-border bg-input px-4 text-sm text-foreground shadow-sm"
+              placeholder={field.placeholder}
+            />
           </div>
         ))}
 
         <div className="grid gap-2">
-          <p className="text-sm font-semibold text-foreground">
+          <label className="text-sm font-semibold text-foreground">
             Notes for review
-          </p>
-          <div className="min-h-28 rounded-md border border-border bg-input px-4 py-3 text-sm leading-6 text-foreground shadow-sm">
-            Briefly describe the listing, verification, or correction request.
-          </div>
+          </label>
+          <textarea
+            className="min-h-28 rounded-md border border-border bg-input px-4 py-3 text-sm leading-6 text-foreground shadow-sm"
+            placeholder="Briefly describe the listing or verification request."
+          />
         </div>
 
-        <div className="mt-1 flex min-h-12 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm">
+        <button
+          className="mt-1 min-h-12 rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm"
+          type="button"
+        >
           Submit request
-        </div>
+        </button>
       </div>
     </section>
   );

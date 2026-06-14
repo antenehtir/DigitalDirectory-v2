@@ -1,5 +1,4 @@
 import { FacilityCardGrid } from "@/components/cards/FacilityCardGrid";
-import { samplePharmacies } from "@/data/samplePharmacies";
 import type { Facility } from "@/types/facility";
 
 type PharmacyResultsSectionProps = {
@@ -8,7 +7,7 @@ type PharmacyResultsSectionProps = {
 };
 
 export function PharmacyResultsSection({
-  pharmacies = samplePharmacies,
+  pharmacies = [],
   query = "",
 }: PharmacyResultsSectionProps) {
   const isFiltered = query.length > 0;
@@ -36,11 +35,8 @@ export function PharmacyResultsSection({
             0
           </div>
           <h3 className="text-lg font-semibold text-foreground">
-            No pharmacy matches yet
+            Pharmacy listings will be added soon.
           </h3>
-          <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-            Try a broader pharmacy name, area, pickup term, or wellness service.
-          </p>
         </section>
       )}
     </section>

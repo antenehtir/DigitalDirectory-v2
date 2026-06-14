@@ -6,24 +6,23 @@ const facilityCategories: {
   href: string;
   value?: FacilityCategoryFilter;
 }[] = [
-  { label: "All facilities", href: "/facilities" },
-  { label: "Clinics", href: "/facilities?category=clinic", value: "clinic" },
+  { label: "All", href: "/facilities" },
   {
-    label: "Hospitals",
+    label: "General Hospitals",
     href: "/facilities?category=hospital",
     value: "hospital",
   },
   {
-    label: "Laboratories",
-    href: "/facilities?category=laboratory",
-    value: "laboratory",
+    label: "Specialty Centers",
+    href: "/facilities?category=specialty",
+    value: "specialty",
   },
+  { label: "Clinics", href: "/facilities?category=clinic", value: "clinic" },
   {
-    label: "Diagnostic centers",
-    href: "/facilities?category=laboratory",
-    value: "laboratory",
+    label: "Diagnostics",
+    href: "/facilities?category=diagnostics",
+    value: "diagnostics",
   },
-  { label: "Community submitted", href: "/facilities" },
 ];
 
 type FacilityCategoryFiltersProps = {

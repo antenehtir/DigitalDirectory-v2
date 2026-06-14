@@ -6,7 +6,6 @@ import { FacilityDetailHeader } from "./FacilityDetailHeader";
 import { FacilityHoursSection } from "./FacilityHoursSection";
 import { FacilityInformationSection } from "./FacilityInformationSection";
 import { FacilityServicesSection } from "./FacilityServicesSection";
-import { FacilityTrustSection } from "./FacilityTrustSection";
 import { SimilarFacilitiesSection } from "./SimilarFacilitiesSection";
 
 type FacilityDetailPageProps = {
@@ -40,7 +39,6 @@ export function FacilityDetailPage({
           </div>
 
           <div className="grid gap-6">
-            <FacilityTrustSection facility={facility} />
             <FacilityCorrectionCta facility={facility} />
           </div>
         </div>
