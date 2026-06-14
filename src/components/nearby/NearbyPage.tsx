@@ -46,6 +46,7 @@ export function NearbyPage({
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [locationState, setLocationState] = useState<LocationState>("idle");
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
+  const [isAreaBrowseOpen, setIsAreaBrowseOpen] = useState(Boolean(selectedArea));
 
   const categoryFacilities = useMemo(
     () => filterFacilitiesByCategory(facilities, selectedCategory),
@@ -69,6 +70,7 @@ export function NearbyPage({
   const unavailableDistanceFacilities = categoryFacilities.filter(
     (facility) => !facility.coordinates,
   );
+  const coordinateBackedCount = categoryFacilities.length - unavailableDistanceFacilities.length;
   const areaFacilities = selectedArea
     ? categoryFacilities.filter((facility) => facility.location === selectedArea)
     : [];
@@ -98,19 +100,31 @@ export function NearbyPage({
 
   return (
     <main className="mx-auto grid w-full max-w-6xl gap-5 px-3 py-6 min-[360px]:px-4 sm:px-6 sm:py-10 lg:px-8">
-      <section className="rounded-2xl border border-border bg-card p-5 shadow-[0_18px_45px_rgba(0,0,0,0.04)] sm:p-7">
-        <p className="text-sm font-semibold text-muted-foreground">Nearby</p>
-        <h1 className="mt-2 text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
-          Find care near your current location.
-        </h1>
-        <p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">
-          Choose a category, share your location, and Tiru will show real
-          facilities with available coordinates nearest first.
-        </p>
-      </section>
+      <section className="overflow-hidden rounded-3xl border border-border bg-card shadow-[0_24px_70px_rgba(0,0,0,0.06)]">
+        <div className="grid gap-6 p-5 sm:p-7 lg:grid-cols-[0.9fr_1.1fr] lg:p-8">
+          <div className="flex flex-col justify-between gap-5">
+            <div>
+              <p className="text-sm font-semibold text-muted-foreground">
+                Nearby care
+              </p>
+              <h1 className="mt-2 text-3xl font-semibold leading-[1.08] text-foreground sm:text-4xl">
+                Find care near your current location.
+              </h1>
+              <p className="mt-3 max-w-xl text-base leading-7 text-muted-foreground">
+                Choose a category, share your location, and see real facilities
+                with available coordinates nearest first.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-border bg-muted p-4 text-sm leading-6 text-muted-foreground">
+              Distance is available for facilities with coordinates. Other
+              facilities remain available through area browsing and search.
+            </div>
+          </div>
 
-      <section className="rounded-2xl border border-border bg-card p-4 shadow-[0_14px_35px_rgba(0,0,0,0.035)] sm:p-5">
-        <p className="text-sm font-semibold text-foreground">Category</p>
+          <div className="rounded-2xl border border-border bg-background p-4 sm:p-5">
+            <p className="text-sm font-semibold text-foreground">
+              1. Choose category
+            </p>
         <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
           {categoryOptions.map((category) => {
             const isActive = category.value === selectedCategory;
@@ -133,6 +147,9 @@ export function NearbyPage({
           })}
         </div>
 
+            <p className="mt-5 text-sm font-semibold text-foreground">
+              2. Share location
+            </p>
         <button
           className="mt-5 flex min-h-12 w-full items-center justify-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:opacity-90 disabled:cursor-wait disabled:opacity-70 sm:w-auto"
           disabled={locationState === "loading"}
@@ -141,6 +158,10 @@ export function NearbyPage({
         >
           {locationState === "loading" ? "Finding nearby care..." : "Use my location"}
         </button>
+            <p className="mt-3 text-xs leading-5 text-muted-foreground">
+              {coordinateBackedCount} matching facilities currently have
+              distance-ready coordinates.
+            </p>
 
         {locationState === "denied" ? (
           <p className="mt-4 rounded-xl border border-border bg-muted p-4 text-sm leading-6 text-muted-foreground">
@@ -155,6 +176,8 @@ export function NearbyPage({
             below.
           </p>
         ) : null}
+          </div>
+        </div>
       </section>
 
       {locationState === "ready" ? (
@@ -183,63 +206,67 @@ export function NearbyPage({
           )}
 
           {unavailableDistanceFacilities.length > 0 ? (
-            <section className="grid gap-3">
-              <h3 className="text-lg font-semibold text-foreground">
-                Distance unavailable
-              </h3>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {unavailableDistanceFacilities.slice(0, 12).map((facility) => (
-                  <NearbyFacilityCard
-                    distanceLabel="Distance unavailable"
-                    facility={facility}
-                    key={facility.id}
-                  />
-                ))}
-              </div>
+            <section className="rounded-2xl border border-border bg-card p-4 text-sm leading-6 text-muted-foreground">
+              {unavailableDistanceFacilities.length} matching facilities do not
+              have distance-ready coordinates yet. Use Browse by Area below to
+              find them without showing fake distance.
             </section>
           ) : null}
         </section>
       ) : null}
 
       <section className="rounded-2xl border border-border bg-card p-4 sm:p-5">
-        <h2 className="text-xl font-semibold leading-tight text-foreground">
-          Browse by Sub-city / Area
-        </h2>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          Use this when location sharing is unavailable or when a facility has
-          no coordinates.
-        </p>
-
-        {areaOptions.length > 0 ? (
-          <div className="mt-4 flex max-h-56 flex-wrap gap-2 overflow-y-auto pr-1">
-            {areaOptions.map((area) => {
-              const isActive = area === selectedArea;
-              const href =
-                selectedCategory === "all"
-                  ? `/nearby?area=${encodeURIComponent(area)}`
-                  : `/nearby?area=${encodeURIComponent(area)}&category=${selectedCategory}`;
-
-              return (
-                <Link
-                  aria-current={isActive ? "page" : undefined}
-                  className={`rounded-full border px-3 py-2 text-sm font-semibold ${
-                    isActive
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border bg-background text-foreground hover:border-foreground"
-                  }`}
-                  href={href}
-                  key={area}
-                >
-                  {area}
-                </Link>
-              );
-            })}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-xl font-semibold leading-tight text-foreground">
+              Browse by area instead
+            </h2>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+              Secondary fallback for records without coordinates or when
+              location access is unavailable.
+            </p>
           </div>
-        ) : (
-          <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            Area options will be added soon.
-          </p>
-        )}
+          <button
+            className="min-h-11 rounded-xl border border-border bg-background px-4 text-sm font-semibold text-foreground"
+            onClick={() => setIsAreaBrowseOpen((current) => !current)}
+            type="button"
+          >
+            {isAreaBrowseOpen ? "Hide areas" : "Browse by area"}
+          </button>
+        </div>
+
+        {isAreaBrowseOpen ? (
+          areaOptions.length > 0 ? (
+            <div className="mt-4 grid max-h-64 gap-2 overflow-y-auto pr-1 sm:grid-cols-2 lg:grid-cols-3">
+              {areaOptions.map((area) => {
+                const isActive = area === selectedArea;
+                const href =
+                  selectedCategory === "all"
+                    ? `/nearby?area=${encodeURIComponent(area)}`
+                    : `/nearby?area=${encodeURIComponent(area)}&category=${selectedCategory}`;
+
+                return (
+                  <Link
+                    aria-current={isActive ? "page" : undefined}
+                    className={`rounded-xl border px-3 py-2 text-sm font-semibold ${
+                      isActive
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-background text-foreground hover:border-foreground"
+                    }`}
+                    href={href}
+                    key={area}
+                  >
+                    {area}
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              Area options will be added soon.
+            </p>
+          )
+        ) : null}
       </section>
 
       {selectedArea ? (
