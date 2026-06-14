@@ -6,8 +6,8 @@ type FacilityHoursSectionProps = {
 
 export function FacilityHoursSection({ facility }: FacilityHoursSectionProps) {
   return (
-    <section className="rounded-3xl border border-border bg-card p-5 shadow-[0_14px_34px_rgba(11,31,51,0.045)] sm:p-6">
-      <p className="text-sm font-semibold text-[#0F8B6E]">
+    <section className="rounded-3xl border border-border bg-card p-5 shadow-[0_10px_26px_rgba(31,41,55,0.04)] sm:p-6">
+      <p className="text-sm font-semibold text-[#0F766E]">
         Hours
       </p>
       <h2 className="mt-2 text-2xl font-semibold leading-tight text-foreground">

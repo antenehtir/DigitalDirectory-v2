@@ -21,11 +21,11 @@ export function FacilityCard({ facility }: FacilityCardProps) {
   const mapAction = contactActions.find((action) => action.kind === "maps");
 
   return (
-    <article className="flex h-full min-w-0 flex-col rounded-3xl border border-border bg-card p-4 shadow-[0_14px_34px_rgba(11,31,51,0.045)] sm:p-5">
+    <article className="flex h-full min-w-0 flex-col rounded-3xl border border-border bg-card p-4 shadow-[0_10px_26px_rgba(31,41,55,0.04)] sm:p-5">
       <div className="flex flex-col items-start gap-3 min-[420px]:flex-row min-[420px]:justify-between">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className="size-2 rounded-full bg-[#0F8B6E]" />
+            <span className="size-2 shrink-0 rounded-full bg-[#14B8A6]" />
           <p className="text-sm font-semibold leading-5 text-muted-foreground">
             {facility.category}
           </p>
@@ -87,7 +87,7 @@ export function FacilityCard({ facility }: FacilityCardProps) {
           </a>
         ) : null}
         <Link
-          className="flex min-h-12 items-center justify-center rounded-2xl bg-primary px-3 text-center text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+          className="flex min-h-12 items-center justify-center rounded-2xl bg-primary px-3 text-center text-sm font-semibold text-primary-foreground transition hover:bg-[#0B5E58]"
           href={detailHref}
         >
           View details

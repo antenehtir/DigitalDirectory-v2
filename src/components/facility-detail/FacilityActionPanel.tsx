@@ -16,7 +16,7 @@ export function FacilityActionPanel({ facility }: FacilityActionPanelProps) {
   );
 
   return (
-    <aside className="rounded-3xl border border-border bg-card p-5 shadow-[0_18px_50px_rgba(11,31,51,0.06)] sm:p-6">
+    <aside className="rounded-3xl border border-border bg-card p-5 shadow-[0_10px_26px_rgba(31,41,55,0.04)] sm:p-6">
       <h2 className="text-2xl font-semibold leading-tight text-foreground">
         Contact options
       </h2>
@@ -31,7 +31,7 @@ export function FacilityActionPanel({ facility }: FacilityActionPanelProps) {
             <a
               className={`flex min-h-12 items-center justify-center rounded-2xl px-5 text-center text-sm font-semibold transition ${
                 index === 0
-                  ? "bg-primary text-primary-foreground"
+                  ? "bg-primary text-primary-foreground hover:bg-[#0B5E58]"
                   : "border border-border bg-card text-foreground"
               }`}
               href={action.href}

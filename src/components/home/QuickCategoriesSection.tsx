@@ -47,7 +47,7 @@ export function QuickCategoriesSection() {
         <div className="mx-auto max-w-4xl">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-sm font-semibold text-[#0F8B6E]">
+              <p className="text-sm font-semibold text-[#0F766E]">
                 Care wayfinding
               </p>
               <h2 className="text-2xl font-semibold leading-tight text-foreground">
@@ -65,21 +65,21 @@ export function QuickCategoriesSection() {
           {categories.map((category) => (
             <Link
               key={category.label}
-              className="group flex min-h-24 items-center gap-3 rounded-3xl border border-border bg-card p-4 shadow-[0_12px_30px_rgba(11,31,51,0.035)] transition-colors hover:border-strong-border"
+              className="group flex min-h-24 min-w-0 items-center gap-3 rounded-3xl border border-border bg-card p-4 shadow-[0_10px_24px_rgba(31,41,55,0.035)] transition-colors hover:border-strong-border"
               href={category.href}
             >
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#E6F4EF] text-sm font-bold text-[#0F8B6E]">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#ECFEFF] text-sm font-bold text-[#0F766E]">
                 {category.marker}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-semibold text-foreground">
+                <span className="block break-words text-sm font-semibold text-foreground">
                   {category.label}
                 </span>
                 <span className="mt-1 block text-sm leading-5 text-muted-foreground">
                   {category.description}
                 </span>
               </span>
-              <span className="text-lg text-muted-foreground transition group-hover:text-foreground">
+              <span className="shrink-0 text-lg text-muted-foreground transition group-hover:text-foreground">
                 &rarr;
               </span>
             </Link>
