@@ -17,11 +17,11 @@ export function CategoryChips() {
       <p className="mb-2 text-xs font-semibold text-muted-foreground">
         Search by category
       </p>
-      <div className="flex max-w-full flex-wrap gap-2">
+      <div className="flex max-w-full flex-wrap items-center gap-2">
         {healthcareCategories.map((category, index) => (
           <Link
             key={category}
-            className={`flex min-h-10 max-w-full items-center rounded-full border px-3 text-left text-sm font-semibold leading-5 transition sm:px-4 ${
+            className={`inline-flex min-h-10 max-w-full items-center justify-center rounded-full border px-4 py-2 text-center text-sm font-semibold leading-tight transition sm:px-5 ${
               index === 0
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-border bg-card text-foreground hover:border-strong-border"
