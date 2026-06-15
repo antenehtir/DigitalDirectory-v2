@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { DesktopNavigation } from "@/components/navigation/DesktopNavigation";
 import { BrandMark } from "@/components/ui/BrandMark";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { HeaderSearchForm } from "./HeaderSearchForm";
 
 export function Header() {
@@ -15,8 +14,6 @@ export function Header() {
         <HeaderSearchForm />
 
         <DesktopNavigation />
-
-        <ThemeToggle />
 
         <div className="ml-auto flex min-w-0 items-center gap-1.5 sm:gap-2 lg:hidden">
           <Link
