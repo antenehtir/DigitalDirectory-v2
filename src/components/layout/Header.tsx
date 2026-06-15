@@ -2,6 +2,7 @@ import Link from "next/link";
 import { DesktopNavigation } from "@/components/navigation/DesktopNavigation";
 import { BrandMark } from "@/components/ui/BrandMark";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { HeaderSearchForm } from "./HeaderSearchForm";
 
 export function Header() {
   return (
@@ -15,10 +16,7 @@ export function Header() {
           <BrandMark />
         </div>
 
-        <div className="hidden min-w-64 flex-1 items-center rounded-full border border-border bg-background px-4 py-2.5 text-sm text-muted-foreground md:flex lg:max-w-sm">
-          <span className="mr-2 size-2 rounded-full bg-[#14B8A6]" />
-          Search hospitals, clinics, diagnostics
-        </div>
+        <HeaderSearchForm />
 
         <DesktopNavigation />
 

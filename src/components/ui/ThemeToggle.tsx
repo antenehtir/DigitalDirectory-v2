@@ -65,19 +65,17 @@ export function ThemeToggle() {
     storeTheme(nextTheme);
   }
 
-  const nextThemeLabel = theme === "dark" ? "Light" : "Dark";
   const Icon = theme === "dark" ? SunIcon : MoonIcon;
 
   return (
     <button
       type="button"
-      className="flex size-9 shrink-0 items-center justify-center gap-2 rounded-full border border-border bg-card text-xs font-semibold text-foreground transition-colors hover:bg-muted min-[380px]:size-10 lg:w-auto lg:px-3"
+      className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-muted min-[380px]:size-10"
       onClick={toggleTheme}
       aria-label="Toggle theme"
       suppressHydrationWarning
     >
       <Icon />
-      <span className="hidden lg:inline">{nextThemeLabel}</span>
     </button>
   );
 }
