@@ -3,7 +3,6 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { realFacilities } from "@/data/real-facility-profiles";
 
 const showcasedFacilities = realFacilities.slice(0, 10);
-const mobileShowcaseFacilities = showcasedFacilities.slice(0, 3);
 
 export function FeaturedFacilityStrip() {
   if (showcasedFacilities.length === 0) {
@@ -14,13 +13,16 @@ export function FeaturedFacilityStrip() {
     <section className="bg-transparent">
       <PageContainer className="py-6 sm:py-8 lg:py-10">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
+          <div className="max-w-2xl">
             <p className="text-sm font-semibold text-primary">
-              Real providers on Tiru
+              Community-submitted providers on Tiru
             </p>
             <h2 className="text-2xl font-semibold leading-tight text-foreground">
-              Featured care options
+              Community-submitted facilities
             </h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              Listings are reviewed and updated as providers confirm details.
+            </p>
           </div>
           <Link
             className="inline-flex min-h-10 w-fit items-center rounded-full border border-border bg-card px-4 text-sm font-semibold text-foreground transition hover:border-strong-border"
@@ -30,60 +32,68 @@ export function FeaturedFacilityStrip() {
           </Link>
         </div>
 
-        <div className="mt-5 grid gap-3 lg:hidden">
-          {mobileShowcaseFacilities.map((facility) => (
-            <Link
-              className="flex min-w-0 flex-col rounded-3xl border border-border bg-card p-4 shadow-[0_10px_26px_rgba(31,41,55,0.04)] transition hover:border-strong-border"
-              href={facility.detailHref ?? `/facilities/${facility.slug}`}
-              key={facility.id}
-            >
-              <p className="text-xs font-semibold text-primary">
-                {facility.category}
-              </p>
-              <h3 className="mt-2 break-words text-base font-semibold leading-snug text-foreground">
-                {facility.name}
-              </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {facility.location}
-              </p>
-              <p className="mt-3 text-sm leading-5 text-muted-foreground">
-                {facility.services[0] ?? facility.subcategory}
-              </p>
-              <span className="mt-3 text-sm font-semibold text-primary">
-                View details
-              </span>
-            </Link>
-          ))}
+        <div className="-mx-4 mt-5 snap-x snap-mandatory overflow-x-auto scroll-smooth px-4 pb-2 lg:hidden">
+          <div className="flex gap-3">
+            {showcasedFacilities.map((facility) => (
+              <FeaturedFacilityCard
+                className="w-[84vw] max-w-[22rem] snap-start"
+                facility={facility}
+                key={facility.id}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="mt-5 hidden overflow-hidden lg:block">
           <div className="homepage-facility-strip flex w-max gap-4 pb-2">
             {showcasedFacilities.map((facility) => (
-              <Link
-                className="flex min-h-44 w-[17rem] shrink-0 flex-col rounded-3xl border border-border bg-card p-4 shadow-[0_10px_26px_rgba(31,41,55,0.04)] transition hover:border-strong-border"
-                href={facility.detailHref ?? `/facilities/${facility.slug}`}
+              <FeaturedFacilityCard
+                className="w-[17rem]"
+                facility={facility}
                 key={facility.id}
-              >
-                <p className="text-xs font-semibold text-primary">
-                  {facility.category}
-                </p>
-                <h3 className="mt-2 line-clamp-2 text-base font-semibold leading-snug text-foreground">
-                  {facility.name}
-                </h3>
-                <p className="mt-2 line-clamp-1 text-sm text-muted-foreground">
-                  {facility.location}
-                </p>
-                <p className="mt-3 line-clamp-2 text-sm leading-5 text-muted-foreground">
-                  {facility.services[0] ?? facility.subcategory}
-                </p>
-                <span className="mt-auto pt-4 text-sm font-semibold text-primary">
-                  View details
-                </span>
-              </Link>
+              />
             ))}
           </div>
         </div>
       </PageContainer>
     </section>
+  );
+}
+
+type FeaturedFacilityCardProps = {
+  className: string;
+  facility: (typeof realFacilities)[number];
+};
+
+function FeaturedFacilityCard({
+  className,
+  facility,
+}: FeaturedFacilityCardProps) {
+  return (
+    <Link
+      className={`flex min-h-48 shrink-0 flex-col rounded-3xl border border-border bg-card p-4 shadow-[0_10px_26px_rgba(31,41,55,0.04)] transition hover:border-strong-border ${className}`}
+      href={facility.detailHref ?? `/facilities/${facility.slug}`}
+    >
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="rounded-full border border-primary/25 bg-soft-accent px-2.5 py-1 text-xs font-semibold text-primary">
+          Community submitted
+        </span>
+        <span className="text-xs font-semibold text-muted-foreground">
+          {facility.category}
+        </span>
+      </div>
+      <h3 className="mt-3 line-clamp-2 break-words text-base font-semibold leading-snug text-foreground">
+        {facility.name}
+      </h3>
+      <p className="mt-2 line-clamp-1 text-sm text-muted-foreground">
+        {facility.location}
+      </p>
+      <p className="mt-3 line-clamp-2 text-sm leading-5 text-muted-foreground">
+        {facility.services[0] ?? facility.subcategory}
+      </p>
+      <span className="mt-auto pt-4 text-sm font-semibold text-primary">
+        View details
+      </span>
+    </Link>
   );
 }

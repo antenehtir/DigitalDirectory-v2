@@ -1,6 +1,13 @@
 "use client";
 
-import { FormEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from "react";
+import {
+  FormEvent,
+  KeyboardEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useRouter } from "next/navigation";
 import { realFacilities } from "@/data/real-facility-profiles";
 import {
@@ -10,23 +17,31 @@ import {
 
 type SearchAutocompleteInputProps = {
   autoFocus?: boolean;
+  buttonLabel?: string;
   buttonClassName: string;
+  buttonText?: string;
   formClassName: string;
   id: string;
   initialQuery?: string;
+  isIconButton?: boolean;
   inputClassName: string;
   label: string;
+  labelClassName?: string;
   placeholder: string;
 };
 
 export function SearchAutocompleteInput({
   autoFocus = false,
+  buttonLabel = "Search",
   buttonClassName,
+  buttonText = "Search",
   formClassName,
   id,
   initialQuery = "",
+  isIconButton = false,
   inputClassName,
   label,
+  labelClassName = "mb-2 block text-sm font-semibold text-foreground",
   placeholder,
 }: SearchAutocompleteInputProps) {
   const router = useRouter();
@@ -53,7 +68,8 @@ export function SearchAutocompleteInput({
     () => getProviderSearchSuggestions(realFacilities, query),
     [query],
   );
-  const showSuggestions = isOpen && query.trim().length > 0 && suggestions.length > 0;
+  const showSuggestions =
+    isOpen && query.trim().length > 0 && suggestions.length > 0;
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -94,7 +110,7 @@ export function SearchAutocompleteInput({
   return (
     <form className={formClassName} onSubmit={submitSearch}>
       <div className="relative min-w-0">
-        <label className="mb-2 block text-sm font-semibold text-foreground" htmlFor={id}>
+        <label className={labelClassName} htmlFor={id}>
           {label}
         </label>
         <input
@@ -140,9 +156,32 @@ export function SearchAutocompleteInput({
         ) : null}
       </div>
 
-      <button className={buttonClassName} type="submit">
-        Search
+      <button
+        aria-label={isIconButton ? buttonLabel : undefined}
+        className={buttonClassName}
+        type="submit"
+      >
+        {isIconButton ? <SearchIcon /> : buttonText}
       </button>
     </form>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-5"
+      fill="none"
+      focusable="false"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path d="m16.5 16.5 4 4" />
+    </svg>
   );
 }
