@@ -12,7 +12,7 @@ export function DesktopNavigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
+    <nav className="ml-auto hidden items-center gap-0.5 lg:flex" aria-label="Primary">
       {mainNavigationItems.map((item) => {
         const isActive = isActiveRoute(pathname, item.href);
 
