@@ -19,7 +19,7 @@ export function FacilityCorrectionCta({ facility }: FacilityCorrectionCtaProps) 
       </p>
       <Link
         className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-md bg-card px-5 text-center text-sm font-semibold text-foreground sm:w-auto"
-        href={`/corrections?listing=${encodeURIComponent(facility.slug)}`}
+        href={`/corrections?facility=${encodeURIComponent(facility.slug)}`}
       >
         Request correction
       </Link>

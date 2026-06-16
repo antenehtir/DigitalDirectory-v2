@@ -22,7 +22,8 @@ type SubmitState = "idle" | "submitting" | "success" | "error";
 
 export function CorrectionsPage() {
   const searchParams = useSearchParams();
-  const initialProviderName = searchParams.get("listing") ?? "";
+  const initialProviderName =
+    searchParams.get("facility") ?? searchParams.get("listing") ?? "";
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 

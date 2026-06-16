@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -42,6 +43,19 @@ type DoctorContactChannel = {
   value: string;
   href?: string;
 };
+
+export async function generateMetadata({
+  params,
+}: DoctorDetailRouteProps): Promise<Metadata> {
+  const { slug } = await params;
+  const result = await getSafeDoctorDetail(slug);
+  const doctor = result.status === "success" ? result.detail : null;
+
+  return {
+    title: doctor ? `${doctor.name} — Tiru` : "Doctor — Tiru",
+    description: doctor ? `${doctor.categoryLabel} in Addis Ababa.` : "",
+  };
+}
 
 export default async function DoctorDetailRoute({
   params,

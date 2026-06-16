@@ -1,35 +1,26 @@
+import type { Metadata } from "next";
+import { Suspense } from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import { SearchResultsPage } from "@/components/search-results/SearchResultsPage";
-import { normalizeSearchParam } from "@/lib/frontend-search-filters";
 import { getSupabasePublicDoctorCards } from "@/lib/supabase/doctors-public-read";
 import type { Doctor, DoctorTelemedicineStatus } from "@/types/doctor";
 import type { PublicProviderCard } from "@/types/public-listings";
 
 export const dynamic = "force-dynamic";
 
-type SearchPageProps = {
-  searchParams?: Promise<{
-    focus?: string | string[];
-    q?: string | string[];
-    category?: string | string[];
-  }>;
+export const metadata: Metadata = {
+  title: "Search — Tiru",
+  description: "Search private healthcare providers in Addis Ababa.",
 };
 
-export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const params = await searchParams;
-  const shouldFocusSearch = normalizeSearchParam(params?.focus) === "1";
-  const query = normalizeSearchParam(params?.q);
-  const category = normalizeSearchParam(params?.category);
+export default async function SearchPage() {
   const doctors = await getDoctorsForSearch();
 
   return (
     <PageShell>
-      <SearchResultsPage
-        category={category}
-        doctors={doctors}
-        focusSearch={shouldFocusSearch}
-        query={query}
-      />
+      <Suspense>
+        <SearchResultsPage doctors={doctors} />
+      </Suspense>
     </PageShell>
   );
 }

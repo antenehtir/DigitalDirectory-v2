@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { FacilityDetailPage } from "@/components/facility-detail/FacilityDetailPage";
@@ -11,6 +12,22 @@ type DiagnosticsDetailRouteProps = {
     slug: string;
   }>;
 };
+
+export async function generateMetadata({
+  params,
+}: DiagnosticsDetailRouteProps): Promise<Metadata> {
+  const { slug } = await params;
+  const facility = getRealFacilityBySlug(slug);
+  const diagnostic =
+    facility && isDiagnosticsFacility(facility) ? facility : null;
+
+  return {
+    title: diagnostic ? `${diagnostic.name} — Tiru` : "Diagnostic Center — Tiru",
+    description: diagnostic
+      ? `Diagnostic center in ${diagnostic.location}, Addis Ababa.`
+      : "",
+  };
+}
 
 export default async function DiagnosticsDetailRoute({
   params,

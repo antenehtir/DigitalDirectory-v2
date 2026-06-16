@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { FacilitiesPage } from "@/components/facilities/FacilitiesPage";
 import { PageShell } from "@/components/layout/PageShell";
 import { realFacilities } from "@/data/real-facility-profiles";
@@ -10,6 +11,12 @@ import {
 } from "@/lib/frontend-search-filters";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Facilities — Tiru",
+  description:
+    "Browse private hospitals, specialty centers and clinics in Addis Ababa.",
+};
 
 type FacilitiesRouteProps = {
   searchParams?: Promise<{

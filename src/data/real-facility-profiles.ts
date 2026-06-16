@@ -61,6 +61,41 @@ const knownCoordinatesByRecordNumber: Record<
   10: { latitude: 9.0156, longitude: 38.8012 }, // MCM Korea Hospital (gerji)
 };
 
+// Approximate per-sub-city bounding boxes used to spread out facilities that
+// don't have a manually verified coordinate above.
+type CoordinateRange = {
+  latMin: number;
+  latMax: number;
+  lngMin: number;
+  lngMax: number;
+};
+
+const subCityCoordinateRanges: Record<string, CoordinateRange> = {
+  bole: { latMin: 9.0, latMax: 9.02, lngMin: 38.78, lngMax: 38.81 },
+  kirkos: { latMin: 9.01, latMax: 9.025, lngMin: 38.75, lngMax: 38.78 },
+  yeka: { latMin: 9.02, latMax: 9.05, lngMin: 38.79, lngMax: 38.83 },
+  arada: { latMin: 9.025, latMax: 9.04, lngMin: 38.74, lngMax: 38.76 },
+  lideta: { latMin: 9.01, latMax: 9.025, lngMin: 38.73, lngMax: 38.75 },
+  "nifas silk-lafto": { latMin: 8.98, latMax: 9.0, lngMin: 38.74, lngMax: 38.77 },
+  "akaki kaliti": { latMin: 8.87, latMax: 8.92, lngMin: 38.78, lngMax: 38.82 },
+  "kolfe keranio": { latMin: 9.01, latMax: 9.04, lngMin: 38.7, lngMax: 38.73 },
+  gulele: { latMin: 9.04, latMax: 9.07, lngMin: 38.73, lngMax: 38.76 },
+  "addis ketema": { latMin: 9.025, latMax: 9.04, lngMin: 38.73, lngMax: 38.75 },
+  "lemi kura": { latMin: 9.03, latMax: 9.06, lngMin: 38.81, lngMax: 38.85 },
+  "sheger city": { latMin: 8.98, latMax: 9.01, lngMin: 38.85, lngMax: 38.9 },
+};
+
+// Aliases / common misspellings found in the source data that map onto a
+// sub-city range above.
+const subCityAliases: Record<string, string> = {
+  kolfe: "kolfe keranio",
+  gullele: "gulele",
+};
+
+// Used for facilities with no single physical location ("online" or
+// "multiple" branches) instead of a sub-city bounding box.
+const ADDIS_ABABA_CITY_CENTER = { latitude: 9.0222, longitude: 38.7468 };
+
 const baseSlugCounts = extractedRecords.reduce<Map<string, number>>(
   (counts, record) => {
     const baseSlug = createBaseSlug(record.name, record.record_number);
@@ -121,7 +156,14 @@ function mapRealFacilityProfileToFacility(
   const hasHours = Boolean(profile.hours);
   const hasPhone = Boolean(profile.phone);
   const hasMap = Boolean(profile.google_maps);
-  const knownCoordinates = knownCoordinatesByRecordNumber[profile.record_number];
+  const normalizedSubCity = profile.sub_city.trim().toLowerCase();
+  const isOnlineOnly = normalizedSubCity === "online";
+  const isMultiBranch = normalizedSubCity === "multiple";
+  const coordinates =
+    knownCoordinatesByRecordNumber[profile.record_number] ??
+    (isOnlineOnly || isMultiBranch
+      ? ADDIS_ABABA_CITY_CENTER
+      : estimateCoordinatesForFacility(profile));
 
   return {
     id: `real-facility-${profile.record_number}`,
@@ -142,9 +184,67 @@ function mapRealFacilityProfileToFacility(
     directionsActionLabel: hasMap ? "Open map" : "View location",
     contactChannels: createFacilityContactChannels(profile),
     detailHref: `/facilities/${profile.slug}`,
-    latitude: knownCoordinates?.latitude,
-    longitude: knownCoordinates?.longitude,
+    latitude: coordinates?.latitude,
+    longitude: coordinates?.longitude,
+    onlineOnly: isOnlineOnly ? true : undefined,
   };
+}
+
+function resolveSubCityRange(subCity: string): CoordinateRange | undefined {
+  const segments = subCity
+    .toLowerCase()
+    .split("/")
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+
+  for (const segment of segments) {
+    const normalized = subCityAliases[segment] ?? segment;
+    const range = subCityCoordinateRanges[normalized];
+
+    if (range) {
+      return range;
+    }
+  }
+
+  return undefined;
+}
+
+function estimateCoordinatesForFacility(
+  profile: RealFacilityProfile,
+): { latitude: number; longitude: number } | undefined {
+  const range = resolveSubCityRange(profile.sub_city);
+
+  if (!range) {
+    return undefined;
+  }
+
+  const latitudeFraction = hashToUnitInterval(`${profile.slug}-lat`);
+  const longitudeFraction = hashToUnitInterval(`${profile.slug}-lng`);
+
+  return {
+    latitude: roundCoordinate(
+      range.latMin + latitudeFraction * (range.latMax - range.latMin),
+    ),
+    longitude: roundCoordinate(
+      range.lngMin + longitudeFraction * (range.lngMax - range.lngMin),
+    ),
+  };
+}
+
+// Deterministic, dependency-free hash so the same facility always lands at
+// the same spread-out point within its sub-city range across builds.
+function hashToUnitInterval(value: string): number {
+  let hash = 0;
+
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
+  }
+
+  return (hash % 10000) / 10000;
+}
+
+function roundCoordinate(value: number): number {
+  return Math.round(value * 10000) / 10000;
 }
 
 function getFacilityServices(profile: RealFacilityProfile): string[] {

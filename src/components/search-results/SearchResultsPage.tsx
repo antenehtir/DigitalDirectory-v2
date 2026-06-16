@@ -1,4 +1,6 @@
-import Link from "next/link";
+"use client";
+
+import { useRouter, useSearchParams } from "next/navigation";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { FacilityCard } from "@/components/cards/FacilityCard";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -9,55 +11,48 @@ import { filterDoctorsByQuery, filterFacilitiesByQuery } from "@/lib/frontend-se
 import type { Doctor } from "@/types/doctor";
 import type { Facility } from "@/types/facility";
 
-const categorySlugs: Record<string, string> = {
-  All: "",
-  "General Hospitals": "hospital",
-  "Specialty Centers": "specialty",
-  Clinics: "clinic",
-  Doctors: "doctor",
-  Diagnostics: "diagnostics",
-  Pharmacies: "pharmacy",
-};
-
 type SearchResultsPageProps = {
-  category?: string;
   doctors?: Doctor[];
-  focusSearch?: boolean;
-  query?: string;
 };
 
-export function SearchResultsPage({
-  category = "",
-  doctors = [],
-  focusSearch = false,
-  query = "",
-}: SearchResultsPageProps) {
+export function SearchResultsPage({ doctors = [] }: SearchResultsPageProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q") ?? "";
+  const category = searchParams.get("category") ?? "";
+  const focusSearch = searchParams.get("focus") === "1";
+  const normalizedCategory = category.trim().toLowerCase();
+  const isAllCategory = !normalizedCategory || normalizedCategory === "all";
+
   const matchingFacilities = filterFacilitiesByQuery(realFacilities, query);
   const matchingDoctors = filterDoctorsByQuery(doctors, query);
-
-  const isPharmacy = (facility: Facility) =>
-    [facility.category, facility.subcategory, facility.name, ...facility.services]
-      .join(" ")
-      .toLowerCase()
-      .includes("pharmacy");
 
   let visibleFacilities: Facility[] = [];
   let visibleDoctors: Doctor[] = [];
 
-  if (category === "doctor") {
-    visibleDoctors = matchingDoctors;
-  } else if (category === "pharmacy") {
-    visibleFacilities = matchingFacilities.filter(isPharmacy);
-  } else if (category === "hospital" || category === "specialty" || category === "clinic" || category === "diagnostics") {
-    visibleFacilities = matchingFacilities.filter(
-      (facility) => !isPharmacy(facility) && matchesFacilityCategory(facility, category),
-    );
-  } else {
+  if (isAllCategory) {
     visibleFacilities = matchingFacilities;
     visibleDoctors = matchingDoctors;
+  } else if (normalizedCategory === "doctors") {
+    visibleDoctors = matchingDoctors;
+  } else {
+    visibleFacilities = matchingFacilities.filter((facility) =>
+      matchesCategoryFilter(facility, normalizedCategory),
+    );
   }
 
   const hasResults = visibleFacilities.length > 0 || visibleDoctors.length > 0;
+
+  function handleCategoryClick(label: string) {
+    const params = new URLSearchParams();
+
+    if (query) {
+      params.set("q", query);
+    }
+
+    params.set("category", label);
+    router.push(`/search?${params.toString()}`);
+  }
 
   return (
     <PageContainer className="py-8 sm:py-10 lg:py-14">
@@ -75,23 +70,23 @@ export function SearchResultsPage({
 
         <div className="flex max-w-full flex-wrap items-center gap-2">
           {healthcareCategories.map((label) => {
-            const slug = categorySlugs[label] ?? "";
-            const isActive = slug === category;
-            const href = buildCategoryHref(query, slug);
+            const isActive =
+              label === "All" ? isAllCategory : normalizedCategory === label.toLowerCase();
 
             return (
-              <Link
+              <button
                 key={label}
-                aria-current={isActive ? "page" : undefined}
+                aria-pressed={isActive}
                 className={`inline-flex min-h-10 items-center rounded-full border px-4 text-sm font-semibold transition ${
                   isActive
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-card text-foreground hover:border-strong-border"
                 }`}
-                href={href}
+                onClick={() => handleCategoryClick(label)}
+                type="button"
               >
                 {label}
-              </Link>
+              </button>
             );
           })}
         </div>
@@ -115,48 +110,34 @@ export function SearchResultsPage({
   );
 }
 
-function matchesFacilityCategory(facility: Facility, category: string): boolean {
+function matchesCategoryFilter(facility: Facility, normalizedCategory: string): boolean {
   const searchableText = [facility.category, facility.subcategory, facility.name, ...facility.services]
     .join(" ")
     .toLowerCase();
 
-  if (category === "clinic") {
-    return (
-      searchableText.includes("clinic") ||
-      searchableText.includes("health center") ||
-      searchableText.includes("primary care")
-    );
-  }
-
-  if (category === "hospital") {
+  if (normalizedCategory === "general hospitals") {
     return searchableText.includes("hospital");
   }
 
-  if (category === "specialty") {
+  if (normalizedCategory === "specialty centers") {
     return searchableText.includes("specialty");
   }
 
-  return (
-    searchableText.includes("laboratory") ||
-    searchableText.includes("diagnostic") ||
-    searchableText.includes("lab") ||
-    searchableText.includes("imaging") ||
-    searchableText.includes("radiology")
-  );
-}
-
-function buildCategoryHref(query: string, categorySlug: string): string {
-  const params = new URLSearchParams();
-
-  if (query) {
-    params.set("q", query);
+  if (normalizedCategory === "clinics") {
+    return searchableText.includes("clinic");
   }
 
-  if (categorySlug) {
-    params.set("category", categorySlug);
+  if (normalizedCategory === "diagnostics") {
+    return (
+      searchableText.includes("diagnostic") ||
+      searchableText.includes("lab") ||
+      searchableText.includes("imaging")
+    );
   }
 
-  const queryString = params.toString();
+  if (normalizedCategory === "pharmacies") {
+    return searchableText.includes("pharmacy");
+  }
 
-  return queryString ? `/search?${queryString}` : "/search";
+  return true;
 }

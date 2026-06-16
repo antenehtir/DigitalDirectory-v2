@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { DiagnosticsPage } from "@/components/diagnostics/DiagnosticsPage";
 import { PageShell } from "@/components/layout/PageShell";
 import { realFacilities } from "@/data/real-facility-profiles";
@@ -5,6 +6,11 @@ import { normalizeSearchParam } from "@/lib/frontend-search-filters";
 import type { Facility } from "@/types/facility";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Diagnostics — Tiru",
+  description: "Labs, imaging centers and diagnostic services in Addis Ababa.",
+};
 
 type DiagnosticsRouteProps = {
   searchParams?: Promise<{

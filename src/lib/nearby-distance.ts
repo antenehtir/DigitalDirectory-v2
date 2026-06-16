@@ -25,9 +25,13 @@ export function calculateDistanceKm(
 }
 
 export function resolveFacilityCoordinates(
-  facility: { latitude?: number; longitude?: number },
+  facility: { latitude?: number; longitude?: number; onlineOnly?: boolean },
   fallbackText: string | undefined,
 ): Coordinates | undefined {
+  if (facility.onlineOnly) {
+    return undefined;
+  }
+
   const { latitude, longitude } = facility;
 
   if (

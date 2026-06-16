@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import { Homepage } from "@/components/home/Homepage";
 import { PageShell } from "@/components/layout/PageShell";
+
+export const metadata: Metadata = {
+  title: "Tiru — Healthcare in Addis Ababa",
+  description:
+    "Find hospitals, clinics, doctors, diagnostics and pharmacies across Addis Ababa.",
+};
 
 export default function Home() {
   return (

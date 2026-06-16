@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { FacilityDetailPage } from "@/components/facility-detail/FacilityDetailPage";
@@ -11,6 +12,21 @@ type PharmacyDetailRouteProps = {
     slug: string;
   }>;
 };
+
+export async function generateMetadata({
+  params,
+}: PharmacyDetailRouteProps): Promise<Metadata> {
+  const { slug } = await params;
+  const facility = getRealFacilityBySlug(slug);
+  const pharmacy = facility && isPharmacyFacility(facility) ? facility : null;
+
+  return {
+    title: pharmacy ? `${pharmacy.name} — Tiru` : "Pharmacy — Tiru",
+    description: pharmacy
+      ? `Pharmacy in ${pharmacy.location}, Addis Ababa.`
+      : "",
+  };
+}
 
 export default async function PharmacyDetailRoute({
   params,

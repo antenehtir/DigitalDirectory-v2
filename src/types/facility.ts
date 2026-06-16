@@ -38,4 +38,5 @@ export type Facility = {
   detailHref?: string;
   latitude?: number;
   longitude?: number;
+  onlineOnly?: boolean;
 };

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { PageShell } from "@/components/layout/PageShell";
 import {
   NearbyPage,
@@ -6,6 +7,12 @@ import {
 import { realFacilities } from "@/data/real-facility-profiles";
 import { resolveFacilityCoordinates } from "@/lib/nearby-distance";
 import type { Facility, FacilityContactChannel } from "@/types/facility";
+
+export const metadata: Metadata = {
+  title: "Nearby Care — Tiru",
+  description:
+    "Find the nearest hospital, clinic, or pharmacy to your location in Addis Ababa.",
+};
 
 type NearbyRouteProps = {
   searchParams?: Promise<{
