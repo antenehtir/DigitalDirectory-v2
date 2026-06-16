@@ -24,6 +24,24 @@ export function calculateDistanceKm(
   return earthRadiusKm * centralAngle;
 }
 
+export function resolveFacilityCoordinates(
+  facility: { latitude?: number; longitude?: number },
+  fallbackText: string | undefined,
+): Coordinates | undefined {
+  const { latitude, longitude } = facility;
+
+  if (
+    typeof latitude === "number" &&
+    typeof longitude === "number" &&
+    isValidLatitude(latitude) &&
+    isValidLongitude(longitude)
+  ) {
+    return { latitude, longitude };
+  }
+
+  return extractCoordinatesFromText(fallbackText);
+}
+
 export function extractCoordinatesFromText(
   value: string | undefined,
 ): Coordinates | undefined {

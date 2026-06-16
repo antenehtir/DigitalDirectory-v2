@@ -4,7 +4,7 @@ import {
   type NearbyFacility,
 } from "@/components/nearby/NearbyPage";
 import { realFacilities } from "@/data/real-facility-profiles";
-import { extractCoordinatesFromText } from "@/lib/nearby-distance";
+import { resolveFacilityCoordinates } from "@/lib/nearby-distance";
 import type { Facility, FacilityContactChannel } from "@/types/facility";
 
 type NearbyRouteProps = {
@@ -71,7 +71,7 @@ function mapFacilityToNearbyFacility(facility: Facility): NearbyFacility {
 
   return {
     ...facility,
-    coordinates: extractCoordinatesFromText(mapsText),
+    coordinates: resolveFacilityCoordinates(facility, mapsText),
   };
 }
 

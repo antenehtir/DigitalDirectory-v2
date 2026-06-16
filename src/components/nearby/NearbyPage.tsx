@@ -24,7 +24,15 @@ type NearbyPageProps = {
   selectedArea: string;
 };
 
-type LocationState = "idle" | "loading" | "ready" | "denied" | "unsupported";
+type LocationState =
+  | "idle"
+  | "loading"
+  | "timeout"
+  | "ready"
+  | "denied"
+  | "unsupported";
+
+const LOCATION_TIMEOUT_MS = 8000;
 
 const categoryOptions = [
   { label: "All", value: "all" },
@@ -45,8 +53,11 @@ export function NearbyPage({
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [locationState, setLocationState] = useState<LocationState>("idle");
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
-  const [isAreaBrowseOpen, setIsAreaBrowseOpen] = useState(Boolean(selectedArea));
+  const [areaBrowseOverride, setAreaBrowseOverride] = useState<boolean | null>(null);
+  const [isLocationTipOpen, setIsLocationTipOpen] = useState(false);
   const hasRequestedLocationRef = useRef(false);
+  const locationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const areaBrowseSectionRef = useRef<HTMLElement>(null);
 
   const categoryFacilities = useMemo(
     () => filterFacilitiesByCategory(facilities, selectedCategory),
@@ -71,15 +82,39 @@ export function NearbyPage({
     ? categoryFacilities.filter((facility) => facility.location === selectedArea)
     : [];
 
+  const activeCategoryLabel =
+    selectedCategory === "all"
+      ? "healthcare"
+      : categoryOptions.find((category) => category.value === selectedCategory)
+          ?.label ?? "healthcare";
+
+  const shouldAutoOpenAreaBrowse =
+    Boolean(selectedArea) ||
+    (locationState === "ready" && rankedFacilities.length === 0);
+  const isAreaBrowseOpen = areaBrowseOverride ?? shouldAutoOpenAreaBrowse;
+
+  const clearLocationTimeout = useCallback(() => {
+    if (locationTimeoutRef.current) {
+      clearTimeout(locationTimeoutRef.current);
+      locationTimeoutRef.current = null;
+    }
+  }, []);
+
   const requestLocation = useCallback(() => {
     if (!("geolocation" in navigator)) {
       setLocationState("unsupported");
       return;
     }
 
+    clearLocationTimeout();
     setLocationState("loading");
+    locationTimeoutRef.current = setTimeout(() => {
+      setLocationState((current) => (current === "loading" ? "timeout" : current));
+    }, LOCATION_TIMEOUT_MS);
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        clearLocationTimeout();
         setUserLocation({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -87,11 +122,20 @@ export function NearbyPage({
         setLocationState("ready");
       },
       () => {
+        clearLocationTimeout();
         setLocationState("denied");
         setUserLocation(null);
       },
       { enableHighAccuracy: true, maximumAge: 60000, timeout: 10000 },
     );
+  }, [clearLocationTimeout]);
+
+  const scrollToAreaBrowse = useCallback(() => {
+    setAreaBrowseOverride(true);
+    areaBrowseSectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   }, []);
 
   useEffect(() => {
@@ -124,7 +168,11 @@ export function NearbyPage({
     }
 
     void requestInitialLocation();
-  }, [requestLocation]);
+
+    return () => {
+      clearLocationTimeout();
+    };
+  }, [clearLocationTimeout, requestLocation]);
 
   return (
     <main className="mx-auto grid w-full max-w-6xl gap-5 overflow-x-hidden px-3 py-6 min-[360px]:px-4 sm:px-6 sm:py-10 lg:px-8">
@@ -163,18 +211,47 @@ export function NearbyPage({
         </p>
       ) : null}
 
-      {locationState === "denied" ? (
+      {locationState === "timeout" ? (
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-sm leading-6 text-muted-foreground">
-            Location access denied.
+            Location is taking longer than expected.
           </p>
           <button
             className="inline-flex min-h-9 items-center justify-center rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground transition hover:bg-primary-hover"
             onClick={requestLocation}
             type="button"
           >
-            Allow access
+            Try again
           </button>
+          <button
+            className="inline-flex min-h-9 items-center justify-center rounded-full border border-border bg-card px-3 text-xs font-semibold text-foreground transition hover:border-strong-border"
+            onClick={scrollToAreaBrowse}
+            type="button"
+          >
+            Browse by sub-city &rarr;
+          </button>
+        </div>
+      ) : null}
+
+      {locationState === "denied" ? (
+        <div className="grid gap-2">
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="text-sm leading-6 text-muted-foreground">
+              Enable location access to find the nearest care.
+            </p>
+            <button
+              className="inline-flex min-h-9 items-center justify-center rounded-full border border-border bg-card px-3 text-xs font-semibold text-foreground transition hover:border-strong-border"
+              onClick={() => setIsLocationTipOpen((current) => !current)}
+              type="button"
+            >
+              How to enable location
+            </button>
+          </div>
+          {isLocationTipOpen ? (
+            <p className="rounded-xl border border-border bg-muted p-3 text-sm leading-6 text-muted-foreground">
+              In your browser address bar, tap the lock icon and allow Location.
+            </p>
+          ) : null}
         </div>
       ) : null}
 
@@ -187,31 +264,45 @@ export function NearbyPage({
       {locationState === "ready" ? (
         <section className="grid gap-3">
           {rankedFacilities.length > 0 ? (
-            <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {rankedFacilities.map(({ facility, distanceKm }) => (
-                <NearbyFacilityCard
-                  distanceLabel={`📍 ${formatDistanceKm(distanceKm)}`}
-                  facility={facility}
-                  key={facility.id}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {rankedFacilities.map(({ facility, distanceKm }) => (
+                  <NearbyFacilityCard
+                    distanceLabel={`📍 ${formatDistanceKm(distanceKm)}`}
+                    facility={facility}
+                    key={facility.id}
+                  />
+                ))}
+              </div>
+              <p className="text-sm leading-6 text-muted-foreground">
+                More providers coming to nearby soon.
+              </p>
+            </>
           ) : (
-            <p className="text-sm leading-6 text-muted-foreground">
-              No nearby results in this category yet.
-            </p>
+            <div className="rounded-2xl border border-primary/30 bg-soft-accent p-4">
+              <p className="text-sm font-semibold leading-6 text-primary">
+                📍 Coordinate data for {activeCategoryLabel} providers is being
+                added.
+              </p>
+              <p className="mt-1 text-sm leading-6 text-primary">
+                Browse by sub-city below to find care near you.
+              </p>
+            </div>
           )}
         </section>
       ) : null}
 
-      <section className="rounded-2xl border border-border bg-card p-4 sm:p-5">
+      <section
+        className="rounded-2xl border border-border bg-card p-4 sm:p-5"
+        ref={areaBrowseSectionRef}
+      >
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-xl font-semibold leading-tight text-foreground">
             Browse by sub-city
           </h2>
           <button
             className="min-h-11 w-full rounded-lg border border-border bg-card px-4 text-sm font-semibold text-foreground transition hover:border-strong-border sm:w-auto"
-            onClick={() => setIsAreaBrowseOpen((current) => !current)}
+            onClick={() => setAreaBrowseOverride(!isAreaBrowseOpen)}
             type="button"
           >
             {isAreaBrowseOpen ? "Hide areas" : "Browse by sub-city"}

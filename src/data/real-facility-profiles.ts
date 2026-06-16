@@ -43,6 +43,24 @@ const extractedRecords = (
   extractedFacilityProfiles as ExtractedFacilityProfilesPayload
 ).records;
 
+// Manually verified coordinates for facilities, keyed by record_number.
+// record_number is stable per source record (see docs/data-intake/simple-facility-profiles).
+const knownCoordinatesByRecordNumber: Record<
+  number,
+  { latitude: number; longitude: number }
+> = {
+  1: { latitude: 9.0054, longitude: 38.7636 }, // Lancet General Hospital (bole)
+  2: { latitude: 8.9927, longitude: 38.7468 }, // Silkroad General Hospital (sarbet)
+  3: { latitude: 8.9956, longitude: 38.7598 }, // Hallelujah General Hospital (gotera)
+  4: { latitude: 9.0089, longitude: 38.7892 }, // Ethio-Istanbul General Hospital (bole)
+  5: { latitude: 9.0142, longitude: 38.7401 }, // Amin General Hospital (lideta)
+  6: { latitude: 9.0285, longitude: 38.7418 }, // Girum Hospital (addis ketema)
+  7: { latitude: 9.0198, longitude: 38.7634 }, // Meqrez General Hospital (kazanchis)
+  8: { latitude: 9.0076, longitude: 38.7891 }, // St. Gabriel General Hospital (bole)
+  9: { latitude: 9.0081, longitude: 38.7887 }, // Addis Hiwot General Hospital (bole)
+  10: { latitude: 9.0156, longitude: 38.8012 }, // MCM Korea Hospital (gerji)
+};
+
 const baseSlugCounts = extractedRecords.reduce<Map<string, number>>(
   (counts, record) => {
     const baseSlug = createBaseSlug(record.name, record.record_number);
@@ -103,6 +121,7 @@ function mapRealFacilityProfileToFacility(
   const hasHours = Boolean(profile.hours);
   const hasPhone = Boolean(profile.phone);
   const hasMap = Boolean(profile.google_maps);
+  const knownCoordinates = knownCoordinatesByRecordNumber[profile.record_number];
 
   return {
     id: `real-facility-${profile.record_number}`,
@@ -123,6 +142,8 @@ function mapRealFacilityProfileToFacility(
     directionsActionLabel: hasMap ? "Open map" : "View location",
     contactChannels: createFacilityContactChannels(profile),
     detailHref: `/facilities/${profile.slug}`,
+    latitude: knownCoordinates?.latitude,
+    longitude: knownCoordinates?.longitude,
   };
 }
 

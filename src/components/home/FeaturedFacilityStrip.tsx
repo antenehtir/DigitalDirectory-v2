@@ -4,6 +4,7 @@ import { VerificationBadge } from "@/components/trust/VerificationBadge";
 import { realFacilities } from "@/data/real-facility-profiles";
 
 const showcasedFacilities = realFacilities.slice(0, 10);
+const marqueeFacilities = [...showcasedFacilities, ...showcasedFacilities];
 
 export function FeaturedFacilityStrip() {
   if (showcasedFacilities.length === 0) {
@@ -39,11 +40,11 @@ export function FeaturedFacilityStrip() {
 
         <div className="mt-5 hidden overflow-hidden lg:block">
           <div className="homepage-facility-strip flex w-max gap-4 pb-2">
-            {showcasedFacilities.map((facility) => (
+            {marqueeFacilities.map((facility, index) => (
               <FeaturedFacilityCard
                 className="w-[17rem]"
                 facility={facility}
-                key={facility.id}
+                key={`${facility.slug}-${index}`}
               />
             ))}
           </div>
