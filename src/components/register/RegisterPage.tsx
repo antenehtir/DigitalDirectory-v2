@@ -1,37 +1,1223 @@
 "use client";
 
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState, type FormEvent } from "react";
-import { PageContainer } from "@/components/layout/PageContainer";
+import { useRef, useState, type FormEvent } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 
-const providerTypeOptions = ["Specialist", "Facility", "Pharmacy", "Diagnostics"];
+type ProviderType = "Specialist" | "Facility" | "Diagnostic Center" | "Pharmacy" | "Other";
 
-const inputClassName =
-  "min-h-11 w-full rounded-lg border border-border bg-input px-3 text-base text-foreground outline-none placeholder:text-muted-foreground focus:border-primary";
-const labelClassName = "mb-1.5 block text-sm font-semibold text-foreground";
+type FacilityEntry = {
+  id: string;
+  searchFacility: string;
+  manualFacility: string;
+  days: string[];
+  startTime: string;
+  endTime: string;
+};
+
+type BranchEntry = {
+  id: string;
+  name: string;
+  address: string;
+  subCity: string;
+  phone: string;
+};
+
+type FormState = {
+  name: string;
+  phone: string;
+  email: string;
+
+  specialty: string;
+  specialtyOther: string;
+  subSpecialty: string;
+  multipleFacilities: boolean;
+  facilityEntries: FacilityEntry[];
+  telemedicineAvailable: boolean;
+  telemedicineDetails: string;
+  bookingLink: string;
+
+  category: string;
+  categoryOther: string;
+  majorServices: string;
+  specialtiesAvailable: string;
+  hasBranches: boolean;
+  branches: BranchEntry[];
+  opdHours: string;
+  hasEmergency: boolean;
+  emergencyType: string;
+  emergencyHours: string;
+  subCity: string;
+  address: string;
+  website: string;
+  telegram: string;
+  googleMapsUrl: string;
+
+  testTypes: string;
+  sampleCollectionAvailable: boolean;
+  homeSampleCollection: boolean;
+
+  pharmacyServices: string;
+  deliveryAvailable: boolean;
+
+  otherDescription: string;
+
+  submitterName: string;
+  submitterRole: string;
+  submitterContact: string;
+};
+
+type Updater = <K extends keyof FormState>(key: K, value: FormState[K]) => void;
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
+
+const PROVIDER_TYPES: ProviderType[] = [
+  "Specialist",
+  "Facility",
+  "Diagnostic Center",
+  "Pharmacy",
+  "Other",
+];
+
+const SPECIALTY_OPTIONS = [
+  "Cardiology",
+  "Neurology",
+  "Orthopedics",
+  "Pediatrics",
+  "Gynecology & Obstetrics",
+  "Dermatology",
+  "Ophthalmology",
+  "ENT",
+  "Psychiatry",
+  "Internal Medicine",
+  "General Surgery",
+  "Urology",
+  "Oncology",
+  "Radiology",
+  "Anesthesiology",
+  "Dentistry",
+  "Physical Therapy",
+  "Other",
+];
+
+const FACILITY_CATEGORY_OPTIONS = [
+  "General Hospital",
+  "Specialty Center",
+  "Clinic",
+  "Diagnostic Center",
+  "Pharmacy",
+  "Home Care",
+  "Telemedicine",
+  "Ambulance Service",
+  "Medical Plaza",
+  "Other",
+];
+
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+function createFacilityEntry(id: string): FacilityEntry {
+  return { id, searchFacility: "", manualFacility: "", days: [], startTime: "", endTime: "" };
+}
+
+function createBranchEntry(id: string): BranchEntry {
+  return { id, name: "", address: "", subCity: "", phone: "" };
+}
+
+function createInitialState(name: string): FormState {
+  return {
+    name,
+    phone: "",
+    email: "",
+    specialty: "",
+    specialtyOther: "",
+    subSpecialty: "",
+    multipleFacilities: false,
+    facilityEntries: [createFacilityEntry("facility-entry-0")],
+    telemedicineAvailable: false,
+    telemedicineDetails: "",
+    bookingLink: "",
+    category: "",
+    categoryOther: "",
+    majorServices: "",
+    specialtiesAvailable: "",
+    hasBranches: false,
+    branches: [],
+    opdHours: "",
+    hasEmergency: false,
+    emergencyType: "",
+    emergencyHours: "",
+    subCity: "",
+    address: "",
+    website: "",
+    telegram: "",
+    googleMapsUrl: "",
+    testTypes: "",
+    sampleCollectionAvailable: false,
+    homeSampleCollection: false,
+    pharmacyServices: "",
+    deliveryAvailable: false,
+    otherDescription: "",
+    submitterName: "",
+    submitterRole: "",
+    submitterContact: "",
+  };
+}
+
+const inputBaseClassName =
+  "w-full min-h-12 rounded-xl border bg-background px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30";
+const labelClassName = "text-sm font-semibold text-foreground mb-1 block";
+const privateNoteClassName = "text-xs text-amber-600 mt-1";
+const errorClassName = "text-xs text-red-500 mt-1";
+const toggleBaseClassName = "px-4 py-2 rounded-full text-sm font-medium border";
+const toggleActiveClassName = "bg-primary text-primary-foreground border-primary";
+const toggleInactiveClassName = "border-border bg-card text-foreground";
+
+function fieldClassName(hasError: boolean) {
+  return `${inputBaseClassName} ${hasError ? "border-red-500" : "border-border"}`;
+}
+
+function YesNoToggle({
+  value,
+  onChange,
+}: {
+  value: boolean;
+  onChange: (value: boolean) => void;
+}) {
+  return (
+    <div className="flex gap-2">
+      <button
+        className={`${toggleBaseClassName} ${value ? toggleActiveClassName : toggleInactiveClassName}`}
+        onClick={() => onChange(true)}
+        type="button"
+      >
+        Yes
+      </button>
+      <button
+        className={`${toggleBaseClassName} ${!value ? toggleActiveClassName : toggleInactiveClassName}`}
+        onClick={() => onChange(false)}
+        type="button"
+      >
+        No
+      </button>
+    </div>
+  );
+}
+
+function DayPills({ days, onToggle }: { days: string[]; onToggle: (day: string) => void }) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {DAYS.map((day) => {
+        const active = days.includes(day);
+        return (
+          <button
+            className={`${toggleBaseClassName} ${active ? toggleActiveClassName : toggleInactiveClassName}`}
+            key={day}
+            onClick={() => onToggle(day)}
+            type="button"
+          >
+            {day}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+type SpecialistFieldsProps = {
+  form: FormState;
+  errors: Record<string, string>;
+  update: Updater;
+  toggleFacilityDay: (id: string, day: string) => void;
+  updateFacilityEntry: (id: string, patch: Partial<FacilityEntry>) => void;
+  addFacilityEntry: () => void;
+  removeFacilityEntry: (id: string) => void;
+};
+
+function SpecialistFields({
+  form,
+  errors,
+  update,
+  toggleFacilityDay,
+  updateFacilityEntry,
+  addFacilityEntry,
+  removeFacilityEntry,
+}: SpecialistFieldsProps) {
+  return (
+    <>
+      <div>
+        <label className={labelClassName} htmlFor="specialty">
+          Specialty <span className="text-error">*</span>
+        </label>
+        <select
+          className={fieldClassName(Boolean(errors.specialty))}
+          id="specialty"
+          onChange={(event) => update("specialty", event.target.value)}
+          value={form.specialty}
+        >
+          <option disabled value="">
+            Select a specialty
+          </option>
+          {SPECIALTY_OPTIONS.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+        {errors.specialty ? <p className={errorClassName}>{errors.specialty}</p> : null}
+        {form.specialty === "Other" ? (
+          <div className="mt-2">
+            <input
+              className={fieldClassName(Boolean(errors.specialtyOther))}
+              onChange={(event) => update("specialtyOther", event.target.value)}
+              placeholder="Enter specialty"
+              type="text"
+              value={form.specialtyOther}
+            />
+            {errors.specialtyOther ? (
+              <p className={errorClassName}>{errors.specialtyOther}</p>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="subSpecialty">
+          Sub-specialty
+        </label>
+        <input
+          className={fieldClassName(false)}
+          id="subSpecialty"
+          onChange={(event) => update("subSpecialty", event.target.value)}
+          placeholder="e.g. Pediatric Cardiology"
+          type="text"
+          value={form.subSpecialty}
+        />
+      </div>
+
+      <div>
+        <label className={labelClassName}>
+          Practice at multiple facilities?
+        </label>
+        <YesNoToggle
+          onChange={(value) => update("multipleFacilities", value)}
+          value={form.multipleFacilities}
+        />
+      </div>
+
+      <div className="grid gap-4">
+        <label className={labelClassName}>
+          Where do you practice? <span className="text-error">*</span>
+        </label>
+        {errors.facilities ? <p className={errorClassName}>{errors.facilities}</p> : null}
+
+        {form.facilityEntries.map((entry, index) => (
+          <div className="rounded-xl border border-border p-4" key={entry.id}>
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold text-foreground">
+                Practice location {index + 1}
+              </p>
+              {index > 0 ? (
+                <button
+                  className="text-xs font-semibold text-muted-foreground underline"
+                  onClick={() => removeFacilityEntry(entry.id)}
+                  type="button"
+                >
+                  Remove
+                </button>
+              ) : null}
+            </div>
+
+            <div className="mt-3">
+              <label className={labelClassName} htmlFor={`search-facility-${entry.id}`}>
+                Search existing Tiru facilities
+              </label>
+              <input
+                className={fieldClassName(false)}
+                id={`search-facility-${entry.id}`}
+                onChange={(event) =>
+                  updateFacilityEntry(entry.id, { searchFacility: event.target.value })
+                }
+                placeholder="Type facility name on Tiru"
+                type="text"
+                value={entry.searchFacility}
+              />
+            </div>
+
+            <div className="mt-3">
+              <label className={labelClassName} htmlFor={`manual-facility-${entry.id}`}>
+                Or enter name manually
+              </label>
+              <input
+                className={fieldClassName(false)}
+                id={`manual-facility-${entry.id}`}
+                onChange={(event) =>
+                  updateFacilityEntry(entry.id, { manualFacility: event.target.value })
+                }
+                placeholder="If not yet on Tiru"
+                type="text"
+                value={entry.manualFacility}
+              />
+            </div>
+
+            <div className="mt-3">
+              <label className={labelClassName}>
+                Consultation days <span className="text-error">*</span>
+              </label>
+              <DayPills
+                days={entry.days}
+                onToggle={(day) => toggleFacilityDay(entry.id, day)}
+              />
+            </div>
+
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <div>
+                <label className={labelClassName} htmlFor={`start-time-${entry.id}`}>
+                  Start time
+                </label>
+                <input
+                  className={fieldClassName(false)}
+                  id={`start-time-${entry.id}`}
+                  onChange={(event) =>
+                    updateFacilityEntry(entry.id, { startTime: event.target.value })
+                  }
+                  type="time"
+                  value={entry.startTime}
+                />
+              </div>
+              <div>
+                <label className={labelClassName} htmlFor={`end-time-${entry.id}`}>
+                  End time
+                </label>
+                <input
+                  className={fieldClassName(false)}
+                  id={`end-time-${entry.id}`}
+                  onChange={(event) =>
+                    updateFacilityEntry(entry.id, { endTime: event.target.value })
+                  }
+                  type="time"
+                  value={entry.endTime}
+                />
+              </div>
+            </div>
+            {errors[`schedule-${entry.id}`] ? (
+              <p className={errorClassName}>{errors[`schedule-${entry.id}`]}</p>
+            ) : null}
+          </div>
+        ))}
+
+        {form.multipleFacilities ? (
+          <button
+            className="text-sm font-semibold text-primary"
+            onClick={addFacilityEntry}
+            type="button"
+          >
+            + Add another facility
+          </button>
+        ) : null}
+      </div>
+
+      <div>
+        <label className={labelClassName}>
+          Telemedicine available?
+        </label>
+        <YesNoToggle
+          onChange={(value) => update("telemedicineAvailable", value)}
+          value={form.telemedicineAvailable}
+        />
+        {form.telemedicineAvailable ? (
+          <textarea
+            className={`${fieldClassName(false)} mt-3 min-h-28 py-2`}
+            onChange={(event) => update("telemedicineDetails", event.target.value)}
+            placeholder="Telemedicine details (platform, link, notes)"
+            rows={4}
+            value={form.telemedicineDetails}
+          />
+        ) : null}
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="bookingLink">
+          Booking link
+        </label>
+        <input
+          className={fieldClassName(false)}
+          id="bookingLink"
+          onChange={(event) => update("bookingLink", event.target.value)}
+          type="url"
+          value={form.bookingLink}
+        />
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="phone">
+          Phone <span className="text-error">*</span>
+        </label>
+        <input
+          className={fieldClassName(Boolean(errors.phone))}
+          id="phone"
+          onChange={(event) => update("phone", event.target.value)}
+          type="tel"
+          value={form.phone}
+        />
+        {errors.phone ? <p className={errorClassName}>{errors.phone}</p> : null}
+        <p className={privateNoteClassName}>
+          ⚠ Not visible to public — for Tiru staff only
+        </p>
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="email">
+          Email
+        </label>
+        <input
+          className={fieldClassName(false)}
+          id="email"
+          onChange={(event) => update("email", event.target.value)}
+          type="email"
+          value={form.email}
+        />
+        <p className={privateNoteClassName}>
+          ⚠ Not visible to public — for Tiru staff only
+        </p>
+      </div>
+    </>
+  );
+}
+
+type FacilityLikeFieldsProps = {
+  isDiagnostic: boolean;
+  form: FormState;
+  errors: Record<string, string>;
+  update: Updater;
+  updateBranch: (id: string, patch: Partial<BranchEntry>) => void;
+  addBranch: () => void;
+  removeBranch: (id: string) => void;
+};
+
+function FacilityLikeFields({
+  isDiagnostic,
+  form,
+  errors,
+  update,
+  updateBranch,
+  addBranch,
+  removeBranch,
+}: FacilityLikeFieldsProps) {
+  return (
+    <>
+      <div>
+        <label className={labelClassName} htmlFor="category">
+          Category <span className="text-error">*</span>
+        </label>
+        <select
+          className={fieldClassName(Boolean(errors.category))}
+          id="category"
+          onChange={(event) => update("category", event.target.value)}
+          value={form.category}
+        >
+          <option disabled value="">
+            Select a category
+          </option>
+          {FACILITY_CATEGORY_OPTIONS.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+        {errors.category ? <p className={errorClassName}>{errors.category}</p> : null}
+        {form.category === "Other" ? (
+          <div className="mt-2">
+            <input
+              className={fieldClassName(Boolean(errors.categoryOther))}
+              onChange={(event) => update("categoryOther", event.target.value)}
+              placeholder="Enter category"
+              type="text"
+              value={form.categoryOther}
+            />
+            {errors.categoryOther ? (
+              <p className={errorClassName}>{errors.categoryOther}</p>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="majorServices">
+          Major services <span className="text-error">*</span>
+        </label>
+        <textarea
+          className={`${fieldClassName(Boolean(errors.majorServices))} min-h-28 py-2`}
+          id="majorServices"
+          onChange={(event) => update("majorServices", event.target.value)}
+          placeholder="e.g. General Medicine, Surgery, ICU, Maternity"
+          rows={4}
+          value={form.majorServices}
+        />
+        {errors.majorServices ? <p className={errorClassName}>{errors.majorServices}</p> : null}
+      </div>
+
+      {isDiagnostic ? (
+        <>
+          <div>
+            <label className={labelClassName} htmlFor="testTypes">
+              Test types
+            </label>
+            <textarea
+              className={`${fieldClassName(false)} min-h-28 py-2`}
+              id="testTypes"
+              onChange={(event) => update("testTypes", event.target.value)}
+              placeholder="e.g. Blood tests, MRI, CT Scan, Ultrasound, X-ray"
+              rows={4}
+              value={form.testTypes}
+            />
+          </div>
+
+          <div>
+            <label className={labelClassName}>
+              Sample collection available?
+            </label>
+            <YesNoToggle
+              onChange={(value) => update("sampleCollectionAvailable", value)}
+              value={form.sampleCollectionAvailable}
+            />
+          </div>
+
+          <div>
+            <label className={labelClassName}>
+              Home sample collection?
+            </label>
+            <YesNoToggle
+              onChange={(value) => update("homeSampleCollection", value)}
+              value={form.homeSampleCollection}
+            />
+          </div>
+        </>
+      ) : (
+        <div>
+          <label className={labelClassName} htmlFor="specialtiesAvailable">
+            Specialties available
+          </label>
+          <textarea
+            className={`${fieldClassName(false)} min-h-28 py-2`}
+            id="specialtiesAvailable"
+            onChange={(event) => update("specialtiesAvailable", event.target.value)}
+            placeholder="e.g. Cardiology, Neurology, Orthopedics"
+            rows={4}
+            value={form.specialtiesAvailable}
+          />
+        </div>
+      )}
+
+      <div>
+        <label className={labelClassName}>Branches?</label>
+        <YesNoToggle onChange={(value) => update("hasBranches", value)} value={form.hasBranches} />
+
+        {form.hasBranches ? (
+          <div className="mt-3 grid gap-4">
+            {form.branches.map((branch, index) => (
+              <div className="rounded-xl border border-border p-4" key={branch.id}>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-foreground">Branch {index + 1}</p>
+                  <button
+                    className="text-xs font-semibold text-muted-foreground underline"
+                    onClick={() => removeBranch(branch.id)}
+                    type="button"
+                  >
+                    Remove
+                  </button>
+                </div>
+
+                <div className="mt-3 grid gap-3">
+                  <input
+                    className={fieldClassName(false)}
+                    onChange={(event) => updateBranch(branch.id, { name: event.target.value })}
+                    placeholder="Branch name"
+                    type="text"
+                    value={branch.name}
+                  />
+                  <input
+                    className={fieldClassName(false)}
+                    onChange={(event) => updateBranch(branch.id, { address: event.target.value })}
+                    placeholder="Address"
+                    type="text"
+                    value={branch.address}
+                  />
+                  <input
+                    className={fieldClassName(false)}
+                    onChange={(event) => updateBranch(branch.id, { subCity: event.target.value })}
+                    placeholder="Sub-city"
+                    type="text"
+                    value={branch.subCity}
+                  />
+                  <input
+                    className={fieldClassName(false)}
+                    onChange={(event) => updateBranch(branch.id, { phone: event.target.value })}
+                    placeholder="Phone"
+                    type="tel"
+                    value={branch.phone}
+                  />
+                </div>
+              </div>
+            ))}
+
+            <button
+              className="text-sm font-semibold text-primary"
+              onClick={addBranch}
+              type="button"
+            >
+              + Add branch
+            </button>
+          </div>
+        ) : null}
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="opdHours">
+          OPD hours <span className="text-error">*</span>
+        </label>
+        <input
+          className={fieldClassName(Boolean(errors.opdHours))}
+          id="opdHours"
+          onChange={(event) => update("opdHours", event.target.value)}
+          placeholder="e.g. Mon–Sat 8am–6pm"
+          type="text"
+          value={form.opdHours}
+        />
+        {errors.opdHours ? <p className={errorClassName}>{errors.opdHours}</p> : null}
+      </div>
+
+      <div>
+        <label className={labelClassName}>Emergency service?</label>
+        <YesNoToggle
+          onChange={(value) => update("hasEmergency", value)}
+          value={form.hasEmergency}
+        />
+
+        {form.hasEmergency ? (
+          <div className="mt-3">
+            <select
+              className={fieldClassName(Boolean(errors.emergencyType))}
+              onChange={(event) => update("emergencyType", event.target.value)}
+              value={form.emergencyType}
+            >
+              <option disabled value="">
+                Select availability
+              </option>
+              <option value="24/7 Emergency">24/7 Emergency</option>
+              <option value="Limited hours">Limited hours</option>
+            </select>
+            {errors.emergencyType ? (
+              <p className={errorClassName}>{errors.emergencyType}</p>
+            ) : null}
+
+            {form.emergencyType === "Limited hours" ? (
+              <div className="mt-2">
+                <input
+                  className={fieldClassName(Boolean(errors.emergencyHours))}
+                  onChange={(event) => update("emergencyHours", event.target.value)}
+                  placeholder="Emergency hours"
+                  type="text"
+                  value={form.emergencyHours}
+                />
+                {errors.emergencyHours ? (
+                  <p className={errorClassName}>{errors.emergencyHours}</p>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="subCity">
+          Sub-city / Area <span className="text-error">*</span>
+        </label>
+        <input
+          className={fieldClassName(Boolean(errors.subCity))}
+          id="subCity"
+          onChange={(event) => update("subCity", event.target.value)}
+          type="text"
+          value={form.subCity}
+        />
+        {errors.subCity ? <p className={errorClassName}>{errors.subCity}</p> : null}
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="address">
+          Address
+        </label>
+        <input
+          className={fieldClassName(false)}
+          id="address"
+          onChange={(event) => update("address", event.target.value)}
+          type="text"
+          value={form.address}
+        />
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="phone">
+          Phone <span className="text-error">*</span>
+        </label>
+        <input
+          className={fieldClassName(Boolean(errors.phone))}
+          id="phone"
+          onChange={(event) => update("phone", event.target.value)}
+          type="tel"
+          value={form.phone}
+        />
+        {errors.phone ? <p className={errorClassName}>{errors.phone}</p> : null}
+        <p className={privateNoteClassName}>
+          ⚠ Not visible to public — for Tiru staff only
+        </p>
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="email">
+          Email
+        </label>
+        <input
+          className={fieldClassName(false)}
+          id="email"
+          onChange={(event) => update("email", event.target.value)}
+          type="email"
+          value={form.email}
+        />
+        <p className={privateNoteClassName}>
+          ⚠ Not visible to public — for Tiru staff only
+        </p>
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="website">
+          Website
+        </label>
+        <input
+          className={fieldClassName(false)}
+          id="website"
+          onChange={(event) => update("website", event.target.value)}
+          type="url"
+          value={form.website}
+        />
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="telegram">
+          Telegram
+        </label>
+        <input
+          className={fieldClassName(false)}
+          id="telegram"
+          onChange={(event) => update("telegram", event.target.value)}
+          type="text"
+          value={form.telegram}
+        />
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="googleMapsUrl">
+          Google Maps link
+        </label>
+        <input
+          className={fieldClassName(false)}
+          id="googleMapsUrl"
+          onChange={(event) => update("googleMapsUrl", event.target.value)}
+          type="url"
+          value={form.googleMapsUrl}
+        />
+        <p className="mt-1 text-xs text-muted-foreground">
+          Used for Nearby search — paste your Google Maps share link
+        </p>
+      </div>
+    </>
+  );
+}
+
+type PharmacyFieldsProps = {
+  form: FormState;
+  errors: Record<string, string>;
+  update: Updater;
+};
+
+function PharmacyFields({ form, errors, update }: PharmacyFieldsProps) {
+  return (
+    <>
+      <div>
+        <label className={labelClassName} htmlFor="pharmacyServices">
+          Services
+        </label>
+        <textarea
+          className={`${fieldClassName(false)} min-h-28 py-2`}
+          id="pharmacyServices"
+          onChange={(event) => update("pharmacyServices", event.target.value)}
+          placeholder="e.g. Prescription dispensing, Compounding"
+          rows={4}
+          value={form.pharmacyServices}
+        />
+      </div>
+
+      <div>
+        <label className={labelClassName}>Delivery available?</label>
+        <YesNoToggle
+          onChange={(value) => update("deliveryAvailable", value)}
+          value={form.deliveryAvailable}
+        />
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="subCity">
+          Sub-city / Area <span className="text-error">*</span>
+        </label>
+        <input
+          className={fieldClassName(Boolean(errors.subCity))}
+          id="subCity"
+          onChange={(event) => update("subCity", event.target.value)}
+          type="text"
+          value={form.subCity}
+        />
+        {errors.subCity ? <p className={errorClassName}>{errors.subCity}</p> : null}
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="phone">
+          Phone <span className="text-error">*</span>
+        </label>
+        <input
+          className={fieldClassName(Boolean(errors.phone))}
+          id="phone"
+          onChange={(event) => update("phone", event.target.value)}
+          type="tel"
+          value={form.phone}
+        />
+        {errors.phone ? <p className={errorClassName}>{errors.phone}</p> : null}
+        <p className={privateNoteClassName}>
+          ⚠ Not visible to public — for Tiru staff only
+        </p>
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="googleMapsUrl">
+          Google Maps link
+        </label>
+        <input
+          className={fieldClassName(false)}
+          id="googleMapsUrl"
+          onChange={(event) => update("googleMapsUrl", event.target.value)}
+          type="url"
+          value={form.googleMapsUrl}
+        />
+      </div>
+    </>
+  );
+}
+
+type OtherFieldsProps = {
+  form: FormState;
+  errors: Record<string, string>;
+  update: Updater;
+};
+
+function OtherFields({ form, errors, update }: OtherFieldsProps) {
+  return (
+    <>
+      <div>
+        <label className={labelClassName} htmlFor="otherDescription">
+          Description <span className="text-error">*</span>
+        </label>
+        <textarea
+          className={`${fieldClassName(Boolean(errors.otherDescription))} min-h-28 py-2`}
+          id="otherDescription"
+          onChange={(event) => update("otherDescription", event.target.value)}
+          rows={4}
+          value={form.otherDescription}
+        />
+        {errors.otherDescription ? (
+          <p className={errorClassName}>{errors.otherDescription}</p>
+        ) : null}
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="phone">
+          Phone <span className="text-error">*</span>
+        </label>
+        <input
+          className={fieldClassName(Boolean(errors.phone))}
+          id="phone"
+          onChange={(event) => update("phone", event.target.value)}
+          type="tel"
+          value={form.phone}
+        />
+        {errors.phone ? <p className={errorClassName}>{errors.phone}</p> : null}
+        <p className={privateNoteClassName}>
+          ⚠ Not visible to public — for Tiru staff only
+        </p>
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="subCity">
+          Sub-city <span className="text-error">*</span>
+        </label>
+        <input
+          className={fieldClassName(Boolean(errors.subCity))}
+          id="subCity"
+          onChange={(event) => update("subCity", event.target.value)}
+          type="text"
+          value={form.subCity}
+        />
+        {errors.subCity ? <p className={errorClassName}>{errors.subCity}</p> : null}
+      </div>
+    </>
+  );
+}
+
+function getNameLabel(providerType: ProviderType) {
+  if (providerType === "Specialist") {
+    return "Full name";
+  }
+  if (providerType === "Facility" || providerType === "Diagnostic Center") {
+    return "Facility name";
+  }
+  if (providerType === "Pharmacy") {
+    return "Pharmacy name";
+  }
+  return "Provider/service name";
+}
 
 export function RegisterPage() {
   const searchParams = useSearchParams();
   const isUpdate = searchParams.get("update") === "true";
   const updateName = searchParams.get("name") ?? "";
 
+  const idCounterRef = useRef(0);
+  function nextId(prefix: string) {
+    idCounterRef.current += 1;
+    return `${prefix}-${idCounterRef.current}`;
+  }
+
+  const [providerType, setProviderType] = useState<ProviderType>("Specialist");
+  const [form, setForm] = useState<FormState>(() => createInitialState(updateName));
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [submitError, setSubmitError] = useState("");
+
+  const update: Updater = (key, value) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
+
+  function handleProviderTypeChange(value: ProviderType) {
+    setProviderType(value);
+    setErrors({});
+  }
+
+  function updateFacilityEntry(id: string, patch: Partial<FacilityEntry>) {
+    setForm((prev) => ({
+      ...prev,
+      facilityEntries: prev.facilityEntries.map((entry) =>
+        entry.id === id ? { ...entry, ...patch } : entry,
+      ),
+    }));
+  }
+
+  function toggleFacilityDay(id: string, day: string) {
+    setForm((prev) => ({
+      ...prev,
+      facilityEntries: prev.facilityEntries.map((entry) => {
+        if (entry.id !== id) {
+          return entry;
+        }
+        const days = entry.days.includes(day)
+          ? entry.days.filter((existingDay) => existingDay !== day)
+          : [...entry.days, day];
+        return { ...entry, days };
+      }),
+    }));
+  }
+
+  function addFacilityEntry() {
+    setForm((prev) => ({
+      ...prev,
+      facilityEntries: [...prev.facilityEntries, createFacilityEntry(nextId("facility-entry"))],
+    }));
+  }
+
+  function removeFacilityEntry(id: string) {
+    setForm((prev) => ({
+      ...prev,
+      facilityEntries: prev.facilityEntries.filter((entry) => entry.id !== id),
+    }));
+  }
+
+  function updateBranch(id: string, patch: Partial<BranchEntry>) {
+    setForm((prev) => ({
+      ...prev,
+      branches: prev.branches.map((branch) => (branch.id === id ? { ...branch, ...patch } : branch)),
+    }));
+  }
+
+  function addBranch() {
+    setForm((prev) => ({ ...prev, branches: [...prev.branches, createBranchEntry(nextId("branch"))] }));
+  }
+
+  function removeBranch(id: string) {
+    setForm((prev) => ({ ...prev, branches: prev.branches.filter((branch) => branch.id !== id) }));
+  }
+
+  function validate(): Record<string, string> {
+    const nextErrors: Record<string, string> = {};
+
+    if (!form.name.trim()) {
+      nextErrors.name = "This field is required.";
+    }
+    if (!form.phone.trim()) {
+      nextErrors.phone = "Phone is required.";
+    }
+    if (!form.submitterName.trim()) {
+      nextErrors.submitterName = "Your name is required.";
+    }
+    if (!form.submitterContact.trim()) {
+      nextErrors.submitterContact = "Your contact is required.";
+    }
+
+    if (providerType === "Specialist") {
+      if (!form.specialty.trim()) {
+        nextErrors.specialty = "Please select a specialty.";
+      } else if (form.specialty === "Other" && !form.specialtyOther.trim()) {
+        nextErrors.specialtyOther = "Please enter the specialty.";
+      }
+
+      const hasPractice = form.facilityEntries.some(
+        (entry) => entry.searchFacility.trim() || entry.manualFacility.trim(),
+      );
+      if (!hasPractice) {
+        nextErrors.facilities = "Please tell us where you practice.";
+      }
+
+      form.facilityEntries.forEach((entry) => {
+        if (!entry.searchFacility.trim() && !entry.manualFacility.trim()) {
+          return;
+        }
+        if (entry.days.length === 0 || !entry.startTime || !entry.endTime) {
+          nextErrors[`schedule-${entry.id}`] = "Please add consultation days and times.";
+        }
+      });
+    }
+
+    if (providerType === "Facility" || providerType === "Diagnostic Center") {
+      if (!form.category.trim()) {
+        nextErrors.category = "Please select a category.";
+      } else if (form.category === "Other" && !form.categoryOther.trim()) {
+        nextErrors.categoryOther = "Please enter the category.";
+      }
+      if (!form.majorServices.trim()) {
+        nextErrors.majorServices = "Please list major services.";
+      }
+      if (!form.opdHours.trim()) {
+        nextErrors.opdHours = "OPD hours are required.";
+      }
+      if (!form.subCity.trim()) {
+        nextErrors.subCity = "Sub-city / area is required.";
+      }
+      if (form.hasEmergency) {
+        if (!form.emergencyType.trim()) {
+          nextErrors.emergencyType = "Please select emergency availability.";
+        } else if (form.emergencyType === "Limited hours" && !form.emergencyHours.trim()) {
+          nextErrors.emergencyHours = "Please enter emergency hours.";
+        }
+      }
+    }
+
+    if (providerType === "Pharmacy") {
+      if (!form.subCity.trim()) {
+        nextErrors.subCity = "Sub-city / area is required.";
+      }
+    }
+
+    if (providerType === "Other") {
+      if (!form.otherDescription.trim()) {
+        nextErrors.otherDescription = "Please add a description.";
+      }
+      if (!form.subCity.trim()) {
+        nextErrors.subCity = "Sub-city is required.";
+      }
+    }
+
+    return nextErrors;
+  }
+
+  function buildNotes(): Record<string, unknown> {
+    if (providerType === "Specialist") {
+      return {
+        specialty: form.specialty === "Other" ? form.specialtyOther : form.specialty,
+        subSpecialty: form.subSpecialty || null,
+        multipleFacilities: form.multipleFacilities,
+        practiceLocations: form.facilityEntries
+          .filter((entry) => entry.searchFacility.trim() || entry.manualFacility.trim())
+          .map((entry) => ({
+            tiruFacility: entry.searchFacility || null,
+            manualFacility: entry.manualFacility || null,
+            days: entry.days,
+            startTime: entry.startTime || null,
+            endTime: entry.endTime || null,
+          })),
+        telemedicineAvailable: form.telemedicineAvailable,
+        telemedicineDetails: form.telemedicineAvailable ? form.telemedicineDetails || null : null,
+        bookingLink: form.bookingLink || null,
+      };
+    }
+
+    if (providerType === "Facility" || providerType === "Diagnostic Center") {
+      const base: Record<string, unknown> = {
+        category: form.category === "Other" ? form.categoryOther : form.category,
+        majorServices: form.majorServices,
+        hasBranches: form.hasBranches,
+        branches: form.hasBranches ? form.branches : [],
+        opdHours: form.opdHours,
+        hasEmergency: form.hasEmergency,
+        emergencyType: form.hasEmergency ? form.emergencyType : null,
+        emergencyHours:
+          form.hasEmergency && form.emergencyType === "Limited hours" ? form.emergencyHours : null,
+        subCity: form.subCity,
+        address: form.address || null,
+        website: form.website || null,
+        telegram: form.telegram || null,
+        googleMapsUrl: form.googleMapsUrl || null,
+        submitterRole: form.submitterRole || null,
+      };
+
+      if (providerType === "Facility") {
+        base.specialtiesAvailable = form.specialtiesAvailable || null;
+      } else {
+        base.testTypes = form.testTypes || null;
+        base.sampleCollectionAvailable = form.sampleCollectionAvailable;
+        base.homeSampleCollection = form.homeSampleCollection;
+      }
+
+      return base;
+    }
+
+    if (providerType === "Pharmacy") {
+      return {
+        services: form.pharmacyServices || null,
+        deliveryAvailable: form.deliveryAvailable,
+        subCity: form.subCity,
+        googleMapsUrl: form.googleMapsUrl || null,
+      };
+    }
+
+    return {
+      description: form.otherDescription,
+      subCity: form.subCity,
+    };
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    const providerName = String(formData.get("provider_name") ?? "").trim();
-    const phone = String(formData.get("phone") ?? "").trim();
+    const nextErrors = validate();
+    setErrors(nextErrors);
 
-    if (!providerName || !phone) {
-      setSubmitState("error");
-      setErrorMessage("Name and phone are required.");
+    if (Object.keys(nextErrors).length > 0) {
       return;
     }
 
@@ -39,183 +1225,194 @@ export function RegisterPage() {
 
     if (!supabase) {
       setSubmitState("error");
-      setErrorMessage("Registration is unavailable right now. Please try again later.");
+      setSubmitError("Registration is unavailable right now. Please try again later.");
       return;
     }
 
     setSubmitState("submitting");
 
+    const notes = {
+      providerType,
+      submitterName: form.submitterName,
+      submitterContact: form.submitterContact,
+      ...buildNotes(),
+    };
+
     const { error } = await supabase.from("listing_requests").insert({
-      provider_type: String(formData.get("provider_type") ?? "").trim(),
-      provider_name: providerName,
-      category: String(formData.get("category") ?? "").trim() || null,
-      phone,
-      email: String(formData.get("email") ?? "").trim() || null,
-      area: String(formData.get("area") ?? "").trim() || null,
-      google_maps_url: String(formData.get("google_maps_url") ?? "").trim() || null,
-      website: String(formData.get("website") ?? "").trim() || null,
-      notes: String(formData.get("notes") ?? "").trim() || null,
+      provider_type: providerType,
+      provider_name: form.name.trim(),
+      phone: form.phone.trim(),
+      email: form.email.trim() || null,
+      notes: JSON.stringify(notes),
     });
 
     if (error) {
       setSubmitState("error");
-      setErrorMessage("Something went wrong submitting your request. Please try again.");
+      setSubmitError("Something went wrong submitting your request. Please try again.");
       return;
     }
 
     setSubmitState("success");
-    form.reset();
   }
 
   if (submitState === "success") {
     return (
-      <PageContainer className="py-8 sm:py-10 lg:py-14">
-        <div className="mx-auto max-w-xl rounded-2xl border border-[#A7F3D0] bg-[#ECFDF5] p-6 text-center sm:p-8">
-          <h1 className="text-xl font-semibold text-[#0F766E]">
-            Request received
-          </h1>
-          <p className="mt-2 text-sm leading-6 text-[#0F766E]">
-            Thanks for registering your practice. Our team will review your
-            submission and follow up.
+      <div className="max-w-xl mx-auto py-10 sm:py-16 px-4">
+        <div className="bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
+          <h1 className="text-lg font-semibold text-green-800">✓ Submission received.</h1>
+          <p className="mt-2 text-sm leading-6 text-green-800">
+            Our team will review your information and contact you at the details you provided
+            before your listing goes live. This usually takes 24–48 hours.
           </p>
+          <Link className="mt-5 inline-flex text-sm font-semibold text-green-800 underline" href="/">
+            ← Back to home
+          </Link>
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   return (
-    <PageContainer className="py-8 sm:py-10 lg:py-14">
-      <div className="mx-auto max-w-2xl">
-        {isUpdate ? (
-          <div className="mb-4 rounded-lg border border-[#FCD34D] bg-[#FEF3C7] p-3 text-sm font-semibold text-[#92400E] dark:border-[#B45309] dark:bg-[#451A03] dark:text-[#FCD34D]">
-            Updating existing listing{updateName ? `: ${updateName}` : ""}
+    <div className="max-w-xl mx-auto py-10 sm:py-16 px-4">
+      {isUpdate ? (
+        <div className="mb-4 rounded-lg border border-[#FCD34D] bg-[#FEF3C7] p-3 text-sm font-semibold text-[#92400E] dark:border-[#B45309] dark:bg-[#451A03] dark:text-[#FCD34D]">
+          Updating existing listing{updateName ? `: ${updateName}` : ""}
+        </div>
+      ) : null}
+
+      <h1 className="text-2xl font-semibold leading-tight text-foreground sm:text-3xl">
+        List a provider
+      </h1>
+      <p className="mt-2 text-sm leading-6 text-muted-foreground">
+        Takes a few minutes. We&rsquo;ll contact you before going live.
+      </p>
+
+      <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
+        <div>
+          <label className={labelClassName} htmlFor="providerType">
+            Provider type
+          </label>
+          <select
+            className={fieldClassName(false)}
+            id="providerType"
+            onChange={(event) => handleProviderTypeChange(event.target.value as ProviderType)}
+            value={providerType}
+          >
+            {PROVIDER_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className={labelClassName} htmlFor="name">
+            {getNameLabel(providerType)} <span className="text-error">*</span>
+          </label>
+          <input
+            className={fieldClassName(Boolean(errors.name))}
+            id="name"
+            onChange={(event) => update("name", event.target.value)}
+            type="text"
+            value={form.name}
+          />
+          {errors.name ? <p className={errorClassName}>{errors.name}</p> : null}
+        </div>
+
+        {providerType === "Specialist" ? (
+          <SpecialistFields
+            addFacilityEntry={addFacilityEntry}
+            errors={errors}
+            form={form}
+            removeFacilityEntry={removeFacilityEntry}
+            toggleFacilityDay={toggleFacilityDay}
+            update={update}
+            updateFacilityEntry={updateFacilityEntry}
+          />
+        ) : null}
+
+        {providerType === "Facility" || providerType === "Diagnostic Center" ? (
+          <FacilityLikeFields
+            addBranch={addBranch}
+            errors={errors}
+            form={form}
+            isDiagnostic={providerType === "Diagnostic Center"}
+            removeBranch={removeBranch}
+            update={update}
+            updateBranch={updateBranch}
+          />
+        ) : null}
+
+        {providerType === "Pharmacy" ? (
+          <PharmacyFields errors={errors} form={form} update={update} />
+        ) : null}
+
+        {providerType === "Other" ? (
+          <OtherFields errors={errors} form={form} update={update} />
+        ) : null}
+
+        <div className="border-t border-border my-8 pt-6">
+          <p className="text-sm font-semibold text-muted-foreground uppercase">Your details</p>
+        </div>
+
+        <div>
+          <label className={labelClassName} htmlFor="submitterName">
+            Submitter name <span className="text-error">*</span>
+          </label>
+          <input
+            className={fieldClassName(Boolean(errors.submitterName))}
+            id="submitterName"
+            onChange={(event) => update("submitterName", event.target.value)}
+            type="text"
+            value={form.submitterName}
+          />
+          {errors.submitterName ? <p className={errorClassName}>{errors.submitterName}</p> : null}
+        </div>
+
+        {providerType === "Facility" || providerType === "Diagnostic Center" ? (
+          <div>
+            <label className={labelClassName} htmlFor="submitterRole">
+              Submitter role
+            </label>
+            <input
+              className={fieldClassName(false)}
+              id="submitterRole"
+              onChange={(event) => update("submitterRole", event.target.value)}
+              placeholder="e.g. Manager, Owner, Admin"
+              type="text"
+              value={form.submitterRole}
+            />
           </div>
         ) : null}
 
-        <h1 className="text-2xl font-semibold leading-tight text-foreground sm:text-3xl">
-          List a provider
-        </h1>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          Tell us about the practice or facility you want to add to Tiru.
-        </p>
-
-        <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
-          <div>
-            <label className={labelClassName} htmlFor="provider_type">
-              Provider type
-            </label>
-            <select
-              className={inputClassName}
-              defaultValue={providerTypeOptions[0]}
-              id="provider_type"
-              name="provider_type"
-            >
-              {providerTypeOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className={labelClassName} htmlFor="provider_name">
-              Name <span className="text-error">*</span>
-            </label>
-            <input
-              className={inputClassName}
-              defaultValue={updateName}
-              id="provider_name"
-              name="provider_name"
-              required
-              type="text"
-            />
-          </div>
-
-          <div>
-            <label className={labelClassName} htmlFor="category">
-              Category
-            </label>
-            <input
-              className={inputClassName}
-              id="category"
-              name="category"
-              placeholder="e.g. General hospital, Pediatrics, Pharmacy"
-              type="text"
-            />
-          </div>
-
-          <div>
-            <label className={labelClassName} htmlFor="phone">
-              Phone <span className="text-error">*</span>
-            </label>
-            <input
-              className={inputClassName}
-              id="phone"
-              name="phone"
-              required
-              type="tel"
-            />
-          </div>
-
-          <div>
-            <label className={labelClassName} htmlFor="email">
-              Email
-            </label>
-            <input className={inputClassName} id="email" name="email" type="email" />
-          </div>
-
-          <div>
-            <label className={labelClassName} htmlFor="area">
-              Area / sub-city
-            </label>
-            <input className={inputClassName} id="area" name="area" type="text" />
-          </div>
-
-          <div>
-            <label className={labelClassName} htmlFor="google_maps_url">
-              Google Maps link
-            </label>
-            <input
-              className={inputClassName}
-              id="google_maps_url"
-              name="google_maps_url"
-              type="url"
-            />
-          </div>
-
-          <div>
-            <label className={labelClassName} htmlFor="website">
-              Website or Telegram
-            </label>
-            <input className={inputClassName} id="website" name="website" type="text" />
-          </div>
-
-          <div>
-            <label className={labelClassName} htmlFor="notes">
-              Notes
-            </label>
-            <textarea
-              className={`${inputClassName} min-h-28 py-2`}
-              id="notes"
-              name="notes"
-              rows={4}
-            />
-          </div>
-
-          {submitState === "error" ? (
-            <p className="text-sm font-medium text-error">{errorMessage}</p>
+        <div>
+          <label className={labelClassName} htmlFor="submitterContact">
+            Submitter contact <span className="text-error">*</span>
+          </label>
+          <input
+            className={fieldClassName(Boolean(errors.submitterContact))}
+            id="submitterContact"
+            onChange={(event) => update("submitterContact", event.target.value)}
+            placeholder="Phone or email"
+            type="text"
+            value={form.submitterContact}
+          />
+          {errors.submitterContact ? (
+            <p className={errorClassName}>{errors.submitterContact}</p>
           ) : null}
+        </div>
 
-          <button
-            className="mt-2 inline-flex min-h-12 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover disabled:opacity-60"
-            disabled={submitState === "submitting"}
-            type="submit"
-          >
-            {submitState === "submitting" ? "Submitting..." : "Submit request"}
-          </button>
-        </form>
-      </div>
-    </PageContainer>
+        {submitState === "error" ? <p className={errorClassName}>{submitError}</p> : null}
+
+        <button
+          className="w-full min-h-12 bg-primary text-primary-foreground rounded-xl font-semibold mt-8 disabled:opacity-60"
+          disabled={submitState === "submitting"}
+          type="submit"
+        >
+          {submitState === "submitting" ? "Submitting..." : "Submit"}
+        </button>
+      </form>
+    </div>
   );
 }
