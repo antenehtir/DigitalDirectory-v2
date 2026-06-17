@@ -5,7 +5,13 @@ import { useSearchParams } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 
-type ProviderType = "Specialist" | "Facility" | "Diagnostic Center" | "Pharmacy" | "Other";
+type ProviderType =
+  | "Specialist"
+  | "Healthcare Facility"
+  | "Diagnostic Center"
+  | "Pharmacy"
+  | "Ambulance Service"
+  | "Other";
 
 type FacilityEntry = {
   id: string;
@@ -61,6 +67,15 @@ type FormState = {
   pharmacyServices: string;
   deliveryAvailable: boolean;
 
+  ambulanceCoverageArea: string;
+  ambulanceFleetSize: string;
+  ambulanceAvailable247: boolean;
+  ambulanceAvailableHours: string;
+  ambulanceServiceTypes: string[];
+  ambulanceEquipment: string;
+  ambulanceResponseTime: string;
+  ambulanceBaseLocation: string;
+
   otherDescription: string;
 
   submitterName: string;
@@ -74,9 +89,10 @@ type SubmitState = "idle" | "submitting" | "success" | "error";
 
 const PROVIDER_TYPES: ProviderType[] = [
   "Specialist",
-  "Facility",
+  "Healthcare Facility",
   "Diagnostic Center",
   "Pharmacy",
+  "Ambulance Service",
   "Other",
 ];
 
@@ -111,6 +127,14 @@ const FACILITY_CATEGORY_OPTIONS = [
   "Telemedicine",
   "Ambulance Service",
   "Medical Plaza",
+  "Other",
+];
+
+const AMBULANCE_SERVICE_TYPES = [
+  "Emergency response",
+  "Patient transfer",
+  "Neonatal transport",
+  "ICU transport",
   "Other",
 ];
 
@@ -157,6 +181,14 @@ function createInitialState(name: string): FormState {
     homeSampleCollection: false,
     pharmacyServices: "",
     deliveryAvailable: false,
+    ambulanceCoverageArea: "",
+    ambulanceFleetSize: "",
+    ambulanceAvailable247: true,
+    ambulanceAvailableHours: "",
+    ambulanceServiceTypes: [],
+    ambulanceEquipment: "",
+    ambulanceResponseTime: "",
+    ambulanceBaseLocation: "",
     otherDescription: "",
     submitterName: "",
     submitterRole: "",
@@ -296,9 +328,7 @@ function SpecialistFields({
       </div>
 
       <div>
-        <label className={labelClassName}>
-          Practice at multiple facilities?
-        </label>
+        <label className={labelClassName}>Practice at multiple facilities?</label>
         <YesNoToggle
           onChange={(value) => update("multipleFacilities", value)}
           value={form.multipleFacilities}
@@ -418,9 +448,7 @@ function SpecialistFields({
       </div>
 
       <div>
-        <label className={labelClassName}>
-          Telemedicine available?
-        </label>
+        <label className={labelClassName}>Telemedicine available?</label>
         <YesNoToggle
           onChange={(value) => update("telemedicineAvailable", value)}
           value={form.telemedicineAvailable}
@@ -461,9 +489,7 @@ function SpecialistFields({
           value={form.phone}
         />
         {errors.phone ? <p className={errorClassName}>{errors.phone}</p> : null}
-        <p className={privateNoteClassName}>
-          ⚠ Not visible to public — for Tiru staff only
-        </p>
+        <p className={privateNoteClassName}>⚠ Not visible to public — for Tiru staff only</p>
       </div>
 
       <div>
@@ -477,9 +503,7 @@ function SpecialistFields({
           type="email"
           value={form.email}
         />
-        <p className={privateNoteClassName}>
-          ⚠ Not visible to public — for Tiru staff only
-        </p>
+        <p className={privateNoteClassName}>⚠ Not visible to public — for Tiru staff only</p>
       </div>
     </>
   );
@@ -574,9 +598,7 @@ function FacilityLikeFields({
           </div>
 
           <div>
-            <label className={labelClassName}>
-              Sample collection available?
-            </label>
+            <label className={labelClassName}>Sample collection available?</label>
             <YesNoToggle
               onChange={(value) => update("sampleCollectionAvailable", value)}
               value={form.sampleCollectionAvailable}
@@ -584,9 +606,7 @@ function FacilityLikeFields({
           </div>
 
           <div>
-            <label className={labelClassName}>
-              Home sample collection?
-            </label>
+            <label className={labelClassName}>Home sample collection?</label>
             <YesNoToggle
               onChange={(value) => update("homeSampleCollection", value)}
               value={form.homeSampleCollection}
@@ -768,9 +788,6 @@ function FacilityLikeFields({
           value={form.phone}
         />
         {errors.phone ? <p className={errorClassName}>{errors.phone}</p> : null}
-        <p className={privateNoteClassName}>
-          ⚠ Not visible to public — for Tiru staff only
-        </p>
       </div>
 
       <div>
@@ -784,9 +801,6 @@ function FacilityLikeFields({
           type="email"
           value={form.email}
         />
-        <p className={privateNoteClassName}>
-          ⚠ Not visible to public — for Tiru staff only
-        </p>
       </div>
 
       <div>
@@ -891,9 +905,6 @@ function PharmacyFields({ form, errors, update }: PharmacyFieldsProps) {
           value={form.phone}
         />
         {errors.phone ? <p className={errorClassName}>{errors.phone}</p> : null}
-        <p className={privateNoteClassName}>
-          ⚠ Not visible to public — for Tiru staff only
-        </p>
       </div>
 
       <div>
@@ -906,6 +917,166 @@ function PharmacyFields({ form, errors, update }: PharmacyFieldsProps) {
           onChange={(event) => update("googleMapsUrl", event.target.value)}
           type="url"
           value={form.googleMapsUrl}
+        />
+      </div>
+    </>
+  );
+}
+
+type AmbulanceServiceFieldsProps = {
+  form: FormState;
+  errors: Record<string, string>;
+  update: Updater;
+};
+
+function AmbulanceServiceFields({ form, errors, update }: AmbulanceServiceFieldsProps) {
+  function toggleServiceType(type: string) {
+    const next = form.ambulanceServiceTypes.includes(type)
+      ? form.ambulanceServiceTypes.filter((t) => t !== type)
+      : [...form.ambulanceServiceTypes, type];
+    update("ambulanceServiceTypes", next);
+  }
+
+  return (
+    <>
+      <div>
+        <label className={labelClassName} htmlFor="ambulanceCoverageArea">
+          Coverage area <span className="text-error">*</span>
+        </label>
+        <input
+          className={fieldClassName(Boolean(errors.ambulanceCoverageArea))}
+          id="ambulanceCoverageArea"
+          onChange={(event) => update("ambulanceCoverageArea", event.target.value)}
+          placeholder="e.g. Bole, Kirkos, Yeka — or All Addis Ababa"
+          type="text"
+          value={form.ambulanceCoverageArea}
+        />
+        {errors.ambulanceCoverageArea ? (
+          <p className={errorClassName}>{errors.ambulanceCoverageArea}</p>
+        ) : null}
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="ambulanceFleetSize">
+          Number of ambulances
+        </label>
+        <input
+          className={fieldClassName(false)}
+          id="ambulanceFleetSize"
+          min="1"
+          onChange={(event) => update("ambulanceFleetSize", event.target.value)}
+          type="number"
+          value={form.ambulanceFleetSize}
+        />
+      </div>
+
+      <div>
+        <label className={labelClassName}>Available 24/7?</label>
+        <YesNoToggle
+          onChange={(value) => update("ambulanceAvailable247", value)}
+          value={form.ambulanceAvailable247}
+        />
+        {!form.ambulanceAvailable247 ? (
+          <div className="mt-3">
+            <label className={labelClassName} htmlFor="ambulanceAvailableHours">
+              Available hours
+            </label>
+            <input
+              className={fieldClassName(false)}
+              id="ambulanceAvailableHours"
+              onChange={(event) => update("ambulanceAvailableHours", event.target.value)}
+              placeholder="e.g. Mon–Sat 7am–10pm"
+              type="text"
+              value={form.ambulanceAvailableHours}
+            />
+          </div>
+        ) : null}
+      </div>
+
+      <div>
+        <label className={labelClassName}>Service type</label>
+        <div className="mt-1 flex flex-wrap gap-2">
+          {AMBULANCE_SERVICE_TYPES.map((type) => {
+            const active = form.ambulanceServiceTypes.includes(type);
+            return (
+              <button
+                className={`${toggleBaseClassName} ${active ? toggleActiveClassName : toggleInactiveClassName}`}
+                key={type}
+                onClick={() => toggleServiceType(type)}
+                type="button"
+              >
+                {type}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="ambulanceEquipment">
+          Equipment on board
+        </label>
+        <textarea
+          className={`${fieldClassName(false)} min-h-28 py-2`}
+          id="ambulanceEquipment"
+          onChange={(event) => update("ambulanceEquipment", event.target.value)}
+          placeholder="e.g. Oxygen, Defibrillator, Stretcher, Paramedic staff"
+          rows={4}
+          value={form.ambulanceEquipment}
+        />
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="ambulanceResponseTime">
+          Average response time
+        </label>
+        <input
+          className={fieldClassName(false)}
+          id="ambulanceResponseTime"
+          onChange={(event) => update("ambulanceResponseTime", event.target.value)}
+          placeholder="e.g. 10–15 minutes within Bole"
+          type="text"
+          value={form.ambulanceResponseTime}
+        />
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="phone">
+          Phone <span className="text-error">*</span>
+        </label>
+        <input
+          className={fieldClassName(Boolean(errors.phone))}
+          id="phone"
+          onChange={(event) => update("phone", event.target.value)}
+          type="tel"
+          value={form.phone}
+        />
+        {errors.phone ? <p className={errorClassName}>{errors.phone}</p> : null}
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="email">
+          Email
+        </label>
+        <input
+          className={fieldClassName(false)}
+          id="email"
+          onChange={(event) => update("email", event.target.value)}
+          type="email"
+          value={form.email}
+        />
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="ambulanceBaseLocation">
+          Base location (Google Maps link)
+        </label>
+        <input
+          className={fieldClassName(false)}
+          id="ambulanceBaseLocation"
+          onChange={(event) => update("ambulanceBaseLocation", event.target.value)}
+          type="url"
+          value={form.ambulanceBaseLocation}
         />
       </div>
     </>
@@ -949,9 +1120,6 @@ function OtherFields({ form, errors, update }: OtherFieldsProps) {
           value={form.phone}
         />
         {errors.phone ? <p className={errorClassName}>{errors.phone}</p> : null}
-        <p className={privateNoteClassName}>
-          ⚠ Not visible to public — for Tiru staff only
-        </p>
       </div>
 
       <div>
@@ -972,15 +1140,12 @@ function OtherFields({ form, errors, update }: OtherFieldsProps) {
 }
 
 function getNameLabel(providerType: ProviderType) {
-  if (providerType === "Specialist") {
-    return "Full name";
+  if (providerType === "Specialist") return "Full name";
+  if (providerType === "Healthcare Facility" || providerType === "Diagnostic Center") {
+    return "Healthcare facility name";
   }
-  if (providerType === "Facility" || providerType === "Diagnostic Center") {
-    return "Facility name";
-  }
-  if (providerType === "Pharmacy") {
-    return "Pharmacy name";
-  }
+  if (providerType === "Pharmacy") return "Pharmacy name";
+  if (providerType === "Ambulance Service") return "Ambulance service name";
   return "Provider/service name";
 }
 
@@ -1023,11 +1188,9 @@ export function RegisterPage() {
     setForm((prev) => ({
       ...prev,
       facilityEntries: prev.facilityEntries.map((entry) => {
-        if (entry.id !== id) {
-          return entry;
-        }
+        if (entry.id !== id) return entry;
         const days = entry.days.includes(day)
-          ? entry.days.filter((existingDay) => existingDay !== day)
+          ? entry.days.filter((d) => d !== day)
           : [...entry.days, day];
         return { ...entry, days };
       }),
@@ -1051,33 +1214,31 @@ export function RegisterPage() {
   function updateBranch(id: string, patch: Partial<BranchEntry>) {
     setForm((prev) => ({
       ...prev,
-      branches: prev.branches.map((branch) => (branch.id === id ? { ...branch, ...patch } : branch)),
+      branches: prev.branches.map((b) => (b.id === id ? { ...b, ...patch } : b)),
     }));
   }
 
   function addBranch() {
-    setForm((prev) => ({ ...prev, branches: [...prev.branches, createBranchEntry(nextId("branch"))] }));
+    setForm((prev) => ({
+      ...prev,
+      branches: [...prev.branches, createBranchEntry(nextId("branch"))],
+    }));
   }
 
   function removeBranch(id: string) {
-    setForm((prev) => ({ ...prev, branches: prev.branches.filter((branch) => branch.id !== id) }));
+    setForm((prev) => ({
+      ...prev,
+      branches: prev.branches.filter((b) => b.id !== id),
+    }));
   }
 
   function validate(): Record<string, string> {
     const nextErrors: Record<string, string> = {};
 
-    if (!form.name.trim()) {
-      nextErrors.name = "This field is required.";
-    }
-    if (!form.phone.trim()) {
-      nextErrors.phone = "Phone is required.";
-    }
-    if (!form.submitterName.trim()) {
-      nextErrors.submitterName = "Your name is required.";
-    }
-    if (!form.submitterContact.trim()) {
-      nextErrors.submitterContact = "Your contact is required.";
-    }
+    if (!form.name.trim()) nextErrors.name = "This field is required.";
+    if (!form.phone.trim()) nextErrors.phone = "Phone is required.";
+    if (!form.submitterName.trim()) nextErrors.submitterName = "Your name is required.";
+    if (!form.submitterContact.trim()) nextErrors.submitterContact = "Your contact is required.";
 
     if (providerType === "Specialist") {
       if (!form.specialty.trim()) {
@@ -1087,37 +1248,27 @@ export function RegisterPage() {
       }
 
       const hasPractice = form.facilityEntries.some(
-        (entry) => entry.searchFacility.trim() || entry.manualFacility.trim(),
+        (e) => e.searchFacility.trim() || e.manualFacility.trim(),
       );
-      if (!hasPractice) {
-        nextErrors.facilities = "Please tell us where you practice.";
-      }
+      if (!hasPractice) nextErrors.facilities = "Please tell us where you practice.";
 
       form.facilityEntries.forEach((entry) => {
-        if (!entry.searchFacility.trim() && !entry.manualFacility.trim()) {
-          return;
-        }
+        if (!entry.searchFacility.trim() && !entry.manualFacility.trim()) return;
         if (entry.days.length === 0 || !entry.startTime || !entry.endTime) {
           nextErrors[`schedule-${entry.id}`] = "Please add consultation days and times.";
         }
       });
     }
 
-    if (providerType === "Facility" || providerType === "Diagnostic Center") {
+    if (providerType === "Healthcare Facility" || providerType === "Diagnostic Center") {
       if (!form.category.trim()) {
         nextErrors.category = "Please select a category.";
       } else if (form.category === "Other" && !form.categoryOther.trim()) {
         nextErrors.categoryOther = "Please enter the category.";
       }
-      if (!form.majorServices.trim()) {
-        nextErrors.majorServices = "Please list major services.";
-      }
-      if (!form.opdHours.trim()) {
-        nextErrors.opdHours = "OPD hours are required.";
-      }
-      if (!form.subCity.trim()) {
-        nextErrors.subCity = "Sub-city / area is required.";
-      }
+      if (!form.majorServices.trim()) nextErrors.majorServices = "Please list major services.";
+      if (!form.opdHours.trim()) nextErrors.opdHours = "OPD hours are required.";
+      if (!form.subCity.trim()) nextErrors.subCity = "Sub-city / area is required.";
       if (form.hasEmergency) {
         if (!form.emergencyType.trim()) {
           nextErrors.emergencyType = "Please select emergency availability.";
@@ -1128,18 +1279,18 @@ export function RegisterPage() {
     }
 
     if (providerType === "Pharmacy") {
-      if (!form.subCity.trim()) {
-        nextErrors.subCity = "Sub-city / area is required.";
+      if (!form.subCity.trim()) nextErrors.subCity = "Sub-city / area is required.";
+    }
+
+    if (providerType === "Ambulance Service") {
+      if (!form.ambulanceCoverageArea.trim()) {
+        nextErrors.ambulanceCoverageArea = "Coverage area is required.";
       }
     }
 
     if (providerType === "Other") {
-      if (!form.otherDescription.trim()) {
-        nextErrors.otherDescription = "Please add a description.";
-      }
-      if (!form.subCity.trim()) {
-        nextErrors.subCity = "Sub-city is required.";
-      }
+      if (!form.otherDescription.trim()) nextErrors.otherDescription = "Please add a description.";
+      if (!form.subCity.trim()) nextErrors.subCity = "Sub-city is required.";
     }
 
     return nextErrors;
@@ -1152,13 +1303,13 @@ export function RegisterPage() {
         subSpecialty: form.subSpecialty || null,
         multipleFacilities: form.multipleFacilities,
         practiceLocations: form.facilityEntries
-          .filter((entry) => entry.searchFacility.trim() || entry.manualFacility.trim())
-          .map((entry) => ({
-            tiruFacility: entry.searchFacility || null,
-            manualFacility: entry.manualFacility || null,
-            days: entry.days,
-            startTime: entry.startTime || null,
-            endTime: entry.endTime || null,
+          .filter((e) => e.searchFacility.trim() || e.manualFacility.trim())
+          .map((e) => ({
+            tiruFacility: e.searchFacility || null,
+            manualFacility: e.manualFacility || null,
+            days: e.days,
+            startTime: e.startTime || null,
+            endTime: e.endTime || null,
           })),
         telemedicineAvailable: form.telemedicineAvailable,
         telemedicineDetails: form.telemedicineAvailable ? form.telemedicineDetails || null : null,
@@ -1166,7 +1317,7 @@ export function RegisterPage() {
       };
     }
 
-    if (providerType === "Facility" || providerType === "Diagnostic Center") {
+    if (providerType === "Healthcare Facility" || providerType === "Diagnostic Center") {
       const base: Record<string, unknown> = {
         category: form.category === "Other" ? form.categoryOther : form.category,
         majorServices: form.majorServices,
@@ -1176,7 +1327,9 @@ export function RegisterPage() {
         hasEmergency: form.hasEmergency,
         emergencyType: form.hasEmergency ? form.emergencyType : null,
         emergencyHours:
-          form.hasEmergency && form.emergencyType === "Limited hours" ? form.emergencyHours : null,
+          form.hasEmergency && form.emergencyType === "Limited hours"
+            ? form.emergencyHours
+            : null,
         subCity: form.subCity,
         address: form.address || null,
         website: form.website || null,
@@ -1185,7 +1338,7 @@ export function RegisterPage() {
         submitterRole: form.submitterRole || null,
       };
 
-      if (providerType === "Facility") {
+      if (providerType === "Healthcare Facility") {
         base.specialtiesAvailable = form.specialtiesAvailable || null;
       } else {
         base.testTypes = form.testTypes || null;
@@ -1205,6 +1358,19 @@ export function RegisterPage() {
       };
     }
 
+    if (providerType === "Ambulance Service") {
+      return {
+        coverageArea: form.ambulanceCoverageArea,
+        fleetSize: form.ambulanceFleetSize || null,
+        available247: form.ambulanceAvailable247,
+        availableHours: form.ambulanceAvailable247 ? null : form.ambulanceAvailableHours || null,
+        serviceTypes: form.ambulanceServiceTypes,
+        equipment: form.ambulanceEquipment || null,
+        responseTime: form.ambulanceResponseTime || null,
+        baseLocation: form.ambulanceBaseLocation || null,
+      };
+    }
+
     return {
       description: form.otherDescription,
       subCity: form.subCity,
@@ -1217,9 +1383,7 @@ export function RegisterPage() {
     const nextErrors = validate();
     setErrors(nextErrors);
 
-    if (Object.keys(nextErrors).length > 0) {
-      return;
-    }
+    if (Object.keys(nextErrors).length > 0) return;
 
     const supabase = getSupabaseBrowserClient();
 
@@ -1257,14 +1421,17 @@ export function RegisterPage() {
 
   if (submitState === "success") {
     return (
-      <div className="max-w-xl mx-auto py-10 sm:py-16 px-4">
-        <div className="bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
+      <div className="mx-auto max-w-xl px-4 py-10 sm:py-16">
+        <div className="rounded-2xl border border-green-200 bg-green-50 p-6 text-center">
           <h1 className="text-lg font-semibold text-green-800">✓ Submission received.</h1>
           <p className="mt-2 text-sm leading-6 text-green-800">
             Our team will review your information and contact you at the details you provided
             before your listing goes live. This usually takes 24–48 hours.
           </p>
-          <Link className="mt-5 inline-flex text-sm font-semibold text-green-800 underline" href="/">
+          <Link
+            className="mt-5 inline-flex text-sm font-semibold text-green-800 underline"
+            href="/"
+          >
             ← Back to home
           </Link>
         </div>
@@ -1273,7 +1440,7 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="max-w-xl mx-auto py-10 sm:py-16 px-4">
+    <div className="mx-auto max-w-xl px-4 py-10 sm:py-16">
       {isUpdate ? (
         <div className="mb-4 rounded-lg border border-[#FCD34D] bg-[#FEF3C7] p-3 text-sm font-semibold text-[#92400E] dark:border-[#B45309] dark:bg-[#451A03] dark:text-[#FCD34D]">
           Updating existing listing{updateName ? `: ${updateName}` : ""}
@@ -1284,7 +1451,7 @@ export function RegisterPage() {
         List a provider
       </h1>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">
-        Takes a few minutes. We&rsquo;ll contact you before going live.
+        Takes a few minutes. We review every submission and contact you before publishing.
       </p>
 
       <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
@@ -1332,7 +1499,7 @@ export function RegisterPage() {
           />
         ) : null}
 
-        {providerType === "Facility" || providerType === "Diagnostic Center" ? (
+        {providerType === "Healthcare Facility" || providerType === "Diagnostic Center" ? (
           <FacilityLikeFields
             addBranch={addBranch}
             errors={errors}
@@ -1348,12 +1515,16 @@ export function RegisterPage() {
           <PharmacyFields errors={errors} form={form} update={update} />
         ) : null}
 
+        {providerType === "Ambulance Service" ? (
+          <AmbulanceServiceFields errors={errors} form={form} update={update} />
+        ) : null}
+
         {providerType === "Other" ? (
           <OtherFields errors={errors} form={form} update={update} />
         ) : null}
 
-        <div className="border-t border-border my-8 pt-6">
-          <p className="text-sm font-semibold text-muted-foreground uppercase">Your details</p>
+        <div className="my-8 border-t border-border pt-6">
+          <p className="text-sm font-semibold uppercase text-muted-foreground">Your details</p>
         </div>
 
         <div>
@@ -1367,10 +1538,12 @@ export function RegisterPage() {
             type="text"
             value={form.submitterName}
           />
-          {errors.submitterName ? <p className={errorClassName}>{errors.submitterName}</p> : null}
+          {errors.submitterName ? (
+            <p className={errorClassName}>{errors.submitterName}</p>
+          ) : null}
         </div>
 
-        {providerType === "Facility" || providerType === "Diagnostic Center" ? (
+        {providerType === "Healthcare Facility" || providerType === "Diagnostic Center" ? (
           <div>
             <label className={labelClassName} htmlFor="submitterRole">
               Submitter role
@@ -1406,7 +1579,7 @@ export function RegisterPage() {
         {submitState === "error" ? <p className={errorClassName}>{submitError}</p> : null}
 
         <button
-          className="w-full min-h-12 bg-primary text-primary-foreground rounded-xl font-semibold mt-8 disabled:opacity-60"
+          className="mt-8 w-full min-h-12 rounded-xl bg-primary font-semibold text-primary-foreground disabled:opacity-60"
           disabled={submitState === "submitting"}
           type="submit"
         >
