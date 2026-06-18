@@ -11,6 +11,7 @@ type FacilitiesPageProps = {
   activeCategory?: FacilityCategoryFilter;
   activeCategoryLabel?: string;
   activeQuery?: string;
+  activeSpecialty?: string;
   facilities?: Facility[];
 };
 
@@ -18,6 +19,7 @@ export function FacilitiesPage({
   activeCategory,
   activeCategoryLabel,
   activeQuery = "",
+  activeSpecialty = "",
   facilities = [],
 }: FacilitiesPageProps) {
   const isFiltered = Boolean(activeCategory || activeQuery);
@@ -27,7 +29,10 @@ export function FacilitiesPage({
       <div className="grid gap-6">
         <FacilitiesHero />
         <FacilitySearchPreview />
-        <FacilityCategoryFilters activeCategory={activeCategory} />
+        <FacilityCategoryFilters
+          activeCategory={activeCategory}
+          activeSpecialty={activeSpecialty}
+        />
 
         <section>
           <div className="mb-4">

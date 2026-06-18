@@ -34,15 +34,7 @@ export default async function DiagnosticsRoute({
 
 async function getDiagnosticsForRoute(): Promise<Facility[]> {
   return realFacilities.filter((facility) =>
-    [
-      facility.category,
-      facility.subcategory,
-      facility.name,
-      ...facility.services,
-    ]
-      .join(" ")
-      .toLowerCase()
-      .match(/diagnostic|laboratory|lab|imaging|radiology/),
+    facility.category.toLowerCase().includes("diagnostic"),
   );
 }
 

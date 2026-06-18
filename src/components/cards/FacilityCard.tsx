@@ -18,14 +18,13 @@ export function FacilityCard({ facility }: FacilityCardProps) {
 
   return (
     <article className="flex h-full min-w-0 flex-col rounded-2xl border border-border bg-card p-4 shadow-sm transition hover:shadow-md">
-      <div className="flex flex-wrap items-center gap-2">
-        <p className="text-sm font-semibold leading-5 text-muted-foreground">
-          {facility.category}
-        </p>
-        <VerificationBadge status={facility.verificationStatus} />
-      </div>
+      <VerificationBadge status={facility.verificationStatus} />
 
-      <h3 className="mt-2 break-words text-lg font-semibold leading-snug text-foreground">
+      <p className="mt-2 text-xs font-semibold leading-5 text-muted-foreground">
+        {facility.category}
+      </p>
+
+      <h3 className="mt-1 break-words text-lg font-semibold leading-snug text-foreground">
         {facility.name}
       </h3>
 

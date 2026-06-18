@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useRef, useState, type FormEvent } from "react";
+import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 
 type ProviderType =
@@ -36,6 +36,10 @@ type FormState = {
   phone: string;
   email: string;
 
+  logoBase64: string;
+  logoName: string;
+  photosBase64: string[];
+
   specialty: string;
   specialtyOther: string;
   subSpecialty: string;
@@ -48,6 +52,8 @@ type FormState = {
 
   category: string;
   categoryOther: string;
+  specialtyCenterType: string;
+  specialtyCenterTypeOther: string;
   majorServices: string;
   specialtiesAvailable: string;
   hasBranches: boolean;
@@ -68,6 +74,8 @@ type FormState = {
   testTypes: string;
   sampleCollectionAvailable: boolean;
   homeSampleCollection: boolean;
+  diagnosticAmbulanceAvailable: boolean;
+  diagnosticAmbulanceContact: string;
 
   pharmacyServices: string;
   deliveryAvailable: boolean;
@@ -134,6 +142,40 @@ const FACILITY_CATEGORY_OPTIONS = [
   "Other",
 ];
 
+const SPECIALTY_CENTER_TYPES = [
+  "Cardiology",
+  "Neurology",
+  "Orthopedics",
+  "Ophthalmology",
+  "Dermatology",
+  "Gynecology & Women's Health",
+  "Pediatrics",
+  "ENT",
+  "Psychiatry & Mental Health",
+  "Gastroenterology",
+  "Urology",
+  "Oncology",
+  "Dental & Oral Health",
+  "Physiotherapy & Rehabilitation",
+  "Cosmetic & Plastic Surgery",
+  "Diabetes & Endocrinology",
+  "Kidney & Nephrology",
+  "Pulmonology & Respiratory",
+  "Multiple specialties",
+  "Other",
+];
+
+const MAX_UPLOAD_BYTES = 2 * 1024 * 1024;
+
+function readFileAsBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });
+}
+
 const AMBULANCE_SERVICE_TYPES = [
   "Emergency response",
   "Patient transfer",
@@ -157,6 +199,9 @@ function createInitialState(name: string): FormState {
     name,
     phone: "",
     email: "",
+    logoBase64: "",
+    logoName: "",
+    photosBase64: [],
     specialty: "",
     specialtyOther: "",
     subSpecialty: "",
@@ -168,6 +213,8 @@ function createInitialState(name: string): FormState {
     linkedin: "",
     category: "",
     categoryOther: "",
+    specialtyCenterType: "",
+    specialtyCenterTypeOther: "",
     majorServices: "",
     specialtiesAvailable: "",
     hasBranches: false,
@@ -187,6 +234,8 @@ function createInitialState(name: string): FormState {
     testTypes: "",
     sampleCollectionAvailable: false,
     homeSampleCollection: false,
+    diagnosticAmbulanceAvailable: false,
+    diagnosticAmbulanceContact: "",
     pharmacyServices: "",
     deliveryAvailable: false,
     ambulanceCoverageArea: "",
@@ -380,6 +429,117 @@ function SocialMediaFields({ form, update }: { form: FormState; update: Updater 
           />
         </div>
       </div>
+    </div>
+  );
+}
+
+function CameraIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="mx-auto mb-2 size-7 text-muted-foreground"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      viewBox="0 0 24 24"
+    >
+      <path d="M3 8a2 2 0 012-2h2l1.5-2h7L17 6h2a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
+      <circle cx="12" cy="13" r="3.5" />
+    </svg>
+  );
+}
+
+const dropzoneClassName =
+  "block cursor-pointer rounded-xl border-2 border-dashed border-border p-4 text-center transition-colors hover:border-primary/50";
+
+type MediaUploadFieldsProps = {
+  form: FormState;
+  update: Updater;
+};
+
+function MediaUploadFields({ form, update }: MediaUploadFieldsProps) {
+  const [warning, setWarning] = useState("");
+
+  async function handleLogoChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setWarning("Please use an image under 2MB");
+      event.target.value = "";
+      return;
+    }
+    setWarning("");
+    const base64 = await readFileAsBase64(file);
+    update("logoBase64", base64);
+    update("logoName", file.name);
+  }
+
+  async function handlePhotosChange(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    if (files.length === 0) return;
+    const tooLarge = files.find((f) => f.size > MAX_UPLOAD_BYTES);
+    if (tooLarge) {
+      setWarning("Please use an image under 2MB");
+      event.target.value = "";
+      return;
+    }
+    setWarning("");
+    const encoded = await Promise.all(files.map((f) => readFileAsBase64(f)));
+    update("photosBase64", encoded);
+  }
+
+  return (
+    <div className="grid gap-4">
+      <div>
+        <label className={labelClassName} htmlFor="logo-upload">
+          Facility logo (optional)
+        </label>
+        <label className={dropzoneClassName} htmlFor="logo-upload">
+          <CameraIcon />
+          <span className="block text-sm font-medium text-foreground">
+            {form.logoName ? form.logoName : "Click to upload a logo"}
+          </span>
+          <span className="mt-1 block text-xs text-muted-foreground">
+            PNG or JPG, shown on your listing
+          </span>
+          <input
+            accept="image/*"
+            className="sr-only"
+            id="logo-upload"
+            onChange={handleLogoChange}
+            type="file"
+          />
+        </label>
+      </div>
+
+      <div>
+        <label className={labelClassName} htmlFor="photos-upload">
+          Facility photo (optional, at least 1 recommended)
+        </label>
+        <label className={dropzoneClassName} htmlFor="photos-upload">
+          <CameraIcon />
+          <span className="block text-sm font-medium text-foreground">
+            {form.photosBase64.length > 0
+              ? `${form.photosBase64.length} photo${form.photosBase64.length > 1 ? "s" : ""} selected`
+              : "Click to upload photos"}
+          </span>
+          <span className="mt-1 block text-xs text-muted-foreground">
+            Photos increase trust and visibility
+          </span>
+          <input
+            accept="image/*"
+            className="sr-only"
+            id="photos-upload"
+            multiple
+            onChange={handlePhotosChange}
+            type="file"
+          />
+        </label>
+      </div>
+
+      {warning ? <p className={errorClassName}>{warning}</p> : null}
     </div>
   );
 }
@@ -694,20 +854,62 @@ function FacilityLikeFields({
         ) : null}
       </div>
 
-      <div>
-        <label className={labelClassName} htmlFor="majorServices">
-          Major services <span className="text-error">*</span>
-        </label>
-        <textarea
-          className={`${fieldClassName(Boolean(errors.majorServices))} min-h-28 py-2`}
-          id="majorServices"
-          onChange={(e) => update("majorServices", e.target.value)}
-          placeholder="e.g. General Medicine, Surgery, ICU, Maternity"
-          rows={4}
-          value={form.majorServices}
-        />
-        {errors.majorServices ? <p className={errorClassName}>{errors.majorServices}</p> : null}
-      </div>
+      {!isDiagnostic && form.category === "Specialty Center" ? (
+        <div>
+          <label className={labelClassName} htmlFor="specialtyCenterType">
+            Specialty type <span className="text-error">*</span>
+          </label>
+          <select
+            className={fieldClassName(Boolean(errors.specialtyCenterType))}
+            id="specialtyCenterType"
+            onChange={(e) => update("specialtyCenterType", e.target.value)}
+            value={form.specialtyCenterType}
+          >
+            <option disabled value="">
+              Select a specialty type
+            </option>
+            {SPECIALTY_CENTER_TYPES.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
+          {errors.specialtyCenterType ? (
+            <p className={errorClassName}>{errors.specialtyCenterType}</p>
+          ) : null}
+          {form.specialtyCenterType === "Other" ? (
+            <div className="mt-2">
+              <input
+                className={fieldClassName(Boolean(errors.specialtyCenterTypeOther))}
+                onChange={(e) => update("specialtyCenterTypeOther", e.target.value)}
+                placeholder="Enter specialty type"
+                type="text"
+                value={form.specialtyCenterTypeOther}
+              />
+              {errors.specialtyCenterTypeOther ? (
+                <p className={errorClassName}>{errors.specialtyCenterTypeOther}</p>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      {!isDiagnostic ? (
+        <div>
+          <label className={labelClassName} htmlFor="majorServices">
+            Major services <span className="text-error">*</span>
+          </label>
+          <textarea
+            className={`${fieldClassName(Boolean(errors.majorServices))} min-h-28 py-2`}
+            id="majorServices"
+            onChange={(e) => update("majorServices", e.target.value)}
+            placeholder="e.g. General Medicine, Surgery, ICU, Maternity"
+            rows={4}
+            value={form.majorServices}
+          />
+          {errors.majorServices ? <p className={errorClassName}>{errors.majorServices}</p> : null}
+        </div>
+      ) : null}
 
       {isDiagnostic ? (
         <>
@@ -737,6 +939,28 @@ function FacilityLikeFields({
               onChange={(v) => update("homeSampleCollection", v)}
               value={form.homeSampleCollection}
             />
+          </div>
+          <div>
+            <label className={labelClassName}>Ambulance service available?</label>
+            <YesNoToggle
+              onChange={(v) => update("diagnosticAmbulanceAvailable", v)}
+              value={form.diagnosticAmbulanceAvailable}
+            />
+            {form.diagnosticAmbulanceAvailable ? (
+              <div className="mt-3">
+                <label className={labelClassName} htmlFor="diagnosticAmbulanceContact">
+                  Ambulance contact number
+                </label>
+                <input
+                  className={fieldClassName(false)}
+                  id="diagnosticAmbulanceContact"
+                  onChange={(e) => update("diagnosticAmbulanceContact", e.target.value)}
+                  type="tel"
+                  value={form.diagnosticAmbulanceContact}
+                />
+                <p className={phoneHintClassName}>Separate multiple numbers with /</p>
+              </div>
+            ) : null}
           </div>
         </>
       ) : (
@@ -908,18 +1132,22 @@ function FacilityLikeFields({
       {!form.hasBranches ? (
         <div>
           <label className={labelClassName} htmlFor="googleMapsUrl">
-            Google Maps link
+            Google Maps link <span className="text-error">*</span>
           </label>
           <input
-            className={fieldClassName(false)}
+            className={fieldClassName(Boolean(errors.googleMapsUrl))}
             id="googleMapsUrl"
             onChange={(e) => update("googleMapsUrl", e.target.value)}
             type="url"
             value={form.googleMapsUrl}
           />
-          <p className="mt-1 text-xs text-muted-foreground">
-            Used for Nearby search — paste your Google Maps share link
-          </p>
+          {errors.googleMapsUrl ? (
+            <p className={errorClassName}>{errors.googleMapsUrl}</p>
+          ) : (
+            <p className="mt-1 text-xs text-muted-foreground">
+              Used for Nearby search — paste your Google Maps share link
+            </p>
+          )}
         </div>
       ) : null}
     </>
@@ -1013,15 +1241,18 @@ function PharmacyFields({
       {!form.hasBranches ? (
         <div>
           <label className={labelClassName} htmlFor="googleMapsUrl">
-            Google Maps link
+            Google Maps link <span className="text-error">*</span>
           </label>
           <input
-            className={fieldClassName(false)}
+            className={fieldClassName(Boolean(errors.googleMapsUrl))}
             id="googleMapsUrl"
             onChange={(e) => update("googleMapsUrl", e.target.value)}
             type="url"
             value={form.googleMapsUrl}
           />
+          {errors.googleMapsUrl ? (
+            <p className={errorClassName}>{errors.googleMapsUrl}</p>
+          ) : null}
         </div>
       ) : null}
     </>
@@ -1216,15 +1447,18 @@ function AmbulanceServiceFields({
       {!form.hasBranches ? (
         <div>
           <label className={labelClassName} htmlFor="ambulanceBaseLocation">
-            Base location (Google Maps link)
+            Base location (Google Maps link) <span className="text-error">*</span>
           </label>
           <input
-            className={fieldClassName(false)}
+            className={fieldClassName(Boolean(errors.ambulanceBaseLocation))}
             id="ambulanceBaseLocation"
             onChange={(e) => update("ambulanceBaseLocation", e.target.value)}
             type="url"
             value={form.ambulanceBaseLocation}
           />
+          {errors.ambulanceBaseLocation ? (
+            <p className={errorClassName}>{errors.ambulanceBaseLocation}</p>
+          ) : null}
         </div>
       ) : null}
     </>
@@ -1290,9 +1524,8 @@ function OtherFields({ form, errors, update }: OtherFieldsProps) {
 
 function getNameLabel(providerType: ProviderType) {
   if (providerType === "Specialist") return "Full name";
-  if (providerType === "Healthcare Facility" || providerType === "Diagnostic Center") {
-    return "Healthcare facility name";
-  }
+  if (providerType === "Diagnostic Center") return "Diagnostic center name";
+  if (providerType === "Healthcare Facility") return "Healthcare facility name";
   if (providerType === "Pharmacy") return "Pharmacy name";
   if (providerType === "Ambulance Service") return "Ambulance service name";
   return "Provider/service name";
@@ -1409,10 +1642,26 @@ export function RegisterPage() {
       } else if (form.category === "Other" && !form.categoryOther.trim()) {
         errs.categoryOther = "Please enter the category.";
       }
-      if (!form.majorServices.trim()) errs.majorServices = "Please list major services.";
+      if (providerType === "Healthcare Facility" && form.category === "Specialty Center") {
+        if (!form.specialtyCenterType.trim()) {
+          errs.specialtyCenterType = "Please select a specialty type.";
+        } else if (
+          form.specialtyCenterType === "Other" &&
+          !form.specialtyCenterTypeOther.trim()
+        ) {
+          errs.specialtyCenterTypeOther = "Please enter the specialty type.";
+        }
+      }
+      if (providerType === "Healthcare Facility" && !form.majorServices.trim()) {
+        errs.majorServices = "Please list major services.";
+      }
       if (!form.opdHours.trim()) errs.opdHours = "OPD hours are required.";
       if (!form.hasBranches && !form.subCity.trim()) {
         errs.subCity = "Sub-city / area is required.";
+      }
+      if (!form.hasBranches && !form.googleMapsUrl.trim()) {
+        errs.googleMapsUrl =
+          "Google Maps link is required — paste your Google Maps share link";
       }
       if (form.hasEmergency) {
         if (!form.emergencyType.trim()) {
@@ -1427,11 +1676,19 @@ export function RegisterPage() {
       if (!form.hasBranches && !form.subCity.trim()) {
         errs.subCity = "Sub-city / area is required.";
       }
+      if (!form.hasBranches && !form.googleMapsUrl.trim()) {
+        errs.googleMapsUrl =
+          "Google Maps link is required — paste your Google Maps share link";
+      }
     }
 
     if (providerType === "Ambulance Service") {
       if (!form.ambulanceCoverageArea.trim()) {
         errs.ambulanceCoverageArea = "Coverage area is required.";
+      }
+      if (!form.hasBranches && !form.ambulanceBaseLocation.trim()) {
+        errs.ambulanceBaseLocation =
+          "Google Maps link is required — paste your Google Maps share link";
       }
     }
 
@@ -1468,7 +1725,6 @@ export function RegisterPage() {
     if (providerType === "Healthcare Facility" || providerType === "Diagnostic Center") {
       const base: Record<string, unknown> = {
         category: form.category === "Other" ? form.categoryOther : form.category,
-        majorServices: form.majorServices,
         hasBranches: form.hasBranches,
         branches: form.hasBranches ? form.branches : [],
         opdHours: form.opdHours,
@@ -1490,11 +1746,22 @@ export function RegisterPage() {
       };
 
       if (providerType === "Healthcare Facility") {
+        base.majorServices = form.majorServices;
         base.specialtiesAvailable = form.specialtiesAvailable || null;
+        if (form.category === "Specialty Center") {
+          base.specialtyCenterType =
+            form.specialtyCenterType === "Other"
+              ? form.specialtyCenterTypeOther
+              : form.specialtyCenterType;
+        }
       } else {
         base.testTypes = form.testTypes || null;
         base.sampleCollectionAvailable = form.sampleCollectionAvailable;
         base.homeSampleCollection = form.homeSampleCollection;
+        base.ambulanceAvailable = form.diagnosticAmbulanceAvailable;
+        base.ambulanceContact = form.diagnosticAmbulanceAvailable
+          ? form.diagnosticAmbulanceContact || null
+          : null;
       }
 
       return base;
@@ -1555,6 +1822,9 @@ export function RegisterPage() {
       providerType,
       submitterName: form.submitterName,
       submitterContact: form.submitterContact,
+      logo: form.logoBase64 || null,
+      logoName: form.logoName || null,
+      photos: form.photosBase64,
       ...buildNotes(),
     };
 
@@ -1625,6 +1895,8 @@ export function RegisterPage() {
             ))}
           </select>
         </div>
+
+        <MediaUploadFields form={form} update={update} />
 
         <div>
           <label className={labelClassName} htmlFor="name">

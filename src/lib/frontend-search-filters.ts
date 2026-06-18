@@ -7,12 +7,51 @@ export type FacilityCategoryFilter =
   | "clinic"
   | "diagnostics";
 
+export const specialtySubFilters = [
+  "All specialties",
+  "Cardiology",
+  "Neurology",
+  "Orthopedics",
+  "Ophthalmology",
+  "Dermatology",
+  "Gynecology",
+  "Pediatrics",
+  "ENT",
+  "Psychiatry",
+  "Gastroenterology",
+  "Urology",
+  "Oncology",
+  "Dental",
+  "Physiotherapy",
+  "Diabetes",
+  "Nephrology",
+  "Pulmonology",
+];
+
 export function normalizeSearchParam(
   value: string | string[] | undefined,
 ): string {
   const source = Array.isArray(value) ? value[0] : value;
 
   return source?.trim() ?? "";
+}
+
+export function filterFacilitiesBySpecialtyKeyword(
+  facilities: Facility[],
+  specialty: string,
+): Facility[] {
+  const keyword = normalizeQuery(specialty);
+
+  if (!keyword || keyword === "all specialties") {
+    return facilities;
+  }
+
+  return facilities.filter((facility) =>
+    matchesTokens(
+      [facility.name, facility.category, facility.subcategory, ...facility.services],
+      keyword,
+    ),
+  );
 }
 
 export function normalizeFacilityCategoryParam(

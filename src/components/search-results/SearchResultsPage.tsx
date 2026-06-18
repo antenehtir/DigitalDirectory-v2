@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { FacilityCard } from "@/components/cards/FacilityCard";
@@ -7,7 +8,11 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { SearchAutocompleteInput } from "@/components/search/SearchAutocompleteInput";
 import { healthcareCategories } from "@/components/search/search-options";
 import { realFacilities } from "@/data/real-facility-profiles";
-import { filterDoctorsByQuery, filterFacilitiesByQuery } from "@/lib/frontend-search-filters";
+import {
+  filterDoctorsByQuery,
+  filterFacilitiesByQuery,
+  specialtySubFilters,
+} from "@/lib/frontend-search-filters";
 import type { Doctor } from "@/types/doctor";
 import type { Facility } from "@/types/facility";
 
@@ -23,6 +28,15 @@ export function SearchResultsPage({ doctors = [] }: SearchResultsPageProps) {
   const focusSearch = searchParams.get("focus") === "1";
   const normalizedCategory = category.trim().toLowerCase();
   const isAllCategory = !normalizedCategory || normalizedCategory === "all";
+  const isSpecialtyCenters = normalizedCategory === "specialty centers";
+
+  const [specialtySubFilter, setSpecialtySubFilter] = useState("All specialties");
+  const [trackedCategory, setTrackedCategory] = useState(normalizedCategory);
+
+  if (trackedCategory !== normalizedCategory) {
+    setTrackedCategory(normalizedCategory);
+    setSpecialtySubFilter("All specialties");
+  }
 
   const matchingFacilities = filterFacilitiesByQuery(realFacilities, query);
   const matchingDoctors = filterDoctorsByQuery(doctors, query);
@@ -41,15 +55,21 @@ export function SearchResultsPage({ doctors = [] }: SearchResultsPageProps) {
     );
   }
 
+  if (isSpecialtyCenters && specialtySubFilter !== "All specialties") {
+    const keyword = specialtySubFilter.toLowerCase();
+    visibleFacilities = visibleFacilities.filter((f) => {
+      const text = [f.name, f.category, f.subcategory ?? "", ...f.services]
+        .join(" ")
+        .toLowerCase();
+      return text.includes(keyword);
+    });
+  }
+
   const hasResults = visibleFacilities.length > 0 || visibleDoctors.length > 0;
 
   function handleCategoryClick(label: string) {
     const params = new URLSearchParams();
-
-    if (query) {
-      params.set("q", query);
-    }
-
+    if (query) params.set("q", query);
     params.set("category", label);
     router.push(`/search?${params.toString()}`);
   }
@@ -62,7 +82,7 @@ export function SearchResultsPage({ doctors = [] }: SearchResultsPageProps) {
           autoFocus={focusSearch}
           initialQuery={query}
           label="Search healthcare"
-          placeholder="Specialists, facilities, pharmacies, specialties"
+          placeholder="Search by name, area, or specialty"
           formClassName="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]"
           inputClassName="min-h-13 w-full min-w-0 rounded-lg border border-border bg-input px-3 text-base text-foreground outline-none placeholder:text-muted-foreground focus:border-primary sm:min-h-14 sm:px-4"
           buttonClassName="min-h-12 rounded-lg bg-primary px-6 text-sm font-semibold text-primary-foreground transition hover:bg-primary-hover md:min-h-14"
@@ -90,6 +110,29 @@ export function SearchResultsPage({ doctors = [] }: SearchResultsPageProps) {
             );
           })}
         </div>
+
+        {isSpecialtyCenters ? (
+          <div className="flex max-w-full flex-wrap items-center gap-2">
+            {specialtySubFilters.map((sub) => {
+              const isActive = specialtySubFilter === sub;
+              return (
+                <button
+                  key={sub}
+                  aria-pressed={isActive}
+                  className={`inline-flex min-h-8 items-center rounded-full border px-3 text-xs font-semibold transition ${
+                    isActive
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-card text-foreground hover:border-strong-border"
+                  }`}
+                  onClick={() => setSpecialtySubFilter(sub)}
+                  type="button"
+                >
+                  {sub}
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
 
         {hasResults ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

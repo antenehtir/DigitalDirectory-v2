@@ -5,6 +5,7 @@ import { realFacilities } from "@/data/real-facility-profiles";
 import {
   filterFacilitiesByCategory,
   filterFacilitiesByQuery,
+  filterFacilitiesBySpecialtyKeyword,
   getFacilityCategoryLabel,
   normalizeFacilityCategoryParam,
   normalizeSearchParam,
@@ -22,6 +23,7 @@ type FacilitiesRouteProps = {
   searchParams?: Promise<{
     category?: string | string[];
     q?: string | string[];
+    specialty?: string | string[];
   }>;
 };
 
@@ -31,9 +33,14 @@ export default async function FacilitiesRoute({
   const params = await searchParams;
   const category = normalizeFacilityCategoryParam(params?.category);
   const query = normalizeSearchParam(params?.q);
-  const facilities = filterFacilitiesByQuery(
-    filterFacilitiesByCategory(realFacilities, category),
-    query,
+  const specialty =
+    category === "specialty" ? normalizeSearchParam(params?.specialty) : "";
+  const facilities = filterFacilitiesBySpecialtyKeyword(
+    filterFacilitiesByQuery(
+      filterFacilitiesByCategory(realFacilities, category),
+      query,
+    ),
+    specialty,
   );
 
   return (
@@ -42,6 +49,7 @@ export default async function FacilitiesRoute({
         activeCategory={category}
         activeCategoryLabel={getFacilityCategoryLabel(category)}
         activeQuery={query}
+        activeSpecialty={specialty}
         facilities={facilities}
       />
     </PageShell>

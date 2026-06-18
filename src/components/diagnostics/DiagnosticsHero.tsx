@@ -9,8 +9,7 @@ export function DiagnosticsHero() {
           Find laboratories and imaging services.
         </h1>
         <p className="mt-4 text-base leading-7 text-muted-foreground">
-          Browse diagnostic centers for laboratory and imaging services with
-          provider information reviewed before publication.
+          Labs, imaging and diagnostic centers across Addis Ababa.
         </p>
       </div>
     </header>

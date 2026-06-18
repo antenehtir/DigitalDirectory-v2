@@ -90,6 +90,28 @@ const categories = [
       </CategoryIcon>
     ),
   },
+  {
+    label: "Ambulance",
+    description: "Emergency transport",
+    href: "/facilities?category=ambulance",
+    icon: (props: SVGProps<SVGSVGElement>) => (
+      <CategoryIcon {...props}>
+        <path d="M3 12h1m16 0h1M5 12V7l3-3h8l3 3v5M5 12v4a1 1 0 001 1h12a1 1 0 001-1v-4M9 21v-4h6v4" />
+        <path d="M9 7h6M12 7v3" />
+      </CategoryIcon>
+    ),
+  },
+  {
+    label: "Home Care",
+    description: "Care at your home",
+    href: "/facilities?category=homecare",
+    icon: (props: SVGProps<SVGSVGElement>) => (
+      <CategoryIcon {...props}>
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" />
+        <path d="M12 12a2 2 0 100 4 2 2 0 000-4z" />
+      </CategoryIcon>
+    ),
+  },
 ];
 
 export function QuickCategoriesSection() {
@@ -100,7 +122,7 @@ export function QuickCategoriesSection() {
           <h2 className="text-2xl font-semibold leading-tight text-foreground">
             Browse by category
           </h2>
-          <div className="mt-5 grid gap-3 grid-cols-2 lg:grid-cols-3">
+          <div className="mt-5 grid gap-3 grid-cols-2 lg:grid-cols-4">
             {categories.map((category) => {
               const Icon = category.icon;
 
