@@ -37,7 +37,7 @@ const trustStats: { label: string; icon: React.ReactNode }[] = [
     ),
   },
   {
-    label: "Reviewed Before Publishing",
+    label: "New Listings Reviewed Before Going Live",
     icon: (
       <svg
         aria-hidden="true"
