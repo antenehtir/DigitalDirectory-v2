@@ -179,7 +179,7 @@ function mapRealFacilityProfileToFacility(
       : "Contact provider for current hours.",
     verificationStatus: "community-submitted",
     isOpen: profile.hours.trim().toLowerCase() === "24/7",
-    availabilityNote: hasHours ? "See listed hours." : "Hours vary by service.",
+    availabilityNote: hasHours ? profile.hours : null,
     contactActionLabel: hasPhone ? "Call provider" : "Contact provider",
     directionsActionLabel: hasMap ? "Open map" : "View location",
     contactChannels: createFacilityContactChannels(profile),

@@ -43,6 +43,7 @@ type FormState = {
 
   specialty: string;
   specialtyOther: string;
+  specialtyMultiple: string;
   subSpecialty: string;
   multipleFacilities: boolean;
   facilityEntries: FacilityEntry[];
@@ -55,6 +56,7 @@ type FormState = {
   categoryOther: string;
   specialtyCenterType: string;
   specialtyCenterTypeOther: string;
+  specialtyCenterTypeMultiple: string;
   majorServices: string;
   specialtiesAvailable: string;
   hasBranches: boolean;
@@ -126,6 +128,7 @@ const SPECIALTY_OPTIONS = [
   "Neurology",
   "Oncology",
   "Gastroenterology",
+  "Multiple specialties",
   "Other",
 ];
 
@@ -199,6 +202,7 @@ function createInitialState(name: string): FormState {
     photosBase64: [],
     specialty: "",
     specialtyOther: "",
+    specialtyMultiple: "",
     subSpecialty: "",
     multipleFacilities: false,
     facilityEntries: [createFacilityEntry("facility-entry-0")],
@@ -210,6 +214,7 @@ function createInitialState(name: string): FormState {
     categoryOther: "",
     specialtyCenterType: "",
     specialtyCenterTypeOther: "",
+    specialtyCenterTypeMultiple: "",
     majorServices: "",
     specialtiesAvailable: "",
     hasBranches: false,
@@ -366,7 +371,7 @@ function BranchSection({ branches, updateBranch, addBranch, removeBranch }: Bran
                 className={fieldClassName(false)}
                 id={`branch-maps-${branch.id}`}
                 onChange={(e) => updateBranch(branch.id, { googleMapsUrl: e.target.value })}
-                type="url"
+                type="text"
                 value={branch.googleMapsUrl}
               />
             </div>
@@ -394,7 +399,7 @@ function SocialMediaFields({ form, update }: { form: FormState; update: Updater 
             id="facebook"
             onChange={(e) => update("facebook", e.target.value)}
             placeholder="https://facebook.com/yourpage"
-            type="url"
+            type="text"
             value={form.facebook}
           />
         </div>
@@ -407,7 +412,7 @@ function SocialMediaFields({ form, update }: { form: FormState; update: Updater 
             id="instagram"
             onChange={(e) => update("instagram", e.target.value)}
             placeholder="https://instagram.com/yourpage"
-            type="url"
+            type="text"
             value={form.instagram}
           />
         </div>
@@ -420,7 +425,7 @@ function SocialMediaFields({ form, update }: { form: FormState; update: Updater 
             id="tiktok"
             onChange={(e) => update("tiktok", e.target.value)}
             placeholder="https://tiktok.com/@yourpage"
-            type="url"
+            type="text"
             value={form.tiktok}
           />
         </div>
@@ -595,6 +600,20 @@ function SpecialistFields({
             ) : null}
           </div>
         ) : null}
+        {form.specialty === "Multiple specialties" ? (
+          <div className="mt-2">
+            <input
+              className={fieldClassName(Boolean(errors.specialtyMultiple))}
+              onChange={(e) => update("specialtyMultiple", e.target.value)}
+              placeholder="List the specialties (comma separated)"
+              type="text"
+              value={form.specialtyMultiple}
+            />
+            {errors.specialtyMultiple ? (
+              <p className={errorClassName}>{errors.specialtyMultiple}</p>
+            ) : null}
+          </div>
+        ) : null}
       </div>
 
       <div>
@@ -740,7 +759,7 @@ function SpecialistFields({
           className={fieldClassName(false)}
           id="bookingLink"
           onChange={(e) => update("bookingLink", e.target.value)}
-          type="url"
+          type="text"
           value={form.bookingLink}
         />
       </div>
@@ -784,7 +803,7 @@ function SpecialistFields({
           id="linkedin"
           onChange={(e) => update("linkedin", e.target.value)}
           placeholder="https://linkedin.com/in/yourname"
-          type="url"
+          type="text"
           value={form.linkedin}
         />
         <p className={privateNoteClassName}>⚠ Not visible to public — for Tiru staff only</p>
@@ -910,6 +929,20 @@ function FacilityLikeFields({
               />
               {errors.specialtyCenterTypeOther ? (
                 <p className={errorClassName}>{errors.specialtyCenterTypeOther}</p>
+              ) : null}
+            </div>
+          ) : null}
+          {form.specialtyCenterType === "Multiple specialties" ? (
+            <div className="mt-2">
+              <input
+                className={fieldClassName(Boolean(errors.specialtyCenterTypeMultiple))}
+                onChange={(e) => update("specialtyCenterTypeMultiple", e.target.value)}
+                placeholder="List the specialties (comma separated)"
+                type="text"
+                value={form.specialtyCenterTypeMultiple}
+              />
+              {errors.specialtyCenterTypeMultiple ? (
+                <p className={errorClassName}>{errors.specialtyCenterTypeMultiple}</p>
               ) : null}
             </div>
           ) : null}
@@ -1135,7 +1168,7 @@ function FacilityLikeFields({
           className={fieldClassName(false)}
           id="website"
           onChange={(e) => update("website", e.target.value)}
-          type="url"
+          type="text"
           value={form.website}
         />
       </div>
@@ -1164,7 +1197,7 @@ function FacilityLikeFields({
             className={fieldClassName(Boolean(errors.googleMapsUrl))}
             id="googleMapsUrl"
             onChange={(e) => update("googleMapsUrl", e.target.value)}
-            type="url"
+            type="text"
             value={form.googleMapsUrl}
           />
           {errors.googleMapsUrl ? (
@@ -1273,7 +1306,7 @@ function PharmacyFields({
             className={fieldClassName(Boolean(errors.googleMapsUrl))}
             id="googleMapsUrl"
             onChange={(e) => update("googleMapsUrl", e.target.value)}
-            type="url"
+            type="text"
             value={form.googleMapsUrl}
           />
           {errors.googleMapsUrl ? (
@@ -1479,7 +1512,7 @@ function AmbulanceServiceFields({
             className={fieldClassName(Boolean(errors.ambulanceBaseLocation))}
             id="ambulanceBaseLocation"
             onChange={(e) => update("ambulanceBaseLocation", e.target.value)}
-            type="url"
+            type="text"
             value={form.ambulanceBaseLocation}
           />
           {errors.ambulanceBaseLocation ? (
@@ -1671,6 +1704,11 @@ export function RegisterPage() {
         errs.specialty = "Please select a specialty.";
       } else if (form.specialty === "Other" && !form.specialtyOther.trim()) {
         errs.specialtyOther = "Please enter the specialty.";
+      } else if (
+        form.specialty === "Multiple specialties" &&
+        !form.specialtyMultiple.trim()
+      ) {
+        errs.specialtyMultiple = "Please list the specialties.";
       }
       const hasPractice = form.facilityEntries.some(
         (e) => e.searchFacility.trim() || e.manualFacility.trim(),
@@ -1699,6 +1737,11 @@ export function RegisterPage() {
             !form.specialtyCenterTypeOther.trim()
           ) {
             errs.specialtyCenterTypeOther = "Please enter the specialty type.";
+          } else if (
+            form.specialtyCenterType === "Multiple specialties" &&
+            !form.specialtyCenterTypeMultiple.trim()
+          ) {
+            errs.specialtyCenterTypeMultiple = "Please list the specialties.";
           }
         }
         if (!form.majorServices.trim()) {
@@ -1756,7 +1799,12 @@ export function RegisterPage() {
   function buildNotes(): Record<string, unknown> {
     if (providerType === "Specialist") {
       return {
-        specialty: form.specialty === "Other" ? form.specialtyOther : form.specialty,
+        specialty:
+          form.specialty === "Other"
+            ? form.specialtyOther
+            : form.specialty === "Multiple specialties"
+              ? form.specialtyMultiple
+              : form.specialty,
         subSpecialty: form.subSpecialty || null,
         multipleFacilities: form.multipleFacilities,
         practiceLocations: form.facilityEntries
@@ -1810,7 +1858,9 @@ export function RegisterPage() {
           base.specialtyCenterType =
             form.specialtyCenterType === "Other"
               ? form.specialtyCenterTypeOther
-              : form.specialtyCenterType;
+              : form.specialtyCenterType === "Multiple specialties"
+                ? form.specialtyCenterTypeMultiple
+                : form.specialtyCenterType;
         }
       } else {
         const labIncluded = isDiagnosticLabIncluded(form.diagnosticSubType);
@@ -1897,6 +1947,7 @@ export function RegisterPage() {
     });
 
     if (error) {
+      console.error("[RegisterPage] Supabase insert failed:", JSON.stringify(error));
       setSubmitState("error");
       setSubmitError("Something went wrong submitting your request. Please try again.");
       return;

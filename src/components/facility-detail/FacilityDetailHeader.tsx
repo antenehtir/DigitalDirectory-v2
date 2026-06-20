@@ -23,7 +23,11 @@ export function FacilityDetailHeader({ facility }: FacilityDetailHeaderProps) {
         <VerificationBadge status={facility.verificationStatus} />
       </div>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-3">
+      <div
+        className={`mt-6 grid gap-3 ${
+          facility.availabilityNote ? "sm:grid-cols-3" : "sm:grid-cols-2"
+        }`}
+      >
         <div className="rounded-2xl border border-border bg-background p-4">
           <p className="text-sm font-semibold text-foreground">
             {facility.category}
@@ -36,16 +40,18 @@ export function FacilityDetailHeader({ facility }: FacilityDetailHeaderProps) {
           </p>
           <p className="mt-1 text-sm text-muted-foreground">Location</p>
         </div>
-        <div className="rounded-2xl border border-border bg-background p-4">
-          <p
-            className={`text-sm font-semibold ${
-              facility.isOpen ? "text-success" : "text-warning"
-            }`}
-          >
-            {facility.availabilityNote}
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">Availability</p>
-        </div>
+        {facility.availabilityNote ? (
+          <div className="rounded-2xl border border-border bg-background p-4">
+            <p
+              className={`text-sm font-semibold ${
+                facility.isOpen ? "text-success" : "text-warning"
+              }`}
+            >
+              {facility.availabilityNote}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">Availability</p>
+          </div>
+        ) : null}
       </div>
     </header>
   );

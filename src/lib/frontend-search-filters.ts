@@ -103,7 +103,7 @@ export function filterFacilitiesByQuery(
         facility.location,
         facility.address,
         facility.workingHours,
-        facility.availabilityNote,
+        facility.availabilityNote ?? "",
         facility.verificationStatus,
         ...facility.services,
       ],

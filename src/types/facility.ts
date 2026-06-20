@@ -31,7 +31,7 @@ export type Facility = {
   workingHours: string;
   verificationStatus: FacilityVerificationStatus;
   isOpen: boolean;
-  availabilityNote: string;
+  availabilityNote: string | null;
   contactActionLabel: string;
   directionsActionLabel: string;
   contactChannels?: FacilityContactChannel[];
