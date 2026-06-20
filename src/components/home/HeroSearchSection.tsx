@@ -7,11 +7,28 @@ export function HeroSearchSection() {
     <section className="bg-transparent">
       <PageContainer className="pb-6 pt-8 sm:pb-8 sm:pt-14 lg:pb-10 lg:pt-16">
         <div className="min-w-0">
-          <div className="mb-4 flex flex-wrap items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-teal-200 bg-teal-50 px-4 py-1.5 text-sm font-semibold text-teal-700">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-teal-200 bg-teal-50 px-4 py-1.5 text-sm font-semibold text-teal-700">
               Addis Ababa &middot; Private Healthcare
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-teal-200 bg-teal-50 px-4 py-1.5 text-sm font-semibold text-teal-700">
+
+            <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700 sm:hidden">
+              <svg
+                aria-hidden="true"
+                className="size-3.5 shrink-0"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.75}
+                viewBox="0 0 24 24"
+              >
+                <path d="M9 6h10M9 12h10M9 18h10M4 6h.01M4 12h.01M4 18h.01" />
+              </svg>
+              100+ Listings &middot; Citywide Coverage
+            </span>
+
+            <span className="hidden items-center gap-1.5 whitespace-nowrap rounded-full border border-teal-200 bg-teal-50 px-4 py-1.5 text-sm font-semibold text-teal-700 sm:inline-flex">
               <svg
                 aria-hidden="true"
                 className="size-4 shrink-0"
@@ -26,7 +43,7 @@ export function HeroSearchSection() {
               </svg>
               100+ Healthcare Listings
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-teal-200 bg-teal-50 px-4 py-1.5 text-sm font-semibold text-teal-700">
+            <span className="hidden items-center gap-1.5 whitespace-nowrap rounded-full border border-teal-200 bg-teal-50 px-4 py-1.5 text-sm font-semibold text-teal-700 sm:inline-flex">
               <svg
                 aria-hidden="true"
                 className="size-4 shrink-0"
