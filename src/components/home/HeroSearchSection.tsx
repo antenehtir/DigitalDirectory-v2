@@ -36,7 +36,7 @@ export function HeroSearchSection() {
             </span>
             <Link
               className="inline-flex min-h-10 items-center rounded-full border border-border bg-transparent px-5 text-sm font-semibold text-foreground transition hover:border-strong-border hover:bg-card"
-              href="/facilities"
+              href="/search"
             >
               Browse with filter
             </Link>

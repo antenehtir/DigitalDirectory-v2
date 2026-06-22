@@ -75,15 +75,30 @@ export function MobileBottomNavigation() {
           return (
             <Link
               key={item.href}
-              className={`flex min-h-16 flex-col items-center justify-center gap-1 rounded-md px-1 text-xs font-medium transition-colors hover:text-primary ${
-                isActive ? "text-primary" : "text-muted-foreground"
-              }`}
+              className="flex min-h-16 flex-col items-center justify-center px-1"
               href={item.href}
               aria-current={isActive ? "page" : undefined}
               prefetch={true}
             >
-              {Icon ? <Icon /> : null}
-              <span className="max-w-full truncate">{item.shortLabel}</span>
+              <span
+                className={`mx-auto mb-1 h-[3px] w-5 rounded-full ${
+                  isActive ? "bg-primary" : "bg-transparent"
+                }`}
+              />
+              <span
+                className={`flex flex-col items-center gap-1 rounded-xl px-2 py-1 transition-colors ${
+                  isActive ? "bg-primary/8 text-primary" : "text-muted-foreground"
+                }`}
+              >
+                {Icon ? <Icon /> : null}
+                <span
+                  className={`max-w-full truncate text-[10px] ${
+                    isActive ? "font-semibold" : "font-medium"
+                  }`}
+                >
+                  {item.shortLabel}
+                </span>
+              </span>
             </Link>
           );
         })}

@@ -1,0 +1,114 @@
+import { filterFacilitiesByCategory, type FacilityCategoryFilter } from "@/lib/frontend-search-filters";
+import type { Doctor } from "@/types/doctor";
+import type { Facility } from "@/types/facility";
+
+export type ListingFilters = {
+  type: FacilityCategoryFilter | "";
+  subCity: string;
+  area: string;
+  specialty: string;
+};
+
+export const EMPTY_LISTING_FILTERS: ListingFilters = {
+  type: "",
+  subCity: "",
+  area: "",
+  specialty: "",
+};
+
+const FILTER_PARAM_KEYS = ["type", "subCity", "area", "specialty"] as const;
+
+export function countActiveListingFilters(filters: ListingFilters): number {
+  return FILTER_PARAM_KEYS.filter((key) => filters[key].trim().length > 0).length;
+}
+
+export function readListingFiltersFromSearchParams(
+  searchParams: URLSearchParams,
+): ListingFilters {
+  return {
+    type: (searchParams.get("type") as FacilityCategoryFilter | null) ?? "",
+    subCity: searchParams.get("subCity") ?? "",
+    area: searchParams.get("area") ?? "",
+    specialty: searchParams.get("specialty") ?? "",
+  };
+}
+
+export function writeListingFiltersToSearchParams(
+  params: URLSearchParams,
+  filters: ListingFilters,
+): void {
+  for (const key of FILTER_PARAM_KEYS) {
+    const value = filters[key];
+
+    if (value) {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+  }
+}
+
+function normalize(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+export function facilityMatchesListingFilters(
+  facility: Facility,
+  filters: ListingFilters,
+): boolean {
+  if (filters.type && filterFacilitiesByCategory([facility], filters.type).length === 0) {
+    return false;
+  }
+
+  if (filters.subCity) {
+    const subCityText = normalize([facility.subCity ?? "", facility.location].join(" "));
+
+    if (!subCityText.includes(normalize(filters.subCity))) {
+      return false;
+    }
+  }
+
+  if (filters.area) {
+    const areaText = normalize(
+      [facility.area ?? "", facility.location, facility.address].join(" "),
+    );
+
+    if (!areaText.includes(normalize(filters.area))) {
+      return false;
+    }
+  }
+
+  if (filters.specialty) {
+    const specialtyText = normalize(
+      [facility.category, facility.subcategory, facility.name, ...facility.services].join(" "),
+    );
+
+    if (!specialtyText.includes(normalize(filters.specialty))) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export function doctorMatchesListingFilters(
+  doctor: Doctor,
+  filters: ListingFilters,
+): boolean {
+  if (filters.subCity && !normalize(doctor.location).includes(normalize(filters.subCity))) {
+    return false;
+  }
+
+  if (filters.area && !normalize(doctor.location).includes(normalize(filters.area))) {
+    return false;
+  }
+
+  if (
+    filters.specialty &&
+    !normalize(doctor.specialty).includes(normalize(filters.specialty))
+  ) {
+    return false;
+  }
+
+  return true;
+}

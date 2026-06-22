@@ -2,8 +2,8 @@ import Link from "next/link";
 
 const diagnosticsTypes = [
   { label: "All", href: "/diagnostics", value: "" },
-  { label: "Laboratories", href: "/diagnostics?type=laboratory", value: "laboratory" },
-  { label: "Imaging", href: "/diagnostics?type=imaging", value: "imaging" },
+  { label: "Laboratories", href: "/diagnostics?subtype=laboratory", value: "laboratory" },
+  { label: "Imaging", href: "/diagnostics?subtype=imaging", value: "imaging" },
 ];
 
 type DiagnosticsFilterChipsProps = {

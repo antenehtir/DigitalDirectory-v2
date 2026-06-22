@@ -176,3 +176,29 @@ a {
     transform: translateX(-50%);
   }
 }
+
+.filter-modal-panel {
+  animation: filter-modal-slide-up 0.25s ease-out;
+}
+
+@media (min-width: 640px) {
+  .filter-modal-panel {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-modal-panel {
+    animation: none;
+  }
+}
+
+@keyframes filter-modal-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}

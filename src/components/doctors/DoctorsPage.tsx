@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { DoctorCardGrid } from "@/components/cards/DoctorCardGrid";
 import { PageContainer } from "@/components/layout/PageContainer";
+import { DoctorListingExperience } from "@/components/search/DoctorListingExperience";
 import { ListingStatusBanner } from "@/components/ui/ListingStatusBanner";
 import type { Doctor } from "@/types/doctor";
 import { DoctorsHero } from "./DoctorsHero";
@@ -22,16 +22,17 @@ export function DoctorsPage({
         <DoctorsHero />
         <SpecialtyFilterChips activeSpecialty={activeSpecialty} />
 
-        {doctors.length > 0 ? (
-          <DoctorCardGrid doctors={doctors} />
-        ) : (
-          <p className="text-sm leading-6 text-muted-foreground">
-            Specialist profiles coming soon.{" "}
-            <Link className="font-semibold text-primary" href="/register">
-              Register your practice &rarr;
-            </Link>
-          </p>
-        )}
+        <DoctorListingExperience
+          doctors={doctors}
+          emptyState={
+            <p className="text-sm leading-6 text-muted-foreground">
+              Specialist profiles coming soon.{" "}
+              <Link className="font-semibold text-primary" href="/register">
+                Register your practice &rarr;
+              </Link>
+            </p>
+          }
+        />
       </div>
     </PageContainer>
   );

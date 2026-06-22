@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 type DiagnosticsRouteProps = {
   searchParams?: Promise<{
-    type?: string | string[];
+    subtype?: string | string[];
   }>;
 };
 
@@ -22,7 +22,7 @@ export default async function DiagnosticsRoute({
   searchParams,
 }: DiagnosticsRouteProps) {
   const params = await searchParams;
-  const activeType = normalizeSearchParam(params?.type);
+  const activeType = normalizeSearchParam(params?.subtype);
   const diagnostics = filterByType(await getDiagnosticsForRoute(), activeType);
 
   return (

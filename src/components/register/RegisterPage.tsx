@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { SPECIALTY_OPTIONS } from "@/lib/constants/specialty-options";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 
 type ProviderType =
@@ -110,26 +111,6 @@ const PROVIDER_TYPE_OPTIONS: { value: ProviderType; label: string }[] = [
   { value: "Pharmacy", label: "Pharmacy" },
   { value: "Ambulance Service", label: "Ambulance Service" },
   { value: "Other", label: "Other (Telemedicine, Home Care, etc.)" },
-];
-
-const SPECIALTY_OPTIONS = [
-  "Internal Medicine",
-  "Pediatrics & Maternal-Child Health",
-  "Gynecology & Obstetrics",
-  "General Surgery",
-  "Cardiology",
-  "Orthopedics",
-  "ENT (Ear, Nose, Throat)",
-  "Dermatology",
-  "Psychiatry & Mental Health",
-  "Ophthalmology (Eye Care)",
-  "Physiotherapy",
-  "Dental",
-  "Neurology",
-  "Oncology",
-  "Gastroenterology",
-  "Multiple specialties",
-  "Other",
 ];
 
 const FACILITY_CATEGORY_OPTIONS = [

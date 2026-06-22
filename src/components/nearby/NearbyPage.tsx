@@ -10,11 +10,20 @@ import {
 } from "@/components/cards/facility-category-style";
 import { ShareButton } from "@/components/cards/ShareButton";
 import { WorkingHoursIndicator } from "@/components/cards/WorkingHoursIndicator";
+import { FilterModal } from "@/components/search/FilterModal";
+import { ListingSearchBar } from "@/components/search/ListingSearchBar";
 import { ListingStatusBanner } from "@/components/ui/ListingStatusBanner";
 import {
   createPublicContactActions,
   getExternalLinkProps,
 } from "@/lib/contact-actions";
+import { filterFacilitiesByQuery } from "@/lib/frontend-search-filters";
+import {
+  countActiveListingFilters,
+  EMPTY_LISTING_FILTERS,
+  facilityMatchesListingFilters,
+  type ListingFilters,
+} from "@/lib/listing-filters";
 import {
   calculateDistanceKm,
   formatDistanceKm,
@@ -64,13 +73,24 @@ export function NearbyPage({
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
   const [areaBrowseOverride, setAreaBrowseOverride] = useState<boolean | null>(null);
   const [isLocationTipOpen, setIsLocationTipOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [filters, setFilters] = useState<ListingFilters>(EMPTY_LISTING_FILTERS);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const hasRequestedLocationRef = useRef(false);
   const locationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const areaBrowseSectionRef = useRef<HTMLElement>(null);
 
+  const searchedFacilities = useMemo(
+    () =>
+      filterFacilitiesByQuery(facilities, query).filter((facility) =>
+        facilityMatchesListingFilters(facility, filters),
+      ),
+    [facilities, query, filters],
+  );
+
   const categoryFacilities = useMemo(
-    () => filterFacilitiesByCategory(facilities, selectedCategory),
-    [facilities, selectedCategory],
+    () => filterFacilitiesByCategory(searchedFacilities, selectedCategory),
+    [searchedFacilities, selectedCategory],
   );
 
   const rankedFacilities = useMemo(() => {
@@ -193,6 +213,21 @@ export function NearbyPage({
       </header>
 
       <ListingStatusBanner />
+
+      <ListingSearchBar
+        activeFilterCount={countActiveListingFilters(filters)}
+        onOpenFilters={() => setIsFilterModalOpen(true)}
+        onSearchChange={setQuery}
+        searchValue={query}
+      />
+
+      <FilterModal
+        filters={filters}
+        isOpen={isFilterModalOpen}
+        onApply={setFilters}
+        onClose={() => setIsFilterModalOpen(false)}
+        onReset={() => setFilters(EMPTY_LISTING_FILTERS)}
+      />
 
       <div className="flex max-w-full flex-wrap gap-2">
         {categoryOptions.map((category) => {

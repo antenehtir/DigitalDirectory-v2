@@ -1,3 +1,4 @@
+import { SPECIALTY_OPTIONS } from "@/lib/constants/specialty-options";
 import type { Doctor } from "@/types/doctor";
 import type { Facility } from "@/types/facility";
 
@@ -10,25 +11,7 @@ export type FacilityCategoryFilter =
   | "ambulance"
   | "home-care";
 
-export const specialtySubFilters = [
-  "All specialties",
-  "Internal Medicine",
-  "Pediatrics & Maternal-Child Health",
-  "Gynecology & Obstetrics",
-  "General Surgery",
-  "Cardiology",
-  "Orthopedics",
-  "ENT (Ear, Nose, Throat)",
-  "Dermatology",
-  "Psychiatry & Mental Health",
-  "Ophthalmology (Eye Care)",
-  "Physiotherapy",
-  "Dental",
-  "Neurology",
-  "Oncology",
-  "Gastroenterology",
-  "Other",
-];
+export const specialtySubFilters = ["All specialties", ...SPECIALTY_OPTIONS];
 
 export function extractSpecialtyMatchKeyword(label: string): string {
   return label
