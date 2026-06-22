@@ -17,7 +17,11 @@ import {
   createPublicContactActions,
   getExternalLinkProps,
 } from "@/lib/contact-actions";
-import { filterFacilitiesByQuery } from "@/lib/frontend-search-filters";
+import { SPECIALTY_OPTIONS } from "@/lib/constants/specialty-options";
+import {
+  extractSpecialtyMatchKeyword,
+  filterFacilitiesByQuery,
+} from "@/lib/frontend-search-filters";
 import {
   countActiveListingFilters,
   EMPTY_LISTING_FILTERS,
@@ -62,6 +66,12 @@ const categoryOptions = [
   { label: "Pharmacies", value: "pharmacies" },
 ];
 
+const nearbySpecialtyOptions = SPECIALTY_OPTIONS.filter(
+  (option) => option !== "Multiple specialties" && option !== "Other",
+).map((option) =>
+  option === "General Surgery" ? "Surgery" : extractSpecialtyMatchKeyword(option),
+);
+
 export function NearbyPage({
   areaOptions,
   facilities,
@@ -69,6 +79,7 @@ export function NearbyPage({
   selectedArea,
 }: NearbyPageProps) {
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+  const [selectedNearbySpecialty, setSelectedNearbySpecialty] = useState("");
   const [locationState, setLocationState] = useState<LocationState>("idle");
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
   const [areaBrowseOverride, setAreaBrowseOverride] = useState<boolean | null>(null);
@@ -93,22 +104,38 @@ export function NearbyPage({
     [searchedFacilities, selectedCategory],
   );
 
+  const specialtyFilteredFacilities = useMemo(() => {
+    if (selectedCategory !== "specialty" || !selectedNearbySpecialty) {
+      return categoryFacilities;
+    }
+
+    const keyword = selectedNearbySpecialty.toLowerCase();
+
+    return categoryFacilities.filter((facility) => {
+      const specialtyText = [facility.subcategory ?? "", ...facility.services]
+        .join(" ")
+        .toLowerCase();
+
+      return specialtyText.includes(keyword);
+    });
+  }, [categoryFacilities, selectedCategory, selectedNearbySpecialty]);
+
   const rankedFacilities = useMemo(() => {
     if (!userLocation) {
       return [];
     }
 
-    return categoryFacilities
+    return specialtyFilteredFacilities
       .filter((facility) => facility.coordinates)
       .map((facility) => ({
         facility,
         distanceKm: calculateDistanceKm(userLocation, facility.coordinates!),
       }))
       .sort((left, right) => left.distanceKm - right.distanceKm);
-  }, [categoryFacilities, userLocation]);
+  }, [specialtyFilteredFacilities, userLocation]);
 
   const areaFacilities = selectedArea
-    ? categoryFacilities.filter((facility) => facility.location === selectedArea)
+    ? specialtyFilteredFacilities.filter((facility) => facility.location === selectedArea)
     : [];
 
   const activeCategoryLabel =
@@ -242,7 +269,13 @@ export function NearbyPage({
                   : "border-border bg-card text-foreground hover:border-strong-border"
               }`}
               key={category.value}
-              onClick={() => setSelectedCategory(category.value)}
+              onClick={() => {
+                setSelectedCategory(category.value);
+
+                if (category.value !== "specialty") {
+                  setSelectedNearbySpecialty("");
+                }
+              }}
               type="button"
             >
               {category.label}
@@ -250,6 +283,31 @@ export function NearbyPage({
           );
         })}
       </div>
+
+      {selectedCategory === "specialty" ? (
+        <div className="-mx-1 flex max-w-full gap-2 overflow-x-auto px-1 pb-1">
+          {["All", ...nearbySpecialtyOptions].map((label) => {
+            const value = label === "All" ? "" : label;
+            const isActive = selectedNearbySpecialty === value;
+
+            return (
+              <button
+                aria-pressed={isActive}
+                className={`inline-flex min-h-9 shrink-0 items-center justify-center whitespace-nowrap rounded-full border px-3 text-xs font-semibold transition ${
+                  isActive
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-card text-foreground hover:border-strong-border"
+                }`}
+                key={label}
+                onClick={() => setSelectedNearbySpecialty(value)}
+                type="button"
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
 
       {locationState === "idle" || locationState === "loading" ? (
         <p className="inline-flex w-fit items-center rounded-full bg-soft-accent px-4 py-2 text-sm font-semibold text-primary">

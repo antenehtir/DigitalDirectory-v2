@@ -85,6 +85,8 @@ export function filterFacilitiesByQuery(
         facility.subcategory,
         facility.location,
         facility.address,
+        facility.subCity ?? "",
+        facility.area ?? "",
         facility.workingHours,
         facility.availabilityNote ?? "",
         facility.verificationStatus,

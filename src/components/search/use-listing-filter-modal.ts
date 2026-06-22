@@ -4,7 +4,6 @@ import { useCallback, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   countActiveListingFilters,
-  EMPTY_LISTING_FILTERS,
   readListingFiltersFromSearchParams,
   writeListingFiltersToSearchParams,
   type ListingFilters,
@@ -44,8 +43,8 @@ export function useListingFilterModal() {
   );
 
   const resetFilters = useCallback(() => {
-    applyFilters(EMPTY_LISTING_FILTERS);
-  }, [applyFilters]);
+    router.push(pathname);
+  }, [pathname, router]);
 
   return {
     isOpen,

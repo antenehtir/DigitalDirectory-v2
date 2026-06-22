@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SPECIALTY_OPTIONS, SUB_CITIES } from "@/lib/constants/specialty-options";
 import { EMPTY_LISTING_FILTERS, type ListingFilters } from "@/lib/listing-filters";
 import type { FacilityCategoryFilter } from "@/lib/frontend-search-filters";
@@ -46,6 +46,18 @@ export function FilterModal({
       setDraft(lockedType ? { ...filters, type: lockedType } : filters);
     }
   }
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   if (!isOpen) {
     return null;
@@ -178,6 +190,10 @@ export function FilterModal({
               </datalist>
             </div>
           </div>
+
+          <p className="mt-2 text-center text-xs text-muted-foreground">
+            Leave any field blank to see all results for that category
+          </p>
 
           <div className="mt-6 flex gap-3">
             <button

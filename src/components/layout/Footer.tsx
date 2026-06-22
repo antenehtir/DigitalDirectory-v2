@@ -18,14 +18,7 @@ const providerLinks = [
 export function Footer() {
   return (
     <footer className="border-t border-primary/10 bg-gradient-to-b from-background to-primary/5">
-      <div className="mx-auto grid w-full max-w-6xl gap-7 px-4 py-8 pb-28 text-sm text-muted-foreground sm:px-6 md:grid-cols-2 md:gap-8 md:pb-8 lg:grid-cols-[1.1fr_1fr_0.8fr] lg:px-8">
-        <div className="max-w-sm">
-          <p className="font-medium text-foreground">Tiru</p>
-          <p className="mt-2 leading-6">
-            Trace the right care.
-          </p>
-        </div>
-
+      <div className="mx-auto grid w-full max-w-6xl gap-7 px-4 py-8 pb-28 text-sm text-muted-foreground sm:px-6 sm:grid-cols-2 sm:gap-8 md:pb-8 lg:px-8">
         <nav aria-label="Footer quick links">
           <p className="font-semibold text-primary">Explore</p>
           <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1">

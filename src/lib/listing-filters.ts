@@ -18,8 +18,14 @@ export const EMPTY_LISTING_FILTERS: ListingFilters = {
 
 const FILTER_PARAM_KEYS = ["type", "subCity", "area", "specialty"] as const;
 
+function isActiveFilterValue(value: string): boolean {
+  const trimmed = value.trim();
+
+  return trimmed.length > 0 && trimmed.toLowerCase() !== "all";
+}
+
 export function countActiveListingFilters(filters: ListingFilters): number {
-  return FILTER_PARAM_KEYS.filter((key) => filters[key].trim().length > 0).length;
+  return FILTER_PARAM_KEYS.filter((key) => isActiveFilterValue(filters[key])).length;
 }
 
 export function readListingFiltersFromSearchParams(

@@ -1,6 +1,6 @@
 "use client";
 
-import type { SVGProps } from "react";
+import { useEffect, useState, type SVGProps } from "react";
 
 function SearchIcon(props: SVGProps<SVGSVGElement>) {
   return (
@@ -52,16 +52,41 @@ export function ListingSearchBar({
   onOpenFilters,
   autoFocus = false,
 }: ListingSearchBarProps) {
+  const [localQuery, setLocalQuery] = useState(searchValue);
+  const [prevSearchValue, setPrevSearchValue] = useState(searchValue);
+
+  if (searchValue !== prevSearchValue) {
+    setPrevSearchValue(searchValue);
+    setLocalQuery(searchValue);
+  }
+
+  useEffect(() => {
+    if (localQuery === searchValue) {
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      onSearchChange(localQuery);
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [localQuery, onSearchChange, searchValue]);
+
   return (
     <div className="flex gap-2">
       <div className="relative flex-1">
         <input
           autoFocus={autoFocus}
           className="w-full min-h-11 rounded-xl border border-border bg-card pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-          onChange={(event) => onSearchChange(event.target.value)}
+          onChange={(event) => setLocalQuery(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              onSearchChange(localQuery);
+            }
+          }}
           placeholder="Search by name, area, specialty..."
           type="text"
-          value={searchValue}
+          value={localQuery}
         />
         <SearchIcon className="absolute left-3 top-3 size-4 text-muted-foreground" />
       </div>
