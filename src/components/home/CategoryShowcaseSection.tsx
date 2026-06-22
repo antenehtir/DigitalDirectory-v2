@@ -167,6 +167,7 @@ export function CategoryShowcaseSection() {
                 className={`relative flex min-h-40 flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br p-6 transition-transform hover:scale-[1.02] lg:min-h-48 ${category.gradient}`}
                 href={category.href}
                 key={category.title}
+                prefetch={true}
               >
                 <div className="absolute -top-8 -right-8 size-32 rounded-full bg-white/10 blur-2xl" />
                 <Icon className="relative z-10 size-10 text-white" />

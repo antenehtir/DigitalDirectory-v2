@@ -104,13 +104,21 @@ html[data-theme="dark"] {
 }
 
 body {
-  background: var(--background);
+  background-color: #F7FBFA;
+  background-image: radial-gradient(#0F766E15 1px, transparent 1px);
+  background-size: 24px 24px;
   color: var(--foreground);
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
   line-height: 1.5;
   overflow-x: hidden;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
+
+html[data-theme="dark"] body {
+  background-color: #0F172A;
+  background-image: radial-gradient(#14B8A620 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 button,

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { DoctorCardGrid } from "@/components/cards/DoctorCardGrid";
 import { PageContainer } from "@/components/layout/PageContainer";
+import { ListingStatusBanner } from "@/components/ui/ListingStatusBanner";
 import type { Doctor } from "@/types/doctor";
 import { DoctorsHero } from "./DoctorsHero";
 import { SpecialtyFilterChips } from "./SpecialtyFilterChips";
@@ -17,6 +18,7 @@ export function DoctorsPage({
   return (
     <PageContainer className="py-8 sm:py-10 lg:py-14">
       <div className="grid gap-6">
+        <ListingStatusBanner />
         <DoctorsHero />
         <SpecialtyFilterChips activeSpecialty={activeSpecialty} />
 

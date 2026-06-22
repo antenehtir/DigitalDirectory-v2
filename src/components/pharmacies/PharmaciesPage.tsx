@@ -1,4 +1,5 @@
 import { PageContainer } from "@/components/layout/PageContainer";
+import { ListingStatusBanner } from "@/components/ui/ListingStatusBanner";
 import { PharmacyFilterChips } from "./PharmacyFilterChips";
 import { PharmacyHero } from "./PharmacyHero";
 import { PharmacyResultsSection } from "./PharmacyResultsSection";
@@ -16,6 +17,7 @@ export function PharmaciesPage({
   return (
     <PageContainer className="py-8 sm:py-10 lg:py-14">
       <div className="grid gap-6">
+        <ListingStatusBanner />
         <PharmacyHero />
         <PharmacyFilterChips activeStatus={activeStatus} />
         <PharmacyResultsSection pharmacies={pharmacies} />

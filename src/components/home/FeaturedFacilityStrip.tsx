@@ -13,20 +13,18 @@ export function FeaturedFacilityStrip() {
 
   return (
     <>
-      <div className="overflow-hidden lg:hidden">
-        <div
-          className="-mx-4 snap-x snap-mandatory overflow-x-auto scroll-smooth px-4 pb-2 [&::-webkit-scrollbar]:hidden"
-          style={{ WebkitOverflowScrolling: "touch" }}
-        >
-          <div className="flex w-max flex-nowrap gap-4">
-            {showcasedFacilities.map((facility) => (
-              <FeaturedFacilityCard
-                className="w-64 shrink-0 snap-start"
-                facility={facility}
-                key={facility.id}
-              />
-            ))}
-          </div>
+      <div
+        className="-mx-4 snap-x snap-mandatory overflow-x-auto scroll-smooth px-4 pb-2 lg:hidden [&::-webkit-scrollbar]:hidden"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
+        <div className="flex w-max flex-nowrap gap-4">
+          {showcasedFacilities.map((facility) => (
+            <FeaturedFacilityCard
+              className="w-[280px] min-w-[280px] shrink-0 snap-start"
+              facility={facility}
+              key={facility.id}
+            />
+          ))}
         </div>
       </div>
 
@@ -34,7 +32,7 @@ export function FeaturedFacilityStrip() {
         <div className="homepage-facility-strip flex w-max flex-nowrap gap-4 pb-2">
           {marqueeFacilities.map((facility, index) => (
             <FeaturedFacilityCard
-              className="w-64 shrink-0"
+              className="w-[280px] min-w-[280px] shrink-0"
               facility={facility}
               key={`${facility.slug}-${index}`}
             />
@@ -60,7 +58,7 @@ function FeaturedFacilityCard({
       href={facility.detailHref ?? `/facilities/${facility.slug}`}
     >
       <div className="flex h-full min-w-0 flex-col rounded-2xl bg-card shadow-[0_10px_26px_rgba(31,41,55,0.04)] group-hover:shadow-md">
-        <FacilityBanner facility={facility} />
+        <FacilityBanner facility={facility} heightClassName="h-24" />
         <div className="flex flex-1 flex-col px-3 pb-3 pt-2">
           <h3 className="line-clamp-2 break-words text-base font-semibold leading-snug text-foreground">
             {facility.name}

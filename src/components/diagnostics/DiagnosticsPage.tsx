@@ -1,4 +1,5 @@
 import { PageContainer } from "@/components/layout/PageContainer";
+import { ListingStatusBanner } from "@/components/ui/ListingStatusBanner";
 import { DiagnosticsFilterChips } from "./DiagnosticsFilterChips";
 import { DiagnosticsHero } from "./DiagnosticsHero";
 import { DiagnosticsResultsSection } from "./DiagnosticsResultsSection";
@@ -13,6 +14,7 @@ export function DiagnosticsPage({ activeType, diagnostics }: DiagnosticsPageProp
   return (
     <PageContainer className="py-8 sm:py-10 lg:py-14">
       <div className="grid gap-6">
+        <ListingStatusBanner />
         <DiagnosticsHero />
         <DiagnosticsFilterChips activeType={activeType} />
         <DiagnosticsResultsSection diagnostics={diagnostics} />

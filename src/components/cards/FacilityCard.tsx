@@ -20,22 +20,32 @@ type FacilityCardProps = {
   facility: Facility;
 };
 
-export function FacilityBanner({ facility }: { facility: Facility }) {
+type FacilityBannerProps = {
+  facility: Facility;
+  heightClassName?: string;
+};
+
+export function FacilityBanner({
+  facility,
+  heightClassName = "h-28",
+}: FacilityBannerProps) {
   const categoryKey = resolveFacilityCardCategoryKey(facility);
   const WatermarkIcon = facilityCategoryIcons[facilityWatermarkIconKey[categoryKey]];
 
   return (
-    <div className="relative h-28 shrink-0 overflow-hidden rounded-t-2xl">
+    <div
+      className={`relative w-full shrink-0 overflow-hidden rounded-t-2xl ${heightClassName}`}
+    >
       {facility.logoUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           alt=""
-          className="h-28 w-full object-cover"
+          className="h-full w-full object-cover"
           src={facility.logoUrl}
         />
       ) : (
         <div
-          className={`flex h-28 w-full items-center justify-center ${facilityBannerGradientClasses[categoryKey]}`}
+          className={`flex h-full w-full items-center justify-center ${facilityBannerGradientClasses[categoryKey]}`}
         >
           <WatermarkIcon className="size-10 text-primary/40" />
         </div>

@@ -9,6 +9,7 @@ import { FacilityCategoryFilters } from "./FacilityCategoryFilters";
 import { FacilityCategoryHero } from "./FacilityCategoryHero";
 import { FacilitySearchPreview } from "./FacilitySearchPreview";
 import { SpecialtyFilterDropdown } from "./SpecialtyFilterDropdown";
+import { ListingStatusBanner } from "@/components/ui/ListingStatusBanner";
 import type { FacilityCategoryFilter } from "@/lib/frontend-search-filters";
 
 type FacilitiesPageProps = {
@@ -43,6 +44,7 @@ export function FacilitiesPage({
     return (
       <PageContainer className="py-8 sm:py-10 lg:py-14">
         <div className="grid gap-6">
+          <ListingStatusBanner />
           <FacilityCategoryHero
             category={activeCategory}
             categoryLabel={categoryLabel}
@@ -88,6 +90,7 @@ export function FacilitiesPage({
   return (
     <PageContainer className="py-8 sm:py-10 lg:py-14">
       <div className="grid gap-6">
+        <ListingStatusBanner />
         <FacilitiesHero />
         <FacilitySearchPreview />
         <FacilityCategoryFilters activeCategory={activeCategory} />

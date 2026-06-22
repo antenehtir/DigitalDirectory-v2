@@ -8,6 +8,8 @@ import { realFacilities } from "@/data/real-facility-profiles";
 import { resolveFacilityCoordinates } from "@/lib/nearby-distance";
 import type { Facility, FacilityContactChannel } from "@/types/facility";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Nearby Care — Tiru",
   description:

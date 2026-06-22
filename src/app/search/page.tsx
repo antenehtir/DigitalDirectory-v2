@@ -6,7 +6,7 @@ import { getSupabasePublicDoctorCards } from "@/lib/supabase/doctors-public-read
 import type { Doctor, DoctorTelemedicineStatus } from "@/types/doctor";
 import type { PublicProviderCard } from "@/types/public-listings";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Search — Tiru",

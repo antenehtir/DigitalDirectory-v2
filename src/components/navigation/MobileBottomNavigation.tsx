@@ -80,6 +80,7 @@ export function MobileBottomNavigation() {
               }`}
               href={item.href}
               aria-current={isActive ? "page" : undefined}
+              prefetch={true}
             >
               {Icon ? <Icon /> : null}
               <span className="max-w-full truncate">{item.shortLabel}</span>

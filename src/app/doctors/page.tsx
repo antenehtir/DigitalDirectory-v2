@@ -9,7 +9,7 @@ import { getSupabasePublicDoctorCards } from "@/lib/supabase/doctors-public-read
 import type { PublicProviderCard } from "@/types/public-listings";
 import type { Doctor, DoctorTelemedicineStatus } from "@/types/doctor";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Specialists — Tiru",

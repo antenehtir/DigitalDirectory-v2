@@ -3,9 +3,14 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapPinIcon, PhoneIcon } from "@/components/cards/contact-icons";
+import { FacilityBanner } from "@/components/cards/FacilityCard";
+import {
+  facilityBorderGradientClasses,
+  resolveFacilityCardCategoryKey,
+} from "@/components/cards/facility-category-style";
 import { ShareButton } from "@/components/cards/ShareButton";
 import { WorkingHoursIndicator } from "@/components/cards/WorkingHoursIndicator";
-import { VerificationBadge } from "@/components/trust/VerificationBadge";
+import { ListingStatusBanner } from "@/components/ui/ListingStatusBanner";
 import {
   createPublicContactActions,
   getExternalLinkProps,
@@ -186,6 +191,8 @@ export function NearbyPage({
           Which care are you looking for?
         </h1>
       </header>
+
+      <ListingStatusBanner />
 
       <div className="flex max-w-full flex-wrap gap-2">
         {categoryOptions.map((category) => {
@@ -373,58 +380,76 @@ function NearbyFacilityCard({
   const contactActions = createPublicContactActions(facility.contactChannels);
   const callAction = contactActions.find((action) => action.kind === "phone");
   const mapAction = contactActions.find((action) => action.kind === "maps");
+  const categoryKey = resolveFacilityCardCategoryKey(facility);
+  const borderGradientClass = facilityBorderGradientClasses[categoryKey];
 
   return (
-    <article className="flex min-w-0 flex-col rounded-2xl border border-border bg-card p-4 shadow-[0_10px_26px_rgba(31,41,55,0.04)] transition active:scale-[0.98]">
-      <VerificationBadge status={facility.verificationStatus} />
-      <p className="mt-2 text-xs font-semibold text-muted-foreground">
-        {facility.category}
-      </p>
-      <h3 className="mt-2 break-words text-lg font-semibold leading-snug text-foreground">
-        {facility.name}
-      </h3>
+    <article
+      className={`group relative rounded-2xl bg-gradient-to-br p-[1px] transition active:scale-[0.98] ${borderGradientClass}`}
+    >
+      <div className="flex h-full min-w-0 flex-col rounded-2xl bg-card shadow-[0_10px_26px_rgba(31,41,55,0.04)] group-hover:shadow-md">
+        <FacilityBanner facility={facility} heightClassName="h-24" />
 
-      {distanceLabel ? (
-        <p className="mt-3 text-sm font-semibold text-primary">{distanceLabel}</p>
-      ) : null}
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">
-        {facility.location || facility.address}
-      </p>
+        <div className="flex flex-1 flex-col px-4 pb-4 pt-3">
+          {distanceLabel ? (
+            <p className="text-sm font-semibold text-primary">{distanceLabel}</p>
+          ) : null}
+          <h3 className="break-words text-lg font-semibold leading-snug text-foreground">
+            {facility.name}
+          </h3>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">
+            {facility.location || facility.address}
+          </p>
 
-      {facility.workingHours?.trim() ? (
-        <div className="mt-2">
-          <WorkingHoursIndicator hours={facility.workingHours} />
+          {facility.services.length > 0 ? (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {facility.services.slice(0, 3).map((service) => (
+                <span
+                  key={service}
+                  className="rounded-full border border-border bg-muted px-3 py-1.5 text-xs font-medium text-foreground"
+                >
+                  {service}
+                </span>
+              ))}
+            </div>
+          ) : null}
+
+          {facility.workingHours?.trim() ? (
+            <div className="mt-3">
+              <WorkingHoursIndicator hours={facility.workingHours} />
+            </div>
+          ) : null}
+
+          <div className="mt-auto flex gap-2 pt-4">
+            {callAction ? (
+              <a
+                className="flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-full border border-primary/30 bg-card text-center text-xs font-semibold text-foreground transition-all duration-150 hover:border-primary/60 hover:bg-primary/5 active:scale-95 active:border-primary active:bg-primary/10"
+                href={callAction.href}
+                {...getExternalLinkProps(callAction)}
+              >
+                <PhoneIcon className="size-4 shrink-0" />
+                Call
+              </a>
+            ) : null}
+            {mapAction ? (
+              <a
+                className="flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-full border border-primary/30 bg-card text-center text-xs font-semibold text-foreground transition-all duration-150 hover:border-primary/60 hover:bg-primary/5 active:scale-95 active:border-primary active:bg-primary/10"
+                href={mapAction.href}
+                {...getExternalLinkProps(mapAction)}
+              >
+                <MapPinIcon className="size-4 shrink-0" />
+                Map
+              </a>
+            ) : null}
+            <ShareButton name={facility.name} slug={facility.slug} />
+            <Link
+              className="flex min-h-9 flex-1 items-center justify-center rounded-full bg-primary text-center text-xs font-semibold text-primary-foreground transition-all duration-150 hover:bg-primary-hover active:scale-95"
+              href={facility.detailHref ?? `/facilities/${facility.slug}`}
+            >
+              View details
+            </Link>
+          </div>
         </div>
-      ) : null}
-
-      <div className="mt-4 flex gap-2 pt-1">
-        {callAction ? (
-          <a
-            className="flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-full border border-border bg-card text-center text-xs font-semibold text-foreground transition hover:border-strong-border"
-            href={callAction.href}
-            {...getExternalLinkProps(callAction)}
-          >
-            <PhoneIcon className="size-4 shrink-0" />
-            Call
-          </a>
-        ) : null}
-        {mapAction ? (
-          <a
-            className="flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-full border border-border bg-card text-center text-xs font-semibold text-foreground transition hover:border-strong-border"
-            href={mapAction.href}
-            {...getExternalLinkProps(mapAction)}
-          >
-            <MapPinIcon className="size-4 shrink-0" />
-            Map
-          </a>
-        ) : null}
-        <ShareButton name={facility.name} slug={facility.slug} />
-        <Link
-          className="flex min-h-9 flex-1 items-center justify-center rounded-full bg-primary text-center text-xs font-semibold text-primary-foreground transition hover:bg-primary-hover"
-          href={facility.detailHref ?? `/facilities/${facility.slug}`}
-        >
-          View details
-        </Link>
       </div>
     </article>
   );

@@ -102,6 +102,7 @@ export function QuickCategoriesSection() {
                   key={category.label}
                   className={`flex min-w-0 items-center gap-3 rounded-2xl border border-border border-t-2 bg-card p-3 transition hover:border-strong-border hover:shadow-md ${category.borderTopClass}`}
                   href={category.href}
+                  prefetch={true}
                 >
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-soft-accent text-primary">
                     <Icon />
