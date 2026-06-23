@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { MapPinIcon, PhoneIcon } from "@/components/cards/contact-icons";
 import {
@@ -61,6 +64,7 @@ export function FacilityBanner({
 }
 
 export function FacilityCard({ facility }: FacilityCardProps) {
+  const router = useRouter();
   const detailHref = facility.detailHref ?? `/facilities/${facility.slug}`;
   const contactActions = createPublicContactActions(facility.contactChannels);
   const callAction = contactActions.find((action) => action.kind === "phone");
@@ -68,16 +72,19 @@ export function FacilityCard({ facility }: FacilityCardProps) {
   const categoryKey = resolveFacilityCardCategoryKey(facility);
   const borderGradientClass = facilityBorderGradientClasses[categoryKey];
 
+  function handleCardClick() {
+    router.push(detailHref);
+  }
+
+  function stopProp(e: React.MouseEvent | React.TouchEvent) {
+    e.stopPropagation();
+  }
+
   return (
     <article
-      className={`group relative cursor-pointer rounded-2xl bg-gradient-to-br p-[1px] transition ${borderGradientClass}`}
+      className={`group cursor-pointer rounded-2xl bg-gradient-to-br p-[1px] transition ${borderGradientClass}`}
+      onClick={handleCardClick}
     >
-      <Link
-        aria-label={`View details for ${facility.name}`}
-        className="absolute inset-0 z-10 rounded-2xl"
-        href={detailHref}
-      />
-
       <div className="flex h-full min-w-0 flex-col rounded-2xl bg-card shadow-sm transition active:scale-[0.98] group-hover:shadow-md">
         <FacilityBanner facility={facility} />
 
@@ -109,7 +116,11 @@ export function FacilityCard({ facility }: FacilityCardProps) {
             </div>
           ) : null}
 
-          <div className="relative z-20 mt-3 flex gap-2">
+          <div
+            className="mt-3 flex gap-2"
+            onClick={stopProp}
+            onTouchEnd={stopProp}
+          >
             {callAction ? (
               <a
                 className="flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-full border border-primary/30 bg-card text-center text-xs font-semibold text-foreground transition-all duration-150 hover:border-primary/60 hover:bg-primary/5 active:scale-95 active:border-primary active:bg-primary/10"

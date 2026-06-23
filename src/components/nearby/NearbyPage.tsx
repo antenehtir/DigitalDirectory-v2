@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { MapPinIcon, PhoneIcon } from "@/components/cards/contact-icons";
 import { FacilityBanner } from "@/components/cards/FacilityCard";
 import {
@@ -362,21 +363,27 @@ function NearbyFacilityCard({
   distanceLabel?: string;
   facility: NearbyFacility;
 }) {
+  const router = useRouter();
   const contactActions = createPublicContactActions(facility.contactChannels);
   const callAction = contactActions.find((action) => action.kind === "phone");
   const mapAction = contactActions.find((action) => action.kind === "maps");
   const categoryKey = resolveFacilityCardCategoryKey(facility);
   const borderGradientClass = facilityBorderGradientClasses[categoryKey];
+  const detailHref = facility.detailHref ?? `/facilities/${facility.slug}`;
+
+  function handleCardClick() {
+    router.push(detailHref);
+  }
+
+  function stopProp(e: React.MouseEvent | React.TouchEvent) {
+    e.stopPropagation();
+  }
 
   return (
     <article
-      className={`group relative cursor-pointer rounded-2xl bg-gradient-to-br p-[1px] transition ${borderGradientClass}`}
+      className={`group cursor-pointer rounded-2xl bg-gradient-to-br p-[1px] transition ${borderGradientClass}`}
+      onClick={handleCardClick}
     >
-      <Link
-        aria-label={`View details for ${facility.name}`}
-        className="absolute inset-0 z-10 rounded-2xl"
-        href={facility.detailHref ?? `/facilities/${facility.slug}`}
-      />
       <div className="flex h-full min-w-0 flex-col rounded-2xl bg-card shadow-[0_10px_26px_rgba(31,41,55,0.04)] transition active:scale-[0.98] group-hover:shadow-md">
         <FacilityBanner facility={facility} heightClassName="h-24" />
 
@@ -410,7 +417,11 @@ function NearbyFacilityCard({
             </div>
           ) : null}
 
-          <div className="relative z-20 mt-auto flex gap-2 pt-4">
+          <div
+            className="mt-auto flex gap-2 pt-4"
+            onClick={stopProp}
+            onTouchEnd={stopProp}
+          >
             {callAction ? (
               <a
                 className="flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-full border border-primary/30 bg-card text-center text-xs font-semibold text-foreground transition-all duration-150 hover:border-primary/60 hover:bg-primary/5 active:scale-95 active:border-primary active:bg-primary/10"
@@ -434,7 +445,7 @@ function NearbyFacilityCard({
             <ShareButton name={facility.name} slug={facility.slug} />
             <Link
               className="flex min-h-9 flex-1 items-center justify-center rounded-full bg-primary text-center text-xs font-semibold text-primary-foreground transition-all duration-150 hover:bg-primary-hover active:scale-95"
-              href={facility.detailHref ?? `/facilities/${facility.slug}`}
+              href={detailHref}
             >
               View details
             </Link>
