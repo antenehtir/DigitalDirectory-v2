@@ -370,14 +370,14 @@ function NearbyFacilityCard({
 
   return (
     <article
-      className={`group relative cursor-pointer rounded-2xl bg-gradient-to-br p-[1px] transition active:scale-[0.98] ${borderGradientClass}`}
+      className={`group relative cursor-pointer rounded-2xl bg-gradient-to-br p-[1px] transition ${borderGradientClass}`}
     >
       <Link
         aria-label={`View details for ${facility.name}`}
         className="absolute inset-0 z-10 rounded-2xl"
         href={facility.detailHref ?? `/facilities/${facility.slug}`}
       />
-      <div className="flex h-full min-w-0 flex-col rounded-2xl bg-card shadow-[0_10px_26px_rgba(31,41,55,0.04)] group-hover:shadow-md">
+      <div className="flex h-full min-w-0 flex-col rounded-2xl bg-card shadow-[0_10px_26px_rgba(31,41,55,0.04)] transition active:scale-[0.98] group-hover:shadow-md">
         <FacilityBanner facility={facility} heightClassName="h-24" />
 
         <div className="flex flex-1 flex-col px-4 pb-4 pt-3">
