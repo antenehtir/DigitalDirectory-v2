@@ -13,6 +13,48 @@ export type FacilityCategoryFilter =
 
 export const specialtySubFilters = ["All specialties", ...SPECIALTY_OPTIONS];
 
+// Maps each SPECIALTY_OPTIONS label to the set of keywords that should match it.
+// Uses word-boundary regex — "ent" must appear as a standalone word, not inside "center".
+const SPECIALTY_ALIAS_MAP: Record<string, string[]> = {
+  "Internal Medicine": ["internal medicine"],
+  "Pediatrics & Maternal-Child Health": ["pediatric", "paediatric", "maternal", "child health", "mch"],
+  "Gynecology & Obstetrics": ["gynecology", "gynaecology", "obstetric", "gyn-obs", "gyni-obs"],
+  "General Surgery": ["general surgery", "surgical"],
+  "Cardiology": ["cardiology", "cardiac", "cardiovascular"],
+  "Orthopedics": ["orthopedic", "orthopaedic"],
+  "ENT (Ear, Nose, Throat)": ["ent", "e.n.t", "ear, nose", "otolaryngol", "otorino"],
+  "Dermatology": ["dermatology", "dermatovenerology"],
+  "Psychiatry & Mental Health": ["psychiatry", "psychiatric", "mental health", "psychotherapy", "psychological"],
+  "Ophthalmology (Eye Care)": ["ophthalmology", "optometry", "eye care", "eye clinic", "eye center"],
+  "Physiotherapy": ["physiotherapy", "physical therapy"],
+  "Dental": ["dental", "dentistry", "orthodontic"],
+  "Neurology": ["neurology", "neurologic", "neurosurgery"],
+  "Oncology": ["oncology", "oncologic"],
+  "Gastroenterology": ["gastroenterology"],
+  "Multiple specialties": ["multispecialty", "multi-specialty", "multiple specialt"],
+  "Other": [],
+};
+
+function buildAliasPattern(alias: string): RegExp {
+  const escaped = alias.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // Bare alphabetic word stems (>= 5 letters, no spaces/punctuation) get a
+  // trailing \w* so plural/inflected forms match too — e.g. the alias
+  // "orthopaedic" must also match the data's "Orthopaedics". Short
+  // abbreviations (e.g. "ent", "mch") and multi-word phrases keep an exact
+  // word-boundary match so they don't become loose prefix matches.
+  const isWordStem = /^[a-zA-Z]{5,}$/.test(alias);
+  const suffix = isWordStem ? "\\w*" : "";
+  return new RegExp(`\\b${escaped}${suffix}\\b`, "i");
+}
+
+export function specialtyMatchesAliases(text: string, label: string): boolean {
+  const aliases = SPECIALTY_ALIAS_MAP[label];
+  if (!aliases || aliases.length === 0) return false;
+
+  return aliases.some((alias) => buildAliasPattern(alias).test(text));
+}
+
+// Kept for backward compatibility — still used to derive short display labels (e.g. NearbyPage pills).
 export function extractSpecialtyMatchKeyword(label: string): string {
   return label
     .replace(/\s*\([^)]*\)/g, "")
@@ -32,18 +74,14 @@ export function filterFacilitiesBySpecialtyKeyword(
   facilities: Facility[],
   specialty: string,
 ): Facility[] {
-  const keyword = normalizeQuery(extractSpecialtyMatchKeyword(specialty));
-
-  if (!keyword || keyword === "all specialties") {
+  if (!specialty || specialty.toLowerCase() === "all specialties") {
     return facilities;
   }
 
-  return facilities.filter((facility) =>
-    matchesTokens(
-      [facility.name, facility.category, facility.subcategory, ...facility.services],
-      keyword,
-    ),
-  );
+  const searchText = (facility: Facility) =>
+    [facility.name, facility.category, facility.subcategory, ...facility.services].join(" ");
+
+  return facilities.filter((facility) => specialtyMatchesAliases(searchText(facility), specialty));
 }
 
 export function normalizeFacilityCategoryParam(

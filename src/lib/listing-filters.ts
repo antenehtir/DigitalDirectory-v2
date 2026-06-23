@@ -1,6 +1,7 @@
 import {
   extractSpecialtyMatchKeyword,
   filterFacilitiesByCategory,
+  specialtyMatchesAliases,
   type FacilityCategoryFilter,
 } from "@/lib/frontend-search-filters";
 import type { Doctor } from "@/types/doctor";
@@ -89,16 +90,15 @@ export function facilityMatchesListingFilters(
   }
 
   if (filters.specialty) {
-    const keyword = normalize(extractSpecialtyMatchKeyword(filters.specialty));
+    const specialtyText = [
+      facility.category,
+      facility.subcategory,
+      facility.name,
+      ...facility.services,
+    ].join(" ");
 
-    if (keyword && keyword !== "all specialties") {
-      const specialtyText = normalize(
-        [facility.category, facility.subcategory, facility.name, ...facility.services].join(" "),
-      );
-
-      if (!specialtyText.includes(keyword)) {
-        return false;
-      }
+    if (!specialtyMatchesAliases(specialtyText, filters.specialty)) {
+      return false;
     }
   }
 
