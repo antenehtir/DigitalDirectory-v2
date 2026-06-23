@@ -72,6 +72,12 @@ export function FacilityCard({ facility }: FacilityCardProps) {
     <article
       className={`group relative rounded-2xl bg-gradient-to-br p-[1px] transition active:scale-[0.98] ${borderGradientClass}`}
     >
+      <Link
+        aria-label={`View details for ${facility.name}`}
+        className="absolute inset-0 z-10 rounded-2xl"
+        href={detailHref}
+      />
+
       <div className="flex h-full min-w-0 flex-col rounded-2xl bg-card shadow-sm group-hover:shadow-md">
         <FacilityBanner facility={facility} />
 
@@ -103,7 +109,7 @@ export function FacilityCard({ facility }: FacilityCardProps) {
             </div>
           ) : null}
 
-          <div className="mt-3 flex gap-2">
+          <div className="relative z-20 mt-3 flex gap-2">
             {callAction ? (
               <a
                 className="flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-full border border-primary/30 bg-card text-center text-xs font-semibold text-foreground transition-all duration-150 hover:border-primary/60 hover:bg-primary/5 active:scale-95 active:border-primary active:bg-primary/10"

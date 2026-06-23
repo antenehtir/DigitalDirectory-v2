@@ -41,5 +41,6 @@ export type Facility = {
   onlineOnly?: boolean;
   logoUrl?: string;
   subCity?: string;
+  subCities: string[];
   area?: string;
 };

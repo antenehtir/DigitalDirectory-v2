@@ -64,7 +64,7 @@ function FacilityListingExperienceInner({
         lockedType={lockedType}
         onApply={applyFilters}
         onClose={close}
-        onReset={resetFilters}
+        onReset={() => resetFilters(lockedType)}
       />
 
       {results.length > 0 ? (

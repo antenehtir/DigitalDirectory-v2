@@ -42,9 +42,20 @@ export function useListingFilterModal() {
     [pathname, router, searchParams],
   );
 
-  const resetFilters = useCallback(() => {
-    router.push(pathname);
-  }, [pathname, router]);
+  const resetFilters = useCallback(
+    (lockedType?: string) => {
+      const params = new URLSearchParams();
+
+      // Preserve category param if a type is locked (category-landing pages)
+      if (lockedType) {
+        params.set("category", lockedType);
+      }
+
+      const queryString = params.toString();
+      router.push(queryString ? `${pathname}?${queryString}` : pathname);
+    },
+    [pathname, router],
+  );
 
   return {
     isOpen,

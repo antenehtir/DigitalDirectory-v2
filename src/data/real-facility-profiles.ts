@@ -165,6 +165,14 @@ function mapRealFacilityProfileToFacility(
       ? ADDIS_ABABA_CITY_CENTER
       : estimateCoordinatesForFacility(profile));
 
+  const isMultiOrOnline = isOnlineOnly || isMultiBranch || normalizedSubCity === "";
+  const subCities = isMultiOrOnline
+    ? []
+    : normalizedSubCity
+        .split("/")
+        .map((s) => s.trim())
+        .filter(Boolean);
+
   return {
     id: `real-facility-${profile.record_number}`,
     name: profile.name,
@@ -188,6 +196,7 @@ function mapRealFacilityProfileToFacility(
     longitude: coordinates?.longitude,
     onlineOnly: isOnlineOnly ? true : undefined,
     subCity: profile.sub_city || undefined,
+    subCities,
     area: profile.area || undefined,
   };
 }

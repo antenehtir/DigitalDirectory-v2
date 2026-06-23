@@ -192,7 +192,8 @@ export function FilterModal({
           </div>
 
           <p className="mt-2 text-center text-xs text-muted-foreground">
-            Leave any field blank to see all results for that category
+            Leave any filter blank to include all options for that field.
+            Hit <span className="font-semibold">Reset</span> to clear all filters.
           </p>
 
           <div className="mt-6 flex gap-3">

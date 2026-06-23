@@ -72,9 +72,14 @@ export function facilityMatchesListingFilters(
   }
 
   if (filters.subCity) {
-    const subCityText = normalize([facility.subCity ?? "", facility.location].join(" "));
+    const needle = normalize(filters.subCity);
+    // Empty subCities means the facility covers all sub-cities (multi-branch or online)
+    // — always include it regardless of sub-city filter
+    const matchesSubCity =
+      facility.subCities.length === 0 ||
+      facility.subCities.some((sc) => normalize(sc).includes(needle));
 
-    if (!subCityText.includes(normalize(filters.subCity))) {
+    if (!matchesSubCity) {
       return false;
     }
   }
