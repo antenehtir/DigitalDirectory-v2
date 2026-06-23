@@ -53,7 +53,7 @@ export function FacilityBanner({
       <div className="absolute right-2 top-2">
         <VerificationBadge status={facility.verificationStatus} />
       </div>
-      <span className="absolute bottom-2 left-2 rounded-full bg-white/80 px-2 py-0.5 text-xs font-medium text-foreground backdrop-blur-sm">
+      <span className="absolute bottom-2 left-2 rounded-full bg-white/80 px-2 py-0.5 text-xs font-medium text-foreground backdrop-blur-sm dark:bg-gray-900/80 dark:text-gray-100">
         {facility.category}
       </span>
     </div>

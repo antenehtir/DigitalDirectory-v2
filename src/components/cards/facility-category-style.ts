@@ -43,11 +43,11 @@ export const facilityBannerGradientClasses: Record<
   FacilityCardCategoryKey,
   string
 > = {
-  hospital: "bg-gradient-to-br from-blue-50 to-blue-100",
-  specialty: "bg-gradient-to-br from-violet-50 to-violet-100",
-  diagnostics: "bg-gradient-to-br from-cyan-50 to-cyan-100",
-  pharmacy: "bg-gradient-to-br from-green-50 to-green-100",
-  default: "bg-gradient-to-br from-teal-50 to-teal-100",
+  hospital:    "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900",
+  specialty:   "bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-950 dark:to-violet-900",
+  diagnostics: "bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-950 dark:to-cyan-900",
+  pharmacy:    "bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900",
+  default:     "bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-950 dark:to-teal-900",
 };
 
 export const facilityBorderGradientClasses: Record<
