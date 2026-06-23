@@ -21,6 +21,7 @@ import { SPECIALTY_OPTIONS } from "@/lib/constants/specialty-options";
 import {
   extractSpecialtyMatchKeyword,
   filterFacilitiesByQuery,
+  specialtyMatchesAliases,
 } from "@/lib/frontend-search-filters";
 import {
   countActiveListingFilters,
@@ -68,9 +69,10 @@ const categoryOptions = [
 
 const nearbySpecialtyOptions = SPECIALTY_OPTIONS.filter(
   (option) => option !== "Multiple specialties" && option !== "Other",
-).map((option) =>
-  option === "General Surgery" ? "Surgery" : extractSpecialtyMatchKeyword(option),
-);
+).map((option) => ({
+  value: option,
+  label: option === "General Surgery" ? "Surgery" : extractSpecialtyMatchKeyword(option),
+}));
 
 export function NearbyPage({
   areaOptions,
@@ -109,14 +111,15 @@ export function NearbyPage({
       return categoryFacilities;
     }
 
-    const keyword = selectedNearbySpecialty.toLowerCase();
-
     return categoryFacilities.filter((facility) => {
-      const specialtyText = [facility.subcategory ?? "", ...facility.services]
-        .join(" ")
-        .toLowerCase();
+      const specialtyText = [
+        facility.category,
+        facility.subcategory,
+        facility.name,
+        ...facility.services,
+      ].join(" ");
 
-      return specialtyText.includes(keyword);
+      return specialtyMatchesAliases(specialtyText, selectedNearbySpecialty);
     });
   }, [categoryFacilities, selectedCategory, selectedNearbySpecialty]);
 
@@ -286,9 +289,8 @@ export function NearbyPage({
 
       {selectedCategory === "specialty" ? (
         <div className="-mx-1 flex max-w-full gap-2 overflow-x-auto px-1 pb-1">
-          {["All", ...nearbySpecialtyOptions].map((label) => {
-            const value = label === "All" ? "" : label;
-            const isActive = selectedNearbySpecialty === value;
+          {[{ value: "", label: "All" }, ...nearbySpecialtyOptions].map((option) => {
+            const isActive = selectedNearbySpecialty === option.value;
 
             return (
               <button
@@ -298,11 +300,11 @@ export function NearbyPage({
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-card text-foreground hover:border-strong-border"
                 }`}
-                key={label}
-                onClick={() => setSelectedNearbySpecialty(value)}
+                key={option.value || "all"}
+                onClick={() => setSelectedNearbySpecialty(option.value)}
                 type="button"
               >
-                {label}
+                {option.label}
               </button>
             );
           })}
