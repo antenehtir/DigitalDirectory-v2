@@ -161,6 +161,19 @@ export function filterDoctorsByQuery(
   );
 }
 
+// Maps each UI filter value to the DB category strings it should match.
+// The `category` field on each Facility record comes directly from the source data
+// and is already correctly set — we match on it directly instead of text-searching.
+const FACILITY_CATEGORY_DB_MAP: Record<FacilityCategoryFilter, string[]> = {
+  hospital: ["General Hospital"],
+  specialty: ["Specialty Center", "Medical Plaza"],
+  clinic: ["Clinic", "Healthcare Facility"],
+  diagnostics: ["Diagnostic Center"],
+  pharmacy: ["Pharmacy"],
+  ambulance: ["Ambulance Service"],
+  "home-care": ["Home Care"],
+};
+
 export function filterFacilitiesByCategory(
   facilities: Facility[],
   category: FacilityCategoryFilter | undefined,
@@ -169,58 +182,13 @@ export function filterFacilitiesByCategory(
     return facilities;
   }
 
-  return facilities.filter((facility) => {
-    const searchableText = normalizeQuery(
-      [
-        facility.category,
-        facility.subcategory,
-        facility.name,
-        ...facility.services,
-      ].join(" "),
-    );
+  const allowedCategories = FACILITY_CATEGORY_DB_MAP[category];
 
-    if (category === "clinic") {
-      return (
-        searchableText.includes("clinic") ||
-        searchableText.includes("health center") ||
-        searchableText.includes("primary care")
-      );
-    }
+  if (!allowedCategories) {
+    return facilities;
+  }
 
-    if (category === "hospital") {
-      return (
-        searchableText.includes("general hospital") ||
-        searchableText.includes("hospital")
-      );
-    }
-
-    if (category === "specialty") {
-      return (
-        searchableText.includes("specialty center") ||
-        searchableText.includes("specialty")
-      );
-    }
-
-    if (category === "pharmacy") {
-      return searchableText.includes("pharmacy");
-    }
-
-    if (category === "ambulance") {
-      return searchableText.includes("ambulance");
-    }
-
-    if (category === "home-care") {
-      return searchableText.includes("home care");
-    }
-
-    return (
-      searchableText.includes("laboratory") ||
-      searchableText.includes("diagnostic") ||
-      searchableText.includes("lab") ||
-      searchableText.includes("imaging") ||
-      searchableText.includes("radiology")
-    );
-  });
+  return facilities.filter((facility) => allowedCategories.includes(facility.category));
 }
 
 export function filterDoctorsBySpecialty(

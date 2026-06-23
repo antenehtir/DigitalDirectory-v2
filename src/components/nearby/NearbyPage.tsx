@@ -550,6 +550,17 @@ function NearbyFacilityCard({
   );
 }
 
+// Maps each Nearby category chip value to the DB category strings it should match.
+// The `category` field on each Facility record is already correctly set in the source
+// data — match on it directly instead of text-searching name/services/subcategory.
+const NEARBY_CATEGORY_DB_MAP: Record<string, string[]> = {
+  hospital: ["General Hospital"],
+  specialty: ["Specialty Center", "Medical Plaza"],
+  clinic: ["Clinic", "Healthcare Facility"],
+  diagnostics: ["Diagnostic Center"],
+  pharmacies: ["Pharmacy"],
+};
+
 function filterFacilitiesByCategory(
   facilities: NearbyFacility[],
   category: string,
@@ -562,40 +573,11 @@ function filterFacilitiesByCategory(
     return [];
   }
 
-  return facilities.filter((facility) => {
-    const searchableText = [
-      facility.category,
-      facility.subcategory,
-      facility.name,
-      ...facility.services,
-    ]
-      .join(" ")
-      .toLowerCase();
+  const allowedCategories = NEARBY_CATEGORY_DB_MAP[category];
 
-    if (category === "hospital") {
-      return searchableText.includes("hospital");
-    }
+  if (!allowedCategories) {
+    return facilities;
+  }
 
-    if (category === "specialty") {
-      return searchableText.includes("specialty");
-    }
-
-    if (category === "clinic") {
-      return (
-        searchableText.includes("clinic") ||
-        searchableText.includes("health center") ||
-        searchableText.includes("primary care")
-      );
-    }
-
-    if (category === "diagnostics") {
-      return /diagnostic|laboratory|lab|imaging|radiology/.test(searchableText);
-    }
-
-    if (category === "pharmacies") {
-      return searchableText.includes("pharmacy");
-    }
-
-    return true;
-  });
+  return facilities.filter((facility) => allowedCategories.includes(facility.category));
 }
