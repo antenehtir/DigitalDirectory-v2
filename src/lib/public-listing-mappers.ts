@@ -43,6 +43,7 @@ const verificationLabels: Record<VerificationStatus, string> = {
   verified: "Verified preview",
   pending: "Pending verification",
   "community-submitted": "Community submitted",
+  "facility-owned": "Managed by the facility",
 };
 
 export function normalizePublicProviderType(

@@ -58,8 +58,10 @@ export function ListingStatusBanner() {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <VerificationBadge status="verified" />
-          <span className="text-xs text-muted-foreground">Verified by Tiru team</span>
+          <VerificationBadge status="facility-owned" />
+          <span className="text-xs text-muted-foreground">
+            Managed by the facility
+          </span>
         </div>
       </div>
 

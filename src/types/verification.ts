@@ -1,1 +1,5 @@
-export type VerificationStatus = "verified" | "pending" | "community-submitted";
+export type VerificationStatus =
+  | "verified"
+  | "pending"
+  | "community-submitted"
+  | "facility-owned";

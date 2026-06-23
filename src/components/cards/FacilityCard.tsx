@@ -70,7 +70,7 @@ export function FacilityCard({ facility }: FacilityCardProps) {
 
   return (
     <article
-      className={`group relative rounded-2xl bg-gradient-to-br p-[1px] transition active:scale-[0.98] ${borderGradientClass}`}
+      className={`group relative cursor-pointer rounded-2xl bg-gradient-to-br p-[1px] transition active:scale-[0.98] ${borderGradientClass}`}
     >
       <Link
         aria-label={`View details for ${facility.name}`}
